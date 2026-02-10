@@ -35,8 +35,9 @@ export class StatsPanel {
             return tiers[key][4];
         };
         const withRating = (key, value) => `${value.toFixed(1)} · ${ratingFor(key, value)}`;
+        const nameLabel = this.player.name ? ` · ${this.player.name}` : "";
         this.container.innerHTML = `
-      <h3 class="panel-title">笼中雀</h3>
+      <h3 class="panel-title">笼中雀${nameLabel}</h3>
       <div class="stat-item">回合 <span>${this.world.turn}/${this.world.maxTurn}</span></div>
       <div class="stat-item">行动力 <span>${this.world.ap}/${this.world.maxAp}</span></div>
       <div class="stat-item">容貌 <span>${withRating("appearance", stats.appearance)}</span></div>

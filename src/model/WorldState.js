@@ -6,6 +6,20 @@ export class WorldState {
         this.maxAp = 3;
         this.maxTurn = 22;
         this.monthsWithoutFavor = 0;
+        this.startTimestamp = Date.now();
+        this.actionCount = 0;
+        this.minutesPerAction = 240;
+    }
+    reset() {
+        this.turn = 1;
+        this.month = 3;
+        this.ap = 3;
+        this.maxAp = 3;
+        this.maxTurn = 22;
+        this.monthsWithoutFavor = 0;
+        this.startTimestamp = Date.now();
+        this.actionCount = 0;
+        this.minutesPerAction = 240;
     }
     advanceTurn() {
         this.turn += 1;
@@ -15,11 +29,19 @@ export class WorldState {
     spendAp(cost) {
         const safeCost = Math.max(0, Math.floor(cost));
         this.ap = Math.max(0, this.ap - safeCost);
+        this.actionCount += safeCost;
         if (this.ap <= 0) {
             this.advanceTurn();
             return true;
         }
         return false;
+    }
+    getStartTimestamp() {
+        return this.startTimestamp;
+    }
+    getCurrentTimestamp() {
+        const minutes = this.actionCount * this.minutesPerAction;
+        return this.startTimestamp + minutes * 60 * 1000;
     }
     serialize() {
         return {
@@ -29,6 +51,9 @@ export class WorldState {
             maxAp: this.maxAp,
             maxTurn: this.maxTurn,
             monthsWithoutFavor: this.monthsWithoutFavor,
+            startTimestamp: this.startTimestamp,
+            actionCount: this.actionCount,
+            minutesPerAction: this.minutesPerAction,
         };
     }
     load(data) {
@@ -53,6 +78,18 @@ export class WorldState {
         }
         if (typeof parsed.monthsWithoutFavor === "number") {
             this.monthsWithoutFavor = parsed.monthsWithoutFavor;
+        }
+        if (typeof parsed.startTimestamp === "number") {
+            this.startTimestamp = parsed.startTimestamp;
+        }
+        else {
+            this.startTimestamp = Date.now();
+        }
+        if (typeof parsed.actionCount === "number") {
+            this.actionCount = parsed.actionCount;
+        }
+        if (typeof parsed.minutesPerAction === "number") {
+            this.minutesPerAction = parsed.minutesPerAction;
         }
     }
 }

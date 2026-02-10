@@ -1,14 +1,38 @@
 export class Player {
     constructor() {
-        this.stats = {
-            appearance: 65,
-            scheming: 40,
-            status: 15,
-            network: 10,
-            favor: 20,
-            health: 75,
-            cash: 5,
+        this.defaultStats = {
+            appearance: 60,
+            scheming: 35,
+            status: 10,
+            network: 5,
+            favor: 15,
+            health: 70,
+            cash: 0,
         };
+        this.name = "";
+        this.backgroundId = "";
+        this.backgroundName = "";
+        this.stats = { ...this.defaultStats };
+        this.npcRelations = {
+            jinshu: 0,
+            matron: 0,
+        };
+        this.inventory = {};
+        this.history = new Set();
+    }
+    setStats(stats) {
+        this.stats = { ...this.stats, ...stats };
+    }
+    setIdentity(name, backgroundId, backgroundName) {
+        this.name = name;
+        this.backgroundId = backgroundId;
+        this.backgroundName = backgroundName;
+    }
+    reset() {
+        this.name = "";
+        this.backgroundId = "";
+        this.backgroundName = "";
+        this.stats = { ...this.defaultStats };
         this.npcRelations = {
             jinshu: 0,
             matron: 0,
@@ -37,6 +61,9 @@ export class Player {
     }
     serialize() {
         return {
+            name: this.name,
+            backgroundId: this.backgroundId,
+            backgroundName: this.backgroundName,
             stats: this.stats,
             npcRelations: this.npcRelations,
             history: Array.from(this.history),
@@ -48,6 +75,15 @@ export class Player {
             return;
         }
         const parsed = data;
+        if (typeof parsed.name === "string") {
+            this.name = parsed.name;
+        }
+        if (typeof parsed.backgroundId === "string") {
+            this.backgroundId = parsed.backgroundId;
+        }
+        if (typeof parsed.backgroundName === "string") {
+            this.backgroundName = parsed.backgroundName;
+        }
         if (parsed.stats) {
             this.stats = { ...this.stats, ...parsed.stats };
         }

@@ -55,6 +55,18 @@
         backdrop-filter: blur(2px);
       }
 
+      .header-meta {
+        display: grid;
+        justify-items: end;
+        gap: 4px;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .time-label {
+        white-space: nowrap;
+      }
+
       header h1 {
         margin: 0;
         font-size: 1.2rem;
@@ -359,6 +371,41 @@
         cursor: not-allowed;
       }
 
+      .log-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .log-row {
+        display: grid;
+        gap: 6px;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(215, 199, 166, 0.7);
+        background: rgba(255, 255, 255, 0.65);
+      }
+
+      .log-header {
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .log-choice {
+        color: var(--bg-ink);
+        font-size: 0.92rem;
+      }
+
+      .log-result {
+        color: var(--bg-ink);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .log-delta {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
       .setting-row,
       .setting-field {
         display: grid;
@@ -382,6 +429,14 @@
         font-family: inherit;
       }
 
+      #ai-test-status {
+        min-height: 1.2em;
+      }
+
+      #ai-warning {
+        color: #b45309;
+      }
+
       .muted {
         color: var(--muted);
         font-size: 0.92rem;
@@ -394,7 +449,7 @@
         transform: translateX(-50%);
         width: min(980px, calc(100% - 24px));
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 8px;
         padding: 10px;
         border-radius: 16px;
@@ -425,12 +480,109 @@
         transform: translateY(-1px);
         box-shadow: 0 6px 16px rgba(43, 38, 32, 0.12);
       }
+
+      .intro {
+        display: grid;
+        gap: 12px;
+      }
+
+      .intro-story {
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(215, 199, 166, 0.7);
+        background: rgba(255, 255, 255, 0.65);
+        line-height: 1.6;
+      }
+
+      .intro-section {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(215, 199, 166, 0.7);
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .intro-backgrounds {
+        display: grid;
+        gap: 8px;
+      }
+
+      .intro-background {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(215, 199, 166, 0.6);
+        background: rgba(255, 255, 255, 0.75);
+      }
+
+      .intro-background-name {
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .intro-name {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(215, 199, 166, 0.8);
+        background: #fffdf6;
+        font-family: inherit;
+      }
+
+      .intro-remaining {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .intro-stats {
+        display: grid;
+        gap: 8px;
+      }
+
+      .intro-stat {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(215, 199, 166, 0.6);
+        background: rgba(255, 255, 255, 0.75);
+      }
+
+      .intro-stat-value {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .intro-stat-controls {
+        display: inline-flex;
+        gap: 6px;
+      }
+
+      .intro-stat-controls button {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid rgba(215, 199, 166, 0.8);
+        background: #fffdf6;
+      }
+
+      .intro-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
     </style>
   </head>
   <body>
     <div id="app">
       <header>
         <h1>庭院纪事</h1>
+        <div class="header-meta" id="time"></div>
       </header>
       <div class="pages" id="pages">
         <section class="page is-active" data-page="action">
@@ -448,6 +600,9 @@
         <section class="page" data-page="save">
           <div class="panel save" id="save"></div>
         </section>
+        <section class="page" data-page="log">
+          <div class="panel log" id="log"></div>
+        </section>
       </div>
     </div>
     <nav class="tabbar" id="tabbar">
@@ -456,6 +611,7 @@
       <button type="button" data-tab="shop">小铺</button>
       <button type="button" data-tab="settings">设置</button>
       <button type="button" data-tab="save">存档</button>
+      <button type="button" data-tab="log">日志</button>
     </nav>
     <script type="module" src="main.js"></script>
   </body>

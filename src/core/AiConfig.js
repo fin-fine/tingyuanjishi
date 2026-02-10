@@ -1,7 +1,8 @@
 const STORAGE_KEY = "story_sim_ai_config";
+export const DEFAULT_AI_URL = "https://api.deepseek.com/v1/chat/completions";
 const defaultSettings = {
     enabled: false,
-    apiUrl: "",
+    apiUrl: DEFAULT_AI_URL,
     apiKey: "",
 };
 export function loadAiSettings() {
@@ -13,7 +14,7 @@ export function loadAiSettings() {
         const parsed = JSON.parse(raw);
         return {
             enabled: Boolean(parsed.enabled),
-            apiUrl: typeof parsed.apiUrl === "string" ? parsed.apiUrl : "",
+            apiUrl: typeof parsed.apiUrl === "string" && parsed.apiUrl ? parsed.apiUrl : DEFAULT_AI_URL,
             apiKey: typeof parsed.apiKey === "string" ? parsed.apiKey : "",
         };
     }

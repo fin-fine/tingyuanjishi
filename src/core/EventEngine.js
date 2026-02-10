@@ -17,6 +17,7 @@ export class EventEngine {
         this.events = (await response.json());
     }
     pickEvent(player, world, predicate) {
+        const candidates = [];
         for (const event of this.events) {
             if (predicate && !predicate(event)) {
                 continue;
@@ -27,9 +28,25 @@ export class EventEngine {
             if (event.once && player.history.has(event.id)) {
                 continue;
             }
-            return event;
+            const rawWeight = event.weight;
+            const weight = typeof rawWeight === "number" ? rawWeight : 1;
+            if (weight <= 0) {
+                continue;
+            }
+            candidates.push({ event, weight });
         }
-        return null;
+        if (!candidates.length) {
+            return null;
+        }
+        const total = candidates.reduce((sum, entry) => sum + entry.weight, 0);
+        let roll = Math.random() * total;
+        for (const entry of candidates) {
+            roll -= entry.weight;
+            if (roll <= 0) {
+                return entry.event;
+            }
+        }
+        return candidates[candidates.length - 1].event;
     }
     findEventById(id) {
         return this.events.find((event) => event.id === id) ?? null;
@@ -112,7 +129,23 @@ export class EventEngine {
         return this.checkConditionGroup(event.trigger, player, world);
     }
     checkConditionGroup(group, player, world) {
+        const rawChance = group["chance"];
+        if (typeof rawChance === "number") {
+            let chance = rawChance;
+            const statKey = group["chanceStat"];
+            if (typeof statKey === "string" && this.isStatKey(statKey)) {
+                const statValue = player.stats[statKey] ?? 0;
+                const derived = Math.max(0.05, Math.min(0.95, statValue / 100));
+                chance = chance * derived;
+            }
+            if (Math.random() > chance) {
+                return false;
+            }
+        }
         for (const [key, value] of Object.entries(group)) {
+            if (key === "chance" || key === "chanceStat") {
+                continue;
+            }
             if (!this.checkCondition(key, value, player, world)) {
                 return false;
             }

@@ -118,7 +118,7 @@ export class EventPopup {
         this.container.appendChild(text);
         this.container.appendChild(options);
     }
-    renderSpecial(event, onSelect) {
+    renderSpecial(event, onSelect, onCustom) {
         this.container.innerHTML = "";
         const mask = document.createElement("div");
         mask.className = "special-mask";
@@ -135,6 +135,18 @@ export class EventPopup {
             button.textContent = opt.text;
             button.addEventListener("click", () => onSelect(opt.id));
             options.appendChild(button);
+        }
+        if (onCustom) {
+            const customButton = document.createElement("button");
+            customButton.textContent = "自定应对";
+            customButton.addEventListener("click", () => {
+                const input = window.prompt("请描述你的应对方式：", "");
+                if (!input || !input.trim()) {
+                    return;
+                }
+                onCustom(input.trim());
+            });
+            options.appendChild(customButton);
         }
         card.appendChild(title);
         card.appendChild(text);
