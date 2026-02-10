@@ -1,0 +1,58 @@
+export class WorldState {
+    constructor() {
+        this.turn = 1;
+        this.month = 3;
+        this.ap = 3;
+        this.maxAp = 3;
+        this.maxTurn = 22;
+        this.monthsWithoutFavor = 0;
+    }
+    advanceTurn() {
+        this.turn += 1;
+        this.month = (this.month % 12) + 1;
+        this.ap = this.maxAp;
+    }
+    spendAp(cost) {
+        const safeCost = Math.max(0, Math.floor(cost));
+        this.ap = Math.max(0, this.ap - safeCost);
+        if (this.ap <= 0) {
+            this.advanceTurn();
+            return true;
+        }
+        return false;
+    }
+    serialize() {
+        return {
+            turn: this.turn,
+            month: this.month,
+            ap: this.ap,
+            maxAp: this.maxAp,
+            maxTurn: this.maxTurn,
+            monthsWithoutFavor: this.monthsWithoutFavor,
+        };
+    }
+    load(data) {
+        if (!data || typeof data !== "object") {
+            return;
+        }
+        const parsed = data;
+        if (typeof parsed.turn === "number") {
+            this.turn = parsed.turn;
+        }
+        if (typeof parsed.month === "number") {
+            this.month = parsed.month;
+        }
+        if (typeof parsed.ap === "number") {
+            this.ap = parsed.ap;
+        }
+        if (typeof parsed.maxAp === "number") {
+            this.maxAp = parsed.maxAp;
+        }
+        if (typeof parsed.maxTurn === "number") {
+            this.maxTurn = parsed.maxTurn;
+        }
+        if (typeof parsed.monthsWithoutFavor === "number") {
+            this.monthsWithoutFavor = parsed.monthsWithoutFavor;
+        }
+    }
+}
