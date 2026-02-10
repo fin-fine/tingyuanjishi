@@ -1,0 +1,446 @@
+[
+  {
+    "id": "s1_0001",
+    "title": "第一夜",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [1, 1]
+    },
+    "text": "景和十二年三月初一。春寒料峭，你被指给谢云峥做通房，搬入少爷院子西厢。午后赵嬷嬷带你进书房，叮嘱只守本分。你在门外站了两个时辰，晚膳时少爷只淡淡看了你一眼。夜深，你睡在外间榻上，三更里间忽传咳嗽。",
+    "once": true,
+    "options": [
+      {
+        "id": "opt_ask_outside",
+        "text": "A. 恪守本分，在外间轻声询问是否要茶水",
+        "apCost": 0,
+        "reward": { "npc_matron": 2, "status": 1 },
+        "resultText": "你守了分寸，赵嬷嬷翌日提起时微微点头。"
+      },
+      {
+        "id": "opt_enter",
+        "text": "B. 主动进屋倒温水伺候",
+        "apCost": 0,
+        "chance": 0.7,
+        "chanceStat": "favor",
+        "reward": { "favor": 2 },
+        "resultText": "少爷略一沉吟，接过温水，未多言。",
+        "failReward": { "favor": -2, "status": -1 },
+        "failResultText": "少爷皱眉，只道\"不必\"，你退出来时心里发凉。"
+      },
+      {
+        "id": "opt_pear_soup",
+        "text": "C. 去小厨房热梨汤再送进去",
+        "apCost": 0,
+        "require": { "stat_scheming": ">= 40" },
+        "chance": 0.6,
+        "chanceStat": "scheming",
+        "reward": { "favor": 3, "scheming": 1 },
+        "resultText": "你记得白天的梨汤，温过后奉上。少爷神色缓了些。",
+        "failReward": { "favor": -3, "status": -1 },
+        "failResultText": "你行动太久，被认为多事，少爷语气淡了下去。",
+        "failText": "你一时慌乱，没敢离开外间。"
+      }
+    ]
+  },
+  {
+    "id": "s1_0101",
+    "title": "避子汤的温度",
+    "type": "random",
+    "trigger": {
+      "turn_range": [1, 22],
+      "item_after_sleep": ">= 1"
+    },
+    "once": false,
+    "text": "赵嬷嬷端来一碗黑乎乎的药汤，皮笑肉不笑地盯着你：\"姑娘是个有福的，但也得惜福。趁热喝了，别让大夫人操心。\"",
+    "options": [
+      {
+        "id": "opt_drink",
+        "text": "A. 当面痛快喝下",
+        "apCost": 1,
+        "cost": { "health": -5, "item_after_sleep": -1 },
+        "reward": { "npc_matron": 2 },
+        "resultText": "苦涩入喉，你顺从地亮出碗底。赵嬷嬷满意地点头离开。"
+      },
+      {
+        "id": "opt_show",
+        "text": "B. 犹豫片刻，试图向少爷展示药碗",
+        "apCost": 1,
+        "cost": { "item_after_sleep": -1 },
+        "reward": { "favor": -5, "npc_matron": -10 },
+        "resultText": "少爷皱眉避开视线：\"母亲的安排，你照做便是。\""
+      },
+      {
+        "id": "opt_dump",
+        "text": "C. 暗中倒掉",
+        "apCost": 1,
+        "require": { "stat_scheming": ">= 60", "stat_cash": ">= 2", "stat_network": ">= 20" },
+        "cost": { "cash": -2, "item_after_sleep": -1, "network": -2 },
+        "reward": { "item_pregnancy_risk": 1 },
+        "resultText": "你假装喝下，实则泼进了花盆。那盆兰花几日后枯死了。",
+        "failText": "你找不到合适的机会，只能把药喝了。"
+      }
+    ]
+  },
+  {
+    "id": "s1_0102",
+    "title": "不能生病的规矩",
+    "type": "random",
+    "trigger": {
+      "turn_range": [1, 22],
+      "stat_health": "<= 40"
+    },
+    "once": false,
+    "text": "你发着高烧，但今日是大夫人要在院子里赏花的日子，所有丫鬟都要去伺候。",
+    "options": [
+      {
+        "id": "opt_force",
+        "text": "A. 强撑着去伺候",
+        "apCost": 1,
+        "cost": { "health": -10 },
+        "reward": { "npc_matron": 5 },
+        "resultText": "你脸色惨白地站了一下午，大夫人夸你\"是个勤勉的\"。"
+      },
+      {
+        "id": "opt_sick",
+        "text": "B. 告病请假",
+        "apCost": 1,
+        "reward": { "status": -5, "favor": -5 },
+        "resultText": "锦书代替你去给少爷研墨，回来时发髻微乱，满面春风。"
+      },
+      {
+        "id": "opt_plead",
+        "text": "C. 求少爷免行",
+        "apCost": 1,
+        "require": { "stat_favor": ">= 50" },
+        "reward": { "favor": 2, "npc_matron": -5 },
+        "resultText": "少爷随口说了句\"她病了\"，大夫人眼神冷了冷。",
+        "failText": "少爷没有开口，你只得自己去。"
+      }
+    ]
+  },
+  {
+    "id": "s1_0201",
+    "title": "书房的废纸",
+    "type": "random",
+    "trigger": {
+      "turn_range": [2, 22],
+      "item_in_study": ">= 1",
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "少爷写了一下午字，却烦躁地将纸揉成一团扔在地上。你捡起来，看到上面写满了\"困\"字。",
+    "options": [
+      {
+        "id": "opt_flatten",
+        "text": "A. 默默展平收好",
+        "apCost": 1,
+        "cost": { "item_in_study": -1 },
+        "reward": { "favor": 5 },
+        "resultText": "他看见了你的动作，没有说话，但晚上留宿了你。"
+      },
+      {
+        "id": "opt_advise",
+        "text": "B. 劝他\"考取功名要紧\"",
+        "apCost": 1,
+        "cost": { "item_in_study": -1 },
+        "reward": { "favor": -10 },
+        "resultText": "他冷笑一声：\"连你也懂这些大道理？出去。\""
+      },
+      {
+        "id": "opt_discard",
+        "text": "C. 装作不识字扔掉",
+        "apCost": 1,
+        "cost": { "item_in_study": -1 },
+        "reward": { "npc_matron": 1 },
+        "resultText": "你把它当垃圾扫了，少爷反而松了口气。"
+      }
+    ]
+  },
+  {
+    "id": "s1_0202",
+    "title": "谁的名字",
+    "type": "random",
+    "trigger": {
+      "turn_range": [2, 22],
+      "item_after_murmur": ">= 1",
+      "chance": 0.3
+    },
+    "once": false,
+    "text": "少爷在睡梦中呓语，似乎喊了一个名字，但不是你。",
+    "options": [
+      {
+        "id": "opt_wake",
+        "text": "A. 摇醒他询问",
+        "apCost": 1,
+        "cost": { "item_after_murmur": -1 },
+        "reward": { "favor": -15, "status": -5 },
+        "resultText": "少爷大怒，直接将你赶去外间睡地板。"
+      },
+      {
+        "id": "opt_ignore",
+        "text": "B. 装作没听见",
+        "apCost": 1,
+        "cost": { "item_after_murmur": -1 },
+        "reward": { "favor": 2, "scheming": 2 },
+        "resultText": "次日他神色慌张地试探你，你一脸茫然，他放下心来赏了你一只金钗。"
+      },
+      {
+        "id": "opt_search",
+        "text": "C. 次日私下查这个名字",
+        "apCost": 1,
+        "require": { "item_gift": ">= 1", "stat_network": ">= 15" },
+        "cost": { "item_after_murmur": -1, "item_gift": -1, "network": -1 },
+        "reward": { "item_white_moon": 1 },
+        "resultText": "你得了些风声，记在心里，日后或有用处。",
+        "failText": "你手里没有合适的人情，话也递不出去。"
+      }
+    ]
+  },
+  {
+    "id": "s1_0301",
+    "title": "馊掉的燕窝",
+    "type": "random",
+    "trigger": {
+      "month_range": [6, 8],
+      "turn_range": [6, 16]
+    },
+    "once": true,
+    "text": "你按例有一碗燕窝，但今日成色极差，甚至有一丝馊味。刘娘子只说\"天气热坏得快\"。",
+    "options": [
+      {
+        "id": "opt_complain",
+        "text": "A. 闹到大夫人面前",
+        "apCost": 1,
+        "reward": { "status": -10, "npc_matron": -5, "cash": -0.5 },
+        "resultText": "大夫人斥责你\"口刁难养\"，还罚了你的月例。"
+      },
+      {
+        "id": "opt_dump",
+        "text": "B. 忍气吞声倒掉",
+        "apCost": 1,
+        "cost": { "health": -2 },
+        "reward": { "scheming": 1 },
+        "resultText": "你明白了，在侯府没钱没势，连口热饭都难吃。"
+      },
+      {
+        "id": "opt_bribe",
+        "text": "C. 私下给刘娘子塞钱",
+        "apCost": 1,
+        "require": { "stat_cash": ">= 1" },
+        "cost": { "cash": -1 },
+        "reward": { "status": 2, "scheming": 1, "network": 2 },
+        "resultText": "刘娘子立刻换了笑脸，转身给你换了新鲜的。"
+      }
+    ]
+  },
+  {
+    "id": "s1_0302",
+    "title": "当票风波",
+    "type": "random",
+    "trigger": {
+      "turn_range": [8, 20],
+      "item_gossip": ">= 1"
+    },
+    "once": false,
+    "text": "你看见赵嬷嬷从后门出去，手里拿着一个不起眼的布包，回来时布包不见了。",
+    "options": [
+      {
+        "id": "opt_tell",
+        "text": "A. 告诉少爷",
+        "apCost": 1,
+        "cost": { "item_gossip": -1 },
+        "reward": { "favor": 2, "npc_matron": -6, "status": -1 },
+        "resultText": "少爷与大夫人争了几句，赵嬷嬷看你的眼神冷了。"
+      },
+      {
+        "id": "opt_silent",
+        "text": "B. 装聋作哑",
+        "apCost": 1,
+        "cost": { "item_gossip": -1 },
+        "reward": { "scheming": 5 },
+        "resultText": "你知道侯府账面见底，却不敢多言。"
+      },
+      {
+        "id": "opt_threat",
+        "text": "C. 私下要价",
+        "apCost": 1,
+        "require": { "stat_scheming": ">= 80", "stat_network": ">= 25" },
+        "cost": { "item_gossip": -1 },
+        "reward": { "cash": 10, "npc_matron": -8, "status": -2 },
+        "resultText": "你换来一笔巨款，也给自己埋下了雷。",
+        "failText": "你没胆子开口，只能吞回话头。"
+      }
+    ]
+  },
+  {
+    "id": "s1_0401",
+    "title": "巫蛊玩偶",
+    "type": "random",
+    "trigger": {
+      "turn_range": [16, 22],
+      "stat_favor": ">= 80",
+      "npc_jinshu": "< 0"
+    },
+    "once": true,
+    "text": "你在枕头下发现了一个扎满针的布偶，上面写着大夫人的生辰八字。外头传来搜查的脚步声。",
+    "options": [
+      {
+        "id": "opt_hide",
+        "text": "A. 慌乱藏在身上",
+        "apCost": 1,
+        "reward": { "health": -999 },
+        "resultText": "搜身时被抓了正着。",
+        "end": {
+          "type": "death",
+          "text": "巫蛊之罪坐实，你被当夜处置，命断侯府。"
+        }
+      },
+      {
+        "id": "opt_throw",
+        "text": "B. 扔出窗外",
+        "apCost": 1,
+        "chance": 0.5,
+        "reward": { "status": -2 },
+        "resultText": "你侥幸躲过一劫。",
+        "failReward": { "status": -20, "favor": -10, "npc_matron": -10 },
+        "failResultText": "院里有人拾到布偶，风声传开了。"
+      },
+      {
+        "id": "opt_shift",
+        "text": "C. 祸水东引",
+        "apCost": 1,
+        "require": { "stat_scheming": ">= 60", "stat_status": ">= 20", "stat_network": ">= 10" },
+        "cost": { "status": -10, "network": -10 },
+        "reward": { "npc_jinshu": -10, "favor": 5, "npc_matron": 5 },
+        "resultText": "你把玩偶塞进小丫头的扫帚里，锦书被赶出了院门。",
+        "failText": "你心中一乱，手脚反倒慢了。"
+      }
+    ]
+  },
+  {
+    "id": "s1_0402",
+    "title": "老侯爷的目光",
+    "type": "random",
+    "trigger": {
+      "turn_range": [12, 22],
+      "stat_appearance": ">= 80"
+    },
+    "once": true,
+    "text": "家宴上，老侯爷的目光在你身上停留许久，还夸了句\"云峥房里这个不错\"。",
+    "options": [
+      {
+        "id": "opt_shy",
+        "text": "A. 羞涩低头",
+        "apCost": 1,
+        "reward": { "npc_matron": -20, "status": -20, "health": -50 },
+        "resultText": "你只觉寒意上身，回到院里被罚跪到深夜。",
+        "end": {
+          "type": "death",
+          "text": "为保颜面，你被连夜处置，悄无声息地消失在府中。"
+        }
+      },
+      {
+        "id": "opt_hide",
+        "text": "B. 躲到少爷身后",
+        "apCost": 1,
+        "reward": { "favor": 10, "npc_matron": -5 },
+        "resultText": "少爷挡住了你，语气却冷了几分。"
+      },
+      {
+        "id": "opt_ruin",
+        "text": "C. 自毁形象",
+        "apCost": 1,
+        "require": { "stat_appearance": ">= 80" },
+        "cost": { "appearance": -20 },
+        "reward": { "status": 1 },
+        "resultText": "你故意打翻酒杯弄湿裙摆，狼狈不堪。老侯爷嫌弃地移开了眼。"
+      }
+    ]
+  },
+  {
+    "id": "s1_1000",
+    "title": "本次行动",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [1, 22]
+    },
+    "text": "本月余下的时辰，你打算如何安排？",
+    "once": false,
+    "options": [
+      {
+        "id": "opt_sleep",
+        "text": "伺候安寝",
+        "apCost": 1,
+        "require": { "stat_status": ">= 12", "stat_health": ">= 40" },
+        "reward": { "favor": 5, "item_after_sleep": 1, "item_after_murmur": 1 },
+        "cost": { "health": -2 },
+        "resultText": "帐暖宵短（宠爱+5，健康-2）。",
+        "failText": "你名声不足或气色欠佳，被婉拒在外。"
+      },
+      {
+        "id": "opt_rules",
+        "text": "正院立规矩",
+        "apCost": 1,
+        "reward": { "npc_matron": 3, "status": 2 },
+        "cost": { "health": -3 },
+        "resultText": "你站得稳当（名声+2，健康-3）。"
+      },
+      {
+        "id": "opt_sew",
+        "text": "细作女红（增银钱）",
+        "apCost": 1,
+        "reward": { "cash": 0.3 },
+        "resultText": "针线细密（银钱+0.3）。"
+      },
+      {
+        "id": "opt_gift_matron",
+        "text": "送礼打点（赵嬷嬷）",
+        "apCost": 1,
+        "require": { "item_gift": ">= 1" },
+        "cost": { "item_gift": -1 },
+        "reward": { "npc_matron": 2, "status": 1, "network": 2 },
+        "resultText": "嬷嬷收了礼（名声+1，人脉+2）。",
+        "failText": "你手里没有合适的小礼。"
+      },
+      {
+        "id": "opt_tonic",
+        "text": "喝温补汤",
+        "apCost": 1,
+        "require": { "item_tonic": ">= 1" },
+        "cost": { "item_tonic": -1 },
+        "reward": { "health": 4 },
+        "resultText": "热汤入腹（健康+4）。",
+        "failText": "你手里没有温补汤。"
+      },
+      {
+        "id": "opt_gossip",
+        "text": "听墙角练心机",
+        "apCost": 1,
+        "reward": { "scheming": 2, "network": 1, "item_gossip": 1 },
+        "resultText": "你记下几句断续的闲话（心机+2，人脉+1）。"
+      },
+      {
+        "id": "opt_rest",
+        "text": "静养养颜",
+        "apCost": 1,
+        "reward": { "health": 2, "appearance": 1 },
+        "resultText": "你放缓脚步（健康+2，容貌+1）。"
+      },
+      {
+        "id": "opt_kitchen",
+        "text": "小厨房帮忙",
+        "apCost": 1,
+        "reward": { "status": 2, "cash": 1 },
+        "resultText": "你搭了把手（名声+2，银钱+1）。"
+      },
+      {
+        "id": "opt_courtyard",
+        "text": "庭前仪容",
+        "apCost": 1,
+        "reward": { "favor": 2, "appearance": 1 },
+        "cost": { "health": -1 },
+        "resultText": "你仪态端雅（容貌+1，宠爱+2，健康-1）。"
+      }
+    ]
+  }
+]

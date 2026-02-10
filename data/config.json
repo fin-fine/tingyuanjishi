@@ -1,0 +1,11 @@
+{
+  "player_start": {
+    "appearance": 10,
+    "scheming": 10,
+    "status": 10,
+    "network": 10,
+    "favor": 10,
+    "health": 10,
+    "cash": 5
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "action_sew": {
+    "name": "做女红",
+    "cost_ap": 1,
+    "effect": {
+      "cash": 2,
+      "scheming": 1,
+      "health": -1
+    },
+    "desc": "挑灯缝补衣物，换得一点体己。"
+  },
+  "action_courtyard": {
+    "name": "庭前伺候",
+    "cost_ap": 1,
+    "effect": {
+      "favor": 2,
+      "appearance": 1,
+      "health": -1
+    },
+    "desc": "多在少爷身边露面，稳住眷顾。"
+  },
+  "action_kitchen": {
+    "name": "小厨房帮忙",
+    "cost_ap": 1,
+    "effect": {
+      "status": 2,
+      "cash": 1
+    },
+    "desc": "帮厨做事，换来管事的好脸色。"
+  },
+  "action_rest": {
+    "name": "静养",
+    "cost_ap": 1,
+    "effect": {
+      "health": 2,
+      "appearance": 1
+    },
+    "desc": "省着力气，养足精神。"
+  }
+}
