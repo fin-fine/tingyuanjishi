@@ -787,7 +787,8 @@ export class GameManager {
                 npcRelations: { ...this.player.npcRelations },
             };
             this.persistAutoSave();
-            this.tick();
+            // 直接显示月度事件，跳过tick()中的重复检查
+            this.showMonthlyPlan();
         });
     }
     generateQuarterSummary() {
