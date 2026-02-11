@@ -8,36 +8,71 @@
     },
     "text": "景和十二年三月初一。春寒料峭，你被指给谢云峥做通房，住入少爷院子西厢。午后赵嬷嬷带你进书房，语气平平却字字像钉子：守本分、懂分寸。她信规矩，也信自己那点多年换来的权威。你在门外站了两个时辰。第一次抬眼见他，眉目清朗，衣襟一动便有风度，院里丫鬟常为他私下议论。晚膳时少爷只淡淡看了你一眼，那眼神里透着教养的克制，还带着与生俱来的距离。夜深，外间榻上薄被凉，你刚合眼，里间忽然传来几声咳嗽。",
     "once": true,
+    "allowCustom": true,
     "options": [
       {
         "id": "opt_ask_outside",
         "text": "A. 恪守本分，在外间轻声询问是否要茶水",
         "apCost": 0,
         "reward": { "npc_matron": 2, "status": 1 },
-        "resultText": "你守着门外，低声询问，不越一步。赵嬷嬷第二日提起你时，眼神里多了点肯定，她喜欢这类可控的分寸。"
+        "resultText": "你守在门外，声线压得极轻。赵嬷嬷听见了，只淡淡点头（主母印象+2，名声+1）。",
+        "outcomeStat": "status",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "npc_matron": 2, "status": 1 },
+            "resultText": "你分寸拿捏得稳，赵嬷嬷次日还夸你一句'知礼'。规矩越稳，路越宽（主母印象+2，名声+1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "npc_matron": 1, "status": 0 },
+            "resultText": "你声音发颤，话也不够利落。赵嬷嬷只当你新来，不多理会（主母印象+1）。"
+          }
+        ]
       },
       {
         "id": "opt_enter",
         "text": "B. 主动进屋倒温水伺候",
         "apCost": 0,
-        "chance": 0.7,
-        "chanceStat": "favor",
         "reward": { "favor": 2 },
-        "resultText": "少爷略一沉吟，接过温水，指尖一触即分。他向来不愿被人看穿软处，却也记得谁在他病时递了这杯。",
-        "failReward": { "favor": -2, "status": -1 },
-        "failResultText": "少爷皱眉，只道\"不必\"。他不喜欢被打扰，你退到外间时，背上一阵凉。"
+        "resultText": "少爷接过温水，语气依旧克制。你退回外间时，心里仍有一线暖意（宠爱+2）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": 2, "status": 1 },
+            "resultText": "他看了你一眼，轻声道了句'辛苦'。这句话不重，却足够你记一晚（宠爱+2，名声+1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 0, "status": -1 },
+            "resultText": "少爷眉尖一紧，只说\"不必\"。你退得快，背上却起了一层凉意（名声-1）。"
+          }
+        ]
       },
       {
         "id": "opt_pear_soup",
         "text": "C. 去小厨房热梨汤再送进去",
         "apCost": 0,
         "require": { "stat_scheming": ">= 40" },
-        "chance": 0.6,
-        "chanceStat": "scheming",
         "reward": { "favor": 3, "scheming": 1 },
-        "resultText": "你记得白天的梨汤，温过后奉上。少爷神色缓了些，咳声也轻了。",
-        "failReward": { "favor": -3, "status": -1 },
-        "failResultText": "你行动太久，被认为多事，少爷语气淡了下去。",
+        "resultText": "你记得白天的梨汤，温过后奉上。少爷神色缓了些，咳声也轻了（宠爱+3，心机+1）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 80,
+            "reward": { "favor": 3, "scheming": 1 },
+            "resultText": "你把时间卡得极准，汤温正好。少爷难得多喝了两口，脸色也舒了（宠爱+3，心机+1）。"
+          },
+          { "min": 60 },
+          {
+            "min": 40,
+            "reward": { "favor": 2, "scheming": 0 },
+            "resultText": "你来得慢了一步，汤有些凉。少爷仍接了，却没多说一句（宠爱+2）。"
+          }
+        ],
         "failText": "你一时慌乱，只能把话吞回去。"
       }
     ]
@@ -51,7 +86,7 @@
       "item_after_sleep": ">= 1"
     },
     "once": false,
-    "text": "赵嬷嬷端来一碗黑乎乎的药汤，热气里带着苦涩。她笑不达眼：\"姑娘是个有福的，但也得惜福。趁热喝了，别让大夫人操心。\"她的忠心里有算计，更怕主母的怪罪，对你是否难受并不在意。",
+    "text": "赵嬷嬷端来一碗黑乎乎的药汤，热气里带着苦涩。她笑不达眼：\"姑娘是个有福的，但也得惜福。趁热喝了，免得大夫人操心。\"她说这话时在门外顿了顿，像是还想说什么，最终只叹口气：\"规矩是规矩，大夫人也是这么过来的。咱们女人，都不容易。\"你知道她的忠心里有算计，更怕主母怪罪，但那声叹息是真的。",
     "options": [
       {
         "id": "opt_drink",
@@ -59,7 +94,21 @@
         "apCost": 1,
         "cost": { "health": -5, "item_after_sleep": -1 },
         "reward": { "npc_matron": 2 },
-        "resultText": "苦涩入喉，你顺从地亮出碗底。赵嬷嬷看你片刻，才满意地走开，她记住了你这份顺。"
+        "resultText": "苦涩入喉，你顺从地亮出碗底。赵嬷嬷看你片刻，才满意地走开（主母印象+2，健康-5）。",
+        "outcomeStat": "status",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "npc_matron": 2 },
+            "resultText": "你面不改色，把碗放得端正。她记住了你的稳重，规矩也更愿意给你留门（主母印象+2，健康-5）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "npc_matron": 1 },
+            "resultText": "你强忍着喝完，脸色却白得吓人。赵嬷嬷只当你身子弱，心里未必看重（主母印象+1，健康-5）。"
+          }
+        ]
       },
       {
         "id": "opt_show",
@@ -67,7 +116,21 @@
         "apCost": 1,
         "cost": { "item_after_sleep": -1 },
         "reward": { "favor": -5, "npc_matron": -10 },
-        "resultText": "少爷皱眉避开视线：\"母亲的安排，你照做便是。\"他不愿与母亲正面对峙，你听得心口发闷。"
+        "resultText": "少爷皱眉避开视线：\"母亲的安排，你照做便是。\"你心口发闷，话也吞回去（宠爱-5，主母印象-10）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": -2, "npc_matron": -6 },
+            "resultText": "少爷虽不愿争，却还是替你缓了一句。主母没发作，但你知道这账记下了（宠爱-2，主母印象-6）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": -8, "npc_matron": -12 },
+            "resultText": "少爷只一句冷淡'照做'，赵嬷嬷脸色立刻沉了。你在两头都落了个不是（宠爱-8，主母印象-12）。"
+          }
+        ]
       },
       {
         "id": "opt_dump",
@@ -76,7 +139,21 @@
         "require": { "stat_scheming": ">= 60", "stat_cash": ">= 2", "stat_network": ">= 20" },
         "cost": { "cash": -2, "item_after_sleep": -1, "network": -2 },
         "reward": { "item_pregnancy_risk": 1 },
-        "resultText": "你假装喝下，实则泼进了花盆。那盆兰花几日后枯死，你的心却还跳得厉害。你知道赵嬷嬷若起疑，下一碗不会这么好躲。",
+        "resultText": "你假装喝下，实则泼进花盆。心跳得厉害，连袖口都发凉（受孕风险+1）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 80,
+            "reward": { "item_pregnancy_risk": 1 },
+            "resultText": "你换了个碗，还把药味掩得干净。赵嬷嬷半点没疑，日后也更好周旋（受孕风险+1）。"
+          },
+          { "min": 70 },
+          {
+            "min": 60,
+            "reward": { "item_pregnancy_risk": 1, "status": -1 },
+            "resultText": "你动作慢了些，药气还是被人闻到。赵嬷嬷未明说，你却心里发紧（受孕风险+1，名声-1）。"
+          }
+        ],
         "failText": "你找不到合适的机会，只能把药喝了。"
       }
     ]
@@ -90,7 +167,7 @@
       "stat_health": "<= 40"
     },
     "once": false,
-    "text": "你烧得浑身发烫，可今日是大夫人要在院子里赏花的日子，所有丫鬟都要去伺候。你撑着起身，眼前一阵发黑。主母爱面子也爱规矩，她最怕院里有人失礼，你病与不病只算附带。",
+    "text": "你烧得浑身发烫，可今日是大夫人要在院子里赏花的日子，所有丫鬟都要去伺候。你撑着起身，眼前一阵发黑。主母立规矩时像一把冷刃，她最怕院里有人失礼乱了体面。但你记得半月前她路过小厨房，曾随口问过你怕不怕冷，还让人添了张毯子——那时候的她表情缓和，像换了个人。只是立规矩和施恩永远是两码事。",
     "options": [
       {
         "id": "opt_force",
@@ -98,14 +175,42 @@
         "apCost": 1,
         "cost": { "health": -10 },
         "reward": { "npc_matron": 5 },
-        "resultText": "你脸色惨白地站了一下午，大夫人一句\"勤勉\"落下，像赏你一根细线。她看中听命，你的命在她眼里轻得很。"
+        "resultText": "你脸色惨白地站了一下午。大夫人在众人面前一句\"勤勉\"落下，语气威严。散场后她却叫住你，让嬷嬷给你端碗姜汤，声音淡了些：\"身子还得养着，别真倒了。\"立规矩时她冷如霜，散了场却还念你一句（主母印象+5，健康-10）。",
+        "outcomeStat": "status",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "npc_matron": 3, "status": 1 },
+            "resultText": "你站得稳当，礼数一点不乱。主母当众称你\"懂规矩\"，声音不容置疑。散场后她从你身边走过，压低声音道：\"今日辛苦了，回去歇着吧。\"那声\"辛苦\"轻得几乎听不见，像她藏起来的那点柔软。你把痛咽进喉里，心里却记住了这句话（主母印象+3，名声+1，健康-5）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "npc_matron": 2, "status": -1 },
+            "resultText": "你脚步虚浮，被人看出不支。主母当场不发一语，眼神凉薄。晚间却让赵嬷嬷给你送了帖药，附了一句话：\"下次身子不支就早说，别硬撑。\"她记下你不济，却也没真的要你的命（主母印象+2，名声-1，健康-5）。"
+          }
+        ]
       },
       {
         "id": "opt_sick",
         "text": "B. 告病请假",
         "apCost": 1,
-        "reward": { "status": -5, "favor": -5 },
-        "resultText": "锦书代替你去给少爷研墨，回来时发髻微乱，满面春风。她向来胆子大、爱赌一把，你心里泛起一层苦。"
+        "reward": { "status": -3, "favor": -3 },
+        "resultText": "你告了病，旁人替你顶上。锦书回来时满面春风，你心里发苦（名声-3，宠爱-3）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "status": -2, "favor": -3 },
+            "resultText": "你把说辞安排得周全，管事只当你真不舒服。名声受损，但不至于塌（名声-2，宠爱-3）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "status": -3, "favor": -3 },
+            "resultText": "你告病显得心虚，风声传得快。人们多一句议论，都是一把小刀（名声-3，宠爱-3）。"
+          }
+        ]
       },
       {
         "id": "opt_plead",
@@ -113,7 +218,21 @@
         "apCost": 1,
         "require": { "stat_favor": ">= 50" },
         "reward": { "favor": 2, "npc_matron": -5 },
-        "resultText": "少爷随口说了句\"她病了\"，大夫人眼神一冷，你知道账被记下了。她记恨时从不大声。",
+        "resultText": "少爷随口说了句\"她病了\"，大夫人眼神一冷，当场没说话。过了两日她单独叫你到正院，语气严厉：\"身子再弱也得撑着场面，这是规矩。\"但说完又顿了顿，目光复杂：\"我当年也是这么过来的。你既在这府里，就得明白什么时候能病、什么时候不能。\"你知道她记下了这笔账，却也从她眼中看到一丝同为女人的无奈（宠爱+2，主母印象-5）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": 3, "npc_matron": -2 },
+            "resultText": "少爷开口更坚定，主母虽不快，却没当场发作。你得了关照，也添了隐忧（宠爱+3，主母印象-2）。"
+          },
+          { "min": 50 },
+          {
+            "min": 0,
+            "reward": { "favor": 1, "npc_matron": -3 },
+            "resultText": "少爷语气敷衍，主母的冷意更明显。你省了力，却欠了账（宠爱+1，主母印象-3）。"
+          }
+        ],
         "failText": "少爷没有开口，你只得自己去。"
       }
     ]
@@ -135,16 +254,44 @@
         "text": "A. 默默展平收好",
         "apCost": 1,
         "cost": { "item_in_study": -1 },
-        "reward": { "favor": 5 },
-        "resultText": "他看见了你的动作，未置一词，夜里却让你留宿。你知道自己踩对了步子。"
+        "reward": { "favor": 3 },
+        "resultText": "你把废纸展平，悄悄收好。少爷看见了，却没说话（宠爱+3）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": 3 },
+            "resultText": "他夜里让你留宿，语气比白日温些。你把那张写满'困'字的纸收好，忽然觉得可笑——他困在仕途科举里，你困在这方院子里，可他抱怨时有人倾听，你的困顿却只能化作对他的体贴。这就是规矩（宠爱+3）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 2 },
+            "resultText": "他只是点了点头，情绪仍沉。你收好纸，心里也收紧。你想安慰他，可你自己又何尝不困？只是没人会问你罢了（宠爱+2）。"
+          }
+        ]
       },
       {
         "id": "opt_advise",
         "text": "B. 劝他\"考取功名要紧\"",
         "apCost": 1,
         "cost": { "item_in_study": -1 },
-        "reward": { "favor": -10 },
-        "resultText": "他冷笑一声：\"连你也懂这些大道理？出去。\"你背上挨了冷气。"
+        "reward": { "favor": -3 },
+        "resultText": "你话说出口，少爷眉眼一沉：\"连你也懂这些大道理？\"你被冷声打断（宠爱-3）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": -2, "status": -1 },
+            "resultText": "他虽不悦，却没重话。你知道越界了，但还留了余地（宠爱-2，名声-1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": -3, "status": -2 },
+            "resultText": "他冷笑一声，让你出去。你背上挨了冷气，也挨了脸面（宠爱-3，名声-2）。"
+          }
+        ]
       },
       {
         "id": "opt_discard",
@@ -152,7 +299,21 @@
         "apCost": 1,
         "cost": { "item_in_study": -1 },
         "reward": { "npc_matron": 1 },
-        "resultText": "你把它当垃圾扫了，少爷反而松了口气，屋里一时安静下来。"
+        "resultText": "你当它是垃圾扫了出去，屋里一时安静（主母印象+1）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "npc_matron": 2, "scheming": 1 },
+            "resultText": "你顺势替他收拾好心情，少爷反而松了口气。你把这份分寸记在心里（主母印象+2，心机+1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "npc_matron": 0 },
+            "resultText": "你处理得太快，少爷反而觉得被催。你没挨责，却也没得好处。"
+          }
+        ]
       }
     ]
   },
@@ -173,8 +334,22 @@
         "text": "A. 摇醒他询问",
         "apCost": 1,
         "cost": { "item_after_murmur": -1 },
-        "reward": { "favor": -15, "status": -5 },
-        "resultText": "少爷大怒，直接将你赶去外间睡地板，你听见门关上的声响。"
+        "reward": { "favor": -3, "status": -3 },
+        "resultText": "你伸手摇醒他，话刚出口就被冷眼截住。门一关，你心里也凉了（宠爱-3，名声-3）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": -2, "status": -1 },
+            "resultText": "他皱眉，却只是让你退下。火气压住了，可疙瘩还在（宠爱-2，名声-1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": -3, "status": -2 },
+            "resultText": "少爷大怒，直接将你赶去外间睡地板。你听见门关上的声响（宠爱-3，名声-2）。"
+          }
+        ]
       },
       {
         "id": "opt_ignore",
@@ -182,7 +357,21 @@
         "apCost": 1,
         "cost": { "item_after_murmur": -1 },
         "reward": { "favor": 2, "scheming": 2 },
-        "resultText": "次日他神色慌张地试探你，你一脸茫然，他放下心来赏了你一只金钗。你明白，沉默有时比哭闹更值钱。"
+        "resultText": "你装作没听见，心里却记着。次日他试探你，你一脸茫然（宠爱+2，心机+2）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": 2, "scheming": 2 },
+            "resultText": "你把情绪压得极稳，他放下心来，还赏了你一只金钗。他在梦里喊别人的名字，醒来却要你守口如瓶。你忽然明白：你不是他的人，你是他的秘密守护者，是他体面的一部分。这份酸涩不是因为他心里有别人，而是因为你连妒忌的资格都要小心掩藏（宠爱+2，心机+2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 1, "scheming": 1 },
+            "resultText": "你努力装作无事，眼神却露了半分。他没追问，但也没多赏。那个名字在你心里扎了根，你说不清是嫉妒她得了他的心，还是嫉妒她可能拥有的、比你更体面的位置（宠爱+1，心机+1）。"
+          }
+        ]
       },
       {
         "id": "opt_search",
@@ -191,7 +380,21 @@
         "require": { "item_gift": ">= 1", "stat_network": ">= 15" },
         "cost": { "item_after_murmur": -1, "item_gift": -1, "network": -1 },
         "reward": { "item_white_moon": 1 },
-        "resultText": "你得了些风声，记在心里，像在手里攥了一根暗线。",
+        "resultText": "你探到些风声，记在心里，像攥住一根暗线。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "item_white_moon": 1, "scheming": 1 },
+            "resultText": "你问得稳当，还多探出一点旧事。那是个官家小姐，琴棋书画样样精通，可以在茶会上谈笑风生。你忽然明白，你嫉妒的不是她得了他的心，而是她生来就能与他平起平坐。那个世界，你连门槛都摸不到（心机+1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "item_white_moon": 1, "status": -1 },
+            "resultText": "你打听得太急，惹来人侧目。消息到手了，名声却薄了些。你想起那个名字，心口发紧——是因为爱而不得，还是因为看清了自己永远只能是个影子（名声-1）？"
+          }
+        ],
         "failText": "你手里没有合适的人情，话也递不出去。"
       }
     ]
@@ -211,8 +414,22 @@
         "id": "opt_complain",
         "text": "A. 闹到大夫人面前",
         "apCost": 1,
-        "reward": { "status": -10, "npc_matron": -5, "cash": -0.5 },
-        "resultText": "大夫人斥责你\"口刁难养\"，还罚了你的月例。你知道这并非一碗燕窝的事。"
+        "reward": { "status": -3, "npc_matron": -3, "cash": -0.5 },
+        "resultText": "大夫人当众斥责你\"口刁难养\"，声色俱厉，还罚了你的月例。但私下里她让嬷嬷悄悄给你补了半份银子，附了句话：\"规矩得立，但我也不瞎。下次有委屈，找对地方说。\"她立威时冷如冰霜，转过头却还是念着一份人情（名声-3，主母印象-3）。",
+        "outcomeStat": "status",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "status": -3, "npc_matron": -2, "cash": -0.5 },
+            "resultText": "你分寸拿得稳，虽被责备，却没被重罚。面子丢了一点，还能撑住（名声-3，主母印象-2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "status": -3, "npc_matron": -3, "cash": -1 },
+            "resultText": "你声大话硬，反倒坐实\"难伺候\"。罚例更重，脸面也更薄（名声-3，主母印象-3）。"
+          }
+        ]
       },
       {
         "id": "opt_dump",
@@ -220,7 +437,21 @@
         "apCost": 1,
         "cost": { "health": -2 },
         "reward": { "scheming": 1 },
-        "resultText": "你明白了，在侯府没钱没势，连口热饭都难吃。"
+        "resultText": "你把燕窝倒了，心里却记下一笔账。忍不是忘（心机+1，健康-2）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "scheming": 2 },
+            "resultText": "你把委屈吞得稳，转身就记住是谁的手。你忽然想明白一件事：在这个院子里，你的尊严和你的位置是挂钩的。等你爬上去了，就不会有人敢给你馊的燕窝。日后用得上这笔记忆（心机+2，健康-2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "scheming": 0 },
+            "resultText": "你忍得不甘，心气乱了几分。你想，若是自己也像大夫人一样有话语权，谁还敢欺到头上？晚间大夫人路过，瞥见你脸色不好，淡淡道：\"忍得住是本事，但也别把自己憋坏了。这宅子里的女人，都是这么熬的。\"她转身离开，背影笔直，像在提醒你：她也曾是熬过来的人（健康-2）。"
+          }
+        ]
       },
       {
         "id": "opt_bribe",
@@ -229,7 +460,21 @@
         "require": { "stat_cash": ">= 1" },
         "cost": { "cash": -1 },
         "reward": { "status": 2, "scheming": 1, "network": 2 },
-        "resultText": "刘娘子立刻换了笑脸，转身给你换了新鲜的。你把这笔人情记在心里。"
+        "resultText": "刘娘子立刻换了笑脸，给你换了新鲜的。人情也算到你名下（名声+2，人脉+2）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "status": 3, "scheming": 2, "network": 3 },
+            "resultText": "你话说得巧，还顺势摸出她的路数。刘娘子对你客气了几分。你忽然明白——银子不是用来买燕窝的，是用来买尊重的。有钱就有话语权，这是这个院子里最简单的规则（名声+3，心机+2，人脉+3）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "status": 1, "scheming": 0, "network": 1 },
+            "resultText": "你塞了钱，却换不来真心。她敷衍一笑，你也只好认。你明白了，钱能解决的问题都不是问题，可你的钱还不够多（名声+1，人脉+1）。"
+          }
+        ]
       }
     ]
   },
@@ -249,16 +494,44 @@
         "text": "A. 告诉少爷",
         "apCost": 1,
         "cost": { "item_gossip": -1 },
-        "reward": { "favor": 2, "npc_matron": -6, "status": -1 },
-        "resultText": "少爷与大夫人争了几句，赵嬷嬷看你的眼神冷了，你知道这笔账要记在你头上。她不会忘记谁动了她的路。"
+        "reward": { "favor": 2, "npc_matron": -3, "status": -1 },
+        "resultText": "少爷与大夫人争了几句，大夫人当场拂袖而去，赵嬷嬷看你的眼神冷了。第二日大夫人却单独叫你进正院，声音平静：\"我知道云峥护着你，但你要明白，这府里的规矩不是我一个人立的。我也曾是新进门的人，懂得进退才能站稳。\"她的严厉里藏着一点过来人的提醒（宠爱+2，主母印象-3，名声-1）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": 3, "npc_matron": -3, "status": 0 },
+            "resultText": "少爷替你挡了一半，赵嬷嬷虽冷，却没立刻发作。你欠了一份人情（宠爱+3，主母印象-3）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 1, "npc_matron": -3, "status": -2 },
+            "resultText": "少爷并不愿多管，你的告状像丢进冷水。赵嬷嬷把账记得更深（宠爱+1，主母印象-3，名声-2）。"
+          }
+        ]
       },
       {
         "id": "opt_silent",
         "text": "B. 装聋作哑",
         "apCost": 1,
         "cost": { "item_gossip": -1 },
-        "reward": { "scheming": 5 },
-        "resultText": "你知道侯府账面见底，却不敢多言。沉默也是一条路。"
+        "reward": { "scheming": 3 },
+        "resultText": "你知道账面见底，却不敢多言。沉默也是一条路（心机+3）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "scheming": 3 },
+            "resultText": "你把话咽得干净，还顺势多看了几处破绽。以后要用得上（心机+3）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "scheming": 3, "status": -1 },
+            "resultText": "你忍得难受，神色还是露了点不平。人言易起，名声也易伤（心机+3，名声-1）。"
+          }
+        ]
       },
       {
         "id": "opt_threat",
@@ -266,8 +539,22 @@
         "apCost": 1,
         "require": { "stat_scheming": ">= 80", "stat_network": ">= 25" },
         "cost": { "item_gossip": -1 },
-        "reward": { "cash": 10, "npc_matron": -8, "status": -2 },
-        "resultText": "你换来一笔巨款，也给自己埋下了雷。你捏着银票，手心都是汗，钱是甜的也是烫的。",
+        "reward": { "cash": 3, "npc_matron": -3, "status": -2 },
+        "resultText": "你换来一笔巨款，也给自己埋下了雷。钱是甜的，也是烫的（银钱+3，主母印象-3）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 95,
+            "reward": { "cash": 3, "npc_matron": -3, "status": -1 },
+            "resultText": "你开价得巧，还留了余地。赵嬷嬷心里怨，却不好发作（银钱+3，主母印象-3）。"
+          },
+          { "min": 88 },
+          {
+            "min": 80,
+            "reward": { "cash": 2, "npc_matron": -3, "status": -3 },
+            "resultText": "你话头太狠，赵嬷嬷脸色发青。钱到手了，路也更窄（银钱+2，主母印象-3，名声-3）。"
+          }
+        ],
         "failText": "你没胆子开口，只能吞回话头。"
       }
     ]
@@ -299,11 +586,22 @@
         "id": "opt_throw",
         "text": "B. 扔出窗外",
         "apCost": 1,
-        "chance": 0.5,
         "reward": { "status": -2 },
-        "resultText": "你侥幸躲过一劫，心却还跳得厉害。",
-        "failReward": { "status": -20, "favor": -10, "npc_matron": -10 },
-        "failResultText": "院里有人拾到布偶，风声传开了，连带你也被记下。"
+        "resultText": "你将玩偶扔出窗外，心跳得厉害（名声-2）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "status": -1 },
+            "resultText": "你算准了时机与风向，玩偶落进荒草无人知晓。你侥幸过关（名声-1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "status": -3, "favor": -3, "npc_matron": -3 },
+            "resultText": "院里有人拾到布偶，风声传开了，连带你也被记下（名声-3，宠爱-3，主母印象-3）。"
+          }
+        ]
       },
       {
         "id": "opt_shift",
@@ -312,7 +610,21 @@
         "require": { "stat_scheming": ">= 60", "stat_status": ">= 20", "stat_network": ">= 10" },
         "cost": { "status": -10, "network": -10 },
         "reward": { "npc_jinshu": -10, "favor": 5, "npc_matron": 5 },
-        "resultText": "你把玩偶塞进小丫头的扫帚里，锦书被赶出了院门。她平日最爱炫耀新得的钗子，这一回却替你顶了刀。你知道自己赌赢了一回。",
+        "resultText": "你把玩偶塞进小丫头的扫帚里，锦书被赶出了院门。你知道自己赌赢了一回（宠爱+5，主母印象+5）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 80,
+            "reward": { "npc_jinshu": -3, "favor": 3, "npc_matron": 3 },
+            "resultText": "你做得干净利落，连赵嬷嬷也找不到破绽。危局暂解，路却更险（宠爱+3，主母印象+3）。"
+          },
+          { "min": 60 },
+          {
+            "min": 0,
+            "reward": { "npc_jinshu": -3, "favor": 2, "npc_matron": 2, "status": -3 },
+            "resultText": "你动作留了线头，院里多了些流言。虽保了自己，名声却薄了（宠爱+2，主母印象+2，名声-3）。"
+          }
+        ],
         "failText": "你心中一乱，手脚反倒慢了。"
       }
     ]
@@ -343,8 +655,22 @@
         "id": "opt_hide",
         "text": "B. 躲到少爷身后",
         "apCost": 1,
-        "reward": { "favor": 10, "npc_matron": -5 },
-        "resultText": "少爷挡住了你，语气却冷了几分。他护的是自己的体面，与你并不尽然有关。你知道这一挡也是一道账。"
+        "reward": { "favor": 3, "npc_matron": -3 },
+        "resultText": "少爷挡住了你，语气却冷了几分。你知道这一挡也是一道账（宠爱+3，主母印象-3）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 80,
+            "reward": { "favor": 3, "npc_matron": -3 },
+            "resultText": "他护得更坚定，连老侯爷都没再多看。你躲在他身后，忽然觉得讽刺——你要靠一个男人的体面才能保全自己的体面，而他拥有的这份权力，恰恰来自你永远无法企及的那个世界。你得了靠山，也看清了天花板（宠爱+3，主母印象-3）。"
+          },
+          { "min": 60 },
+          {
+            "min": 0,
+            "reward": { "favor": 3, "npc_matron": -3 },
+            "resultText": "少爷护你只是出于体面，话语里透着疏离。你站在他影子里，心里泛起一阵说不清的情绪——是感激他的庇护，还是嫉妒他可以随意决定你的命运？主母的冷意更深了（宠爱+3，主母印象-3）。"
+          }
+        ]
       },
       {
         "id": "opt_ruin",
@@ -353,7 +679,85 @@
         "require": { "stat_appearance": ">= 80" },
         "cost": { "appearance": -20 },
         "reward": { "status": 1 },
-        "resultText": "你故意打翻酒杯弄湿裙摆，狼狈不堪。老侯爷嫌弃地移开了眼，你把这笔羞辱换成了安全。"
+        "resultText": "你故意打翻酒杯弄湿裙摆，狼狈不堪。老侯爷嫌弃地移开了眼（名声+1，容貌-20）。",
+        "outcomeStat": "status",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "status": 2 },
+            "resultText": "你装得够真，旁人只当你笨拙。你用容貌换了一条活路，用美换了安全。忽然想起母亲说过：'女人的美是资本，也是枷锁。'现在你懂了——你能用的筹码，也是别人能夺走的东西。羞辱换来安全，也换来一记耳光般的清醒（名声+2，容貌-20）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "status": 0, "favor": -2 },
+            "resultText": "你演得太用力，反惹人侧目。少爷也皱了眉，你心里一沉（宠爱-2，容貌-20）。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "s1_0403",
+    "title": "院门外的世界",
+    "type": "random",
+    "trigger": {
+      "turn_range": [5, 22],
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "清晨，少爷换上骑装准备外出。他策马而去的背影挺拔自如，风吹动他的衣袂，像一只自由的鸟。你站在院门内目送，忽然觉得心里空落落的。",
+    "options": [
+      {
+        "id": "opt_watch",
+        "text": "A. 默默目送",
+        "apCost": 0,
+        "reward": { "favor": 1 },
+        "resultText": "你看着他消失在巷口，心里涌起一阵说不清的情绪。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": { "favor": 1, "scheming": 1 },
+            "resultText": "你看着他策马远去，心里忽然明白——你羡慕的不是他去了哪里，而是他拥有'去'的权力。他可以骑马出城，可以会友饮酒，而你连踏出院门都要请示。你们活在同一个屋檐下，却活在两个世界里。这份酸涩，不是爱，是对自由的渴望（宠爱+1，心机+1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 1 },
+            "resultText": "你看着他的背影，心口发紧。是舍不得他走，还是舍不得那个你永远到不了的远方？你分不清（宠爱+1）。"
+          }
+        ]
+      },
+      {
+        "id": "opt_busy",
+        "text": "B. 转身做事",
+        "apCost": 0,
+        "reward": { "scheming": 1 },
+        "resultText": "你收回目光，去整理他落下的衣物。手里的活计把那份空落填满。"
+      },
+      {
+        "id": "opt_ask",
+        "text": "C. 询问何时回来",
+        "apCost": 0,
+        "require": { "stat_favor": ">= 40" },
+        "reward": { "favor": 1 },
+        "resultText": "他回头看了你一眼：'晚膳前。'语气平淡，却让你心安。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 50,
+            "reward": { "favor": 1, "scheming": 1 },
+            "resultText": "他回头看了你一眼：'晚膳前。'你应声退下，心里却泛起苦涩——你要他的一句交代，他却拥有整个天地。你把这份依赖当成情分，可它的另一面，是你被困在这四方院落里的无奈（宠爱+1，心机+1）。"
+          },
+          { "min": 0 },
+          {
+            "min": 0,
+            "reward": { "favor": 1 },
+            "resultText": "他回头看了你一眼：'晚膳前。'你点头，心里却空空的。你想要的是什么？是他的归期，还是那份可以自由来去的底气（宠爱+1）？"
+          }
+        ],
+        "failText": "你不敢开口，只能目送他离开。"
       }
     ]
   },
@@ -362,10 +766,11 @@
     "title": "本次行动",
     "type": "fixed",
     "trigger": {
-      "turn_range": [1, 120]
+      "turn_range": [1, 22]
     },
     "text": "本月余下的时辰，你打算如何安排？",
     "once": false,
+    "allowCustom": true,
     "options": [
       {
         "id": "opt_sleep",
@@ -374,24 +779,66 @@
         "require": { "stat_status": ">= 12", "stat_health": ">= 40" },
         "reward": { "favor": 5, "item_after_sleep": 1, "item_after_murmur": 1 },
         "cost": { "health": -2 },
-        "resultText": "帐暖宵短（宠爱+5，健康-2）。",
+        "resultText": "夜里风冷，你守在帐旁，分寸拿捏得当。少爷留你在侧，语气却仍克制（宠爱+5，健康-2）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": 3, "item_after_sleep": 1, "item_after_murmur": 1 },
+            "resultText": "他侧躺在帐中，月色落在他清朗的眉眼上。你忽然觉得心口发紧，像有什么东西在发酵。他明日可以骑马出门，可以谈诗论文，而你的世界只有这一方院落。你想，这大概就是女人的命：越是靠近权势，越是清楚自己不过是陪衬。你被记在心上，却记不住自己想要什么（宠爱+3，健康-2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 3, "item_after_sleep": 1, "item_after_murmur": 1 },
+            "resultText": "你守在外间，听着里面均匀的呼吸。心里忽然泛起一阵酸涨，说不清道不明。是因为他今日的冷淡，还是因为别的什么？你想起母亲说过的话：'有了依靠就有了着落。'可你分不清这份心绪，是情愫，还是对他能随意支配你去留的那份……什么（宠爱+3，健康-2）。"
+          }
+        ],
         "failText": "你名声不足或气色欠佳，被婉拒在外。"
       },
       {
-        "id": "opt_rules",
-        "text": "正院立规矩",
+        "id": "opt_study",
+        "text": "书房伺候",
         "apCost": 1,
-        "reward": { "npc_matron": 3, "status": 2 },
-        "cost": { "health": -3 },
-        "resultText": "你站得稳当（名声+2，健康-3）。"
+        "reward": { "favor": 2, "status": 1, "item_in_study": 1 },
+        "cost": { "health": -1 },
+        "resultText": "你研墨添茶，步子轻得像影。少爷偶尔抬眼，记住了你的稳当（宠爱+2，名声+1，健康-1）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": 3, "status": 2, "item_in_study": 1 },
+            "resultText": "他让你靠近些收拾书案，语气里有一丝亲近。你知道这一步值钱（宠爱+3，名声+2，健康-1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 1, "status": 0, "item_in_study": 1 },
+            "resultText": "你守在一旁不敢多言，少爷只是点头示意。规矩有了，亲近仍少（宠爱+1，健康-1）。"
+          }
+        ]
       },
       {
         "id": "opt_sew",
-        "text": "抄录账目",
+        "text": "做针线活",
         "apCost": 1,
-        "reward": { "status": 2, "cash": 0.5, "scheming": 1 },
+        "reward": { "cash": 1, "scheming": 1 },
         "cost": { "health": -1 },
-        "resultText": "你把账页抄得清楚（名声+2，银钱+0.5，心机+1，健康-1）。"
+        "resultText": "你挑灯缝补，一针一线都当成活路。针脚齐整，心也更定（银钱+1，心机+1，健康-1）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "cash": 1.5, "scheming": 2 },
+            "resultText": "你顺手修好了一处隐蔽的裂线，被管事夸了细致，还多添了一点赏银。针线活是你们唯一能光明正大换钱的手艺，也是唯一被允许的'才能'。你把针脚缝得齐整，心里却想：若是女子也能科举，你会不会也有别的选择（银钱+1.5，心机+2，健康-1）？"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "cash": 0.5, "scheming": 0.5 },
+            "resultText": "手脚慢些，天快亮才做完。勉强过关，却没多余好处。你放下针线，手指发麻，忽然想起母亲说过：'女人一辈子，不就是缝缝补补。'（银钱+0.5，心机+0.5，健康-1）"
+          }
+        ]
       },
       {
         "id": "opt_gift_matron",
@@ -400,7 +847,21 @@
         "require": { "item_gift": ">= 1" },
         "cost": { "item_gift": -1 },
         "reward": { "npc_matron": 2, "status": 1, "network": 2 },
-        "resultText": "嬷嬷收了礼（名声+1，人脉+2）。",
+        "resultText": "嬷嬷收了礼，却不多言，只让你记着规矩（名声+1，人脉+2）。",
+        "outcomeStat": "status",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "npc_matron": 3, "status": 2, "network": 2 },
+            "resultText": "你说话有分寸，礼又送得稳。赵嬷嬷脸色缓了些，还替你挡了一句闲话（名声+2，人脉+2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "npc_matron": 1, "status": 0, "network": 1 },
+            "resultText": "礼是送到了，但话头没接住。嬷嬷只淡淡收下，你的面子不算大（人脉+1）。"
+          }
+        ],
         "failText": "你手里没有合适的小礼。"
       },
       {
@@ -410,58 +871,154 @@
         "require": { "item_tonic": ">= 1" },
         "cost": { "item_tonic": -1 },
         "reward": { "health": 4 },
-        "resultText": "热汤入腹（健康+4）。",
+        "resultText": "热汤入腹，身子总算稳了些（健康+4）。",
+        "outcomeStat": "health",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "health": 3 },
+            "resultText": "汤药合你体质，暖意从胃里散到指尖。你难得睡了个安稳觉（健康+3）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "health": 2 },
+            "resultText": "药性偏冲，你反倒有些乏。好在没出大碍（健康+2）。"
+          }
+        ],
         "failText": "你手里没有温补汤。"
       },
       {
         "id": "opt_gossip",
-        "text": "打探正院动静",
+        "text": "打探院里消息",
         "apCost": 1,
         "reward": { "scheming": 2, "network": 1, "item_gossip": 1 },
-        "resultText": "你摸清了些风向（心机+2，人脉+1）。"
+        "resultText": "你在廊下听了几句，手里多了个方向（心机+2，人脉+1）。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "scheming": 3, "network": 2, "item_gossip": 1 },
+            "resultText": "你顺着话头把人情搭上，几处口风都摸透了。你忽然明白，在这个院子里，消息就是权力。知道别人的秘密，就是握住了谈判的筹码。你没有科举、没有家业，这些耳语就是你的资本（心机+3，人脉+2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "scheming": 1, "network": 0, "item_gossip": 1 },
+            "resultText": "你只听到些零碎风声，难成线索。也算有个防备。你想，若是自己能像少爷一样光明正大地获取消息就好了，而不是靠在墙角偷听（心机+1）。"
+          }
+        ]
       },
       {
         "id": "opt_rest",
         "text": "静养养颜",
         "apCost": 1,
         "reward": { "health": 2, "appearance": 1 },
-        "resultText": "你放缓脚步（健康+2，容貌+1）。"
+        "resultText": "你少走一步路，脸色回了点光（健康+2，容貌+1）。",
+        "outcomeStat": "health",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "health": 3, "appearance": 2 },
+            "resultText": "你歇得恰到好处，肤色润了些。旁人看你都说气色好（健康+3，容貌+2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "health": 1, "appearance": 0.5 },
+            "resultText": "你睡了会儿，却仍觉心头压着事。好在面色没太差（健康+1，容貌+0.5）。"
+          }
+        ]
       },
       {
         "id": "opt_kitchen",
-        "text": "正院办差",
+        "text": "小厨房帮忙",
         "apCost": 1,
-        "reward": { "npc_matron": 2, "status": 2 },
+        "reward": { "network": 2, "status": 1, "cash": 0.5 },
         "cost": { "health": -2 },
-        "resultText": "你忙了一圈（名声+2，主母印象+2，健康-2）。"
+        "resultText": "你在灶边忙了一圈，换来一声'懂事'（人脉+2，名声+1，银钱+0.5，健康-2）。",
+        "outcomeStat": "status",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "network": 3, "status": 2, "cash": 1 },
+            "resultText": "你手脚利落，管事愿意多照拂你一分。临走还塞了点油水（人脉+3，名声+2，银钱+1，健康-2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "network": 1, "status": 0, "cash": 0.2 },
+            "resultText": "你忙得满头汗，却只得了些残羹。人情不算大（人脉+1，银钱+0.2，健康-2）。"
+          }
+        ]
       },
       {
         "id": "opt_courtyard",
-        "text": "陪侍家宴",
+        "text": "庭前伺候",
         "apCost": 1,
-        "require": { "stat_status": ">= 15" },
-        "reward": { "favor": 1, "status": 2, "appearance": 1 },
-        "cost": { "health": -2 },
-        "resultText": "你稳住场面（名声+2，宠爱+1，容貌+1，健康-2）。",
-        "failText": "你名声不足，未能入席。"
+        "reward": { "favor": 2, "appearance": 1 },
+        "cost": { "health": -1 },
+        "resultText": "你在庭前陪侍，眼神一抬一落都小心（宠爱+2，容貌+1，健康-1）。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": { "favor": 3, "appearance": 2 },
+            "resultText": "少爷多看了你几眼，还问了你一句寒暖。你把这份温度记下（宠爱+3，容貌+2，健康-1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 1, "appearance": 0.5 },
+            "resultText": "你在旁边站得规矩，却没得一句关照。露脸是露脸，亲近仍难（宠爱+1，容貌+0.5，健康-1）。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "s1_final",
+    "title": "站稳脚跟",
+    "type": "fixed",
+    "weight": 10,
+    "trigger": {
+      "turn_range": [22, 22]
+    },
+    "text": "景和十二年秋末，距离你进府已过大半年。这日黄昏，赵嬷嬷唤你去后院清点库房，她边翻账册边不经意道：'你在这院里算是站住了。大夫人虽不常当面夸人，但你的名字我在她面前提过几次，她都点头。'你听着，心里压着的石头轻了些。这大半年来，你小心翼翼地走过每一步，如履薄冰却也渐有根基。\n\n晚间，少爷书房里点了灯。你送茶进去时，他正在读信，见你进来便抬起头，神色比往日柔和了些：'这些日子辛苦你了。'他说话不多，却让你知道，你的小心和用心他都看在眼里。\n\n外头传来消息，侯爷近日升迁在即，府里气氛也跟着不同。人人都在说，变天了，新人要来，规矩要改。你站在院中，秋风吹过，心里既有惶恐，也有隐隐的期待。你已不再是那个刚进府时战战兢兢的小丫头，这半年的摸爬滚打让你明白了一些道理，也学会了一些手段。\n\n接下来的日子，会是新的局面。你深吸一口气，告诉自己：无论如何，都要活得更好。",
+    "once": true,
+    "options": [
+      {
+        "id": "opt_reflect",
+        "text": "A. 回想这半年的点滴，心中感慨万千",
+        "apCost": 0,
+        "reward": { "scheming": 2, "status": 1 },
+        "resultText": "你在房中坐了许久，翻看着这些日子的记忆。每一次选择，每一次进退，都刻在心里。你比以前更懂这府里的规矩，也更明白自己想要什么。这份清醒，会是你往后最大的依仗（心机+2，名声+1）。"
       },
       {
-        "id": "opt_rival_visit",
-        "text": "与姨娘往来",
-        "apCost": 1,
-        "reward": { "npc_rival": 2, "network": 1 },
-        "cost": { "cash": -0.5 },
-        "resultText": "你递了礼，维系表面和气（姨娘关系+2，人脉+1，银钱-0.5）。"
+        "id": "opt_prepare",
+        "text": "B. 开始为即将到来的变化做准备",
+        "apCost": 0,
+        "reward": { "network": 2, "cash": 1 },
+        "resultText": "你趁着这段空隙，悄悄打听府里的风向，也把手头的人情关系理了一遍。面对新来的主母，你必须做好万全准备。机会和危险常常并存，你得学会抓住前者（人脉+2，银钱+1）。"
       },
       {
-        "id": "opt_child_care",
-        "text": "子嗣抚育",
-        "apCost": 1,
-        "require": { "item_child": ">= 1" },
-        "reward": { "status": 2, "favor": 1 },
-        "cost": { "health": -2 },
-        "resultText": "你亲自照看孩子（名声+2，宠爱+1，健康-2）。",
-        "failText": "你还没有孩子可抚育。"
+        "id": "opt_gratitude",
+        "text": "C. 给赵嬷嬷备一份小礼表示感谢",
+        "apCost": 0,
+        "require": { "stat_cash": ">= 2" },
+        "cost": { "cash": -2 },
+        "reward": { "npc_matron": 5, "status": 2 },
+        "resultText": "你托人从外头买了赵嬷嬷爱吃的茯苓糕，亲自送到她房里。她接过时愣了一下，随后抿嘴笑了：'你这丫头，倒是有心。'她拍拍你的手，语重心长道：'以后新人来了，规矩会更严，你得更加留神。我能护着你的地方不多，你自己要争气。'这份情分记在心里，往后的路或许能多些照应（主母印象+5，名声+2）。",
+        "failText": "你手头紧，只能把这份心意压下。有些事，等往后宽裕了再说。"
+      },
+      {
+        "id": "opt_ambition",
+        "text": "D. 在心中立下新的目标",
+        "apCost": 0,
+        "require": { "stat_scheming": ">= 50" },
+        "reward": { "scheming": 3, "favor": 1, "status": 1 },
+        "resultText": "你站在窗前，望着月色下的侯府。这半年你只是求生存，而从今往后，你想要的更多。你想要真正的体面，想要在这深宅大院里不再仰人鼻息。你知道，想要得到，就得付出更大的代价。但你已经准备好了（心机+3，宠爱+1，名声+1）。",
+        "failText": "你想得太多，心却乱了，最终只是叹了口气作罢。"
       }
     ]
   },
@@ -473,15 +1030,15 @@
     "trigger": {
       "turn_range": [23, 23]
     },
-    "text": "新夫人进门，正院灯火通明，人人都屏着气等她开口立规矩。你被安排在侧门迎接，风里全是新漆的味道。她出身清贵，爱整洁，也爱掌控，进门第一步便在衡量每个人的分寸。",
+    "text": "景和十三年春，少爷高升，侯爷已在议传爵之事。新夫人进门，正院灯火通明，人人都屏着气等她开口立规矩。侯府家务逐渐交到她手中，外头都说她持家有方。你被安排在侧门迎接，风里全是新漆的味道。她出身清贵，爱整洁，也爱掌控，进门第一步便在衡量每个人的分寸。她当众立了一堆规矩，声音不高却带着不容置疑的威严。但当晚散场后，她却让赵嬷嬷给每个人发了见面赏银，还附了一句：'从此大家都在一个院子里，互相体谅。'你第一次感受到，她立威时冷如霜雪，施恩时却还有些人情。",
     "once": true,
     "options": [
       {
         "id": "opt_greet",
         "text": "A. 依礼迎接，言辞得体",
         "apCost": 0,
-        "reward": { "npc_matron": 6, "status": 3 },
-        "resultText": "你规矩周全，主母多看了你一眼，那眼神像在掂量一枚新棋。她喜欢的是可用之人。"
+        "reward": { "npc_matron": 3, "status": 3 },
+        "resultText": "你规矩周全，主母多看了你一眼，那眼神像在掂量一枚新棋。晚间她当众立威，私下却让赵嬷嬷给你额外赏了一两银子，附了句话：'你做得好，我看在眼里。以后好好做事，我不是不通人情的人。'她喜欢的是可用之人，也懂得赏罚分明。"
       },
       {
         "id": "opt_low",
@@ -496,8 +1053,8 @@
         "apCost": 0,
         "require": { "stat_cash": ">= 3" },
         "cost": { "cash": -3 },
-        "reward": { "npc_matron": 10, "status": 2, "network": 2 },
-        "resultText": "礼不在贵，在心意。主母态度缓和了些，你知道这点小面子值钱。",
+        "reward": { "npc_matron": 3, "status": 2, "network": 2 },
+        "resultText": "礼不在贵，在心意。主母态度缓和了些，轻声道：'你有心了。女人在这府里，得懂得进退，也得懂得人情。'你知道这点小面子值钱，也看到了她严厉下面的那些宽和。",
         "failText": "你囊中羞涩，只好作罢。"
       }
     ]
@@ -511,7 +1068,7 @@
       "turn_range": [24, 40]
     },
     "once": false,
-    "text": "主母忽然抽查小厨房账目，点名让你协助。帐页翻动的声音比训斥更锋利。",
+    "text": "少夫人接管家务不久，便开始抽查各处账目。今日她点名让你协助核对小厨房的账。她坐在主位上，声音不高却带着不容置疑的威严，帐页翻动的声音比训斥更锋利。但当其他人退下后，她挥手让你坐下，声音缓了些：\"这些事得有人管，不然就乱了套。虽说我初掌家务，但该立的规矩还是要立。你记着，规矩是立给别人看的，私底下我也明白大家都不容易。\"",
     "options": [
       {
         "id": "opt_check",
@@ -537,7 +1094,7 @@
         "apCost": 1,
         "require": { "stat_scheming": ">= 60" },
         "cost": { "status": -2 },
-        "reward": { "cash": 4, "scheming": 2, "npc_matron": -6 },
+        "reward": { "cash": 3, "scheming": 2, "npc_matron": -3 },
         "resultText": "你拿到了银子，但也埋下隐患。账上的缺口像一颗刺，迟早会扎到人。",
         "failText": "你手脚不够快，最终只能照规矩行事。"
       }
@@ -552,7 +1109,7 @@
       "turn_range": [23, 60]
     },
     "once": false,
-    "text": "主母立下新规，要求院内丫头每日立规矩一刻钟。她不提高声，却句句压得住人。",
+    "text": "少夫人立下新规，要求院内丫头每日立规矩一刻钟。她坐在主位上，不提高声，却句句压得住人。你们站成一排，大气都不敢喊。但第二日少夫人却私下让赵嬷嬷给每个人发了跨脚的薄垫，附了句话：\"规矩要立，但人也不能真的站坏了。娘家嬷嬷曾说，立威与施恩要并举。\"你心里有了些许明白：她严厉时是规矩，宽和时是人情。",
     "options": [
       {
         "id": "opt_stand",
@@ -567,8 +1124,8 @@
         "text": "B. 找机会献一条更省力的法子",
         "apCost": 1,
         "require": { "stat_scheming": ">= 40" },
-        "reward": { "npc_matron": 4, "favor": 1 },
-        "resultText": "你话说得巧，主母点头采纳。你在正院的分量悄悄加了一点。",
+        "reward": { "npc_matron": 3, "favor": 1 },
+        "resultText": "你话说得巧，主母点头采纳。她看着你，目光里有些认可：\"你有心也有眼色，难得。咱们女人在这府里，得会用脑子，不然就只能被人拿捐。\"你在正院的分量悄悄加了一点。",
         "failText": "你话没说到点上，只能闭嘴退下。"
       },
       {
@@ -576,7 +1133,7 @@
         "text": "C. 佯装不懂，混过去",
         "apCost": 1,
         "reward": { "status": -2, "npc_matron": -3 },
-        "resultText": "被主母撞见，你挨了几句训斥。规矩从此更难糊弄。"
+        "resultText": "被主母撞见，当众你挨了几句训斥，声色俱厉。但晚间她却私下叫你过去，声音平静了许多：\"人前我得立威，但规矩不是死的。下次长点眼色，别让我为难。\"你看到她眼中的疲惫，明白她的严厉也是被逼出来的。规矩从此更难糊弄。"
       }
     ]
   },
@@ -589,14 +1146,28 @@
       "turn_range": [28, 60]
     },
     "once": true,
-    "text": "府里抬进一位新姨娘，来历不小，正院特意安排人接应。她的轿帘一动，院里风向都变了。她爱好香料，袖口常有淡淡檀香，话虽柔，目光却是精确的。",
+    "text": "府里抬进一位新姨娘，来历不小，正院特意安排人接应。她的轿帘一动，院里风向都变了。她爱好香料，袖口常有淡淡檀香，话说得柔顺，目光却是精确的。你看见她行礼时脊背挺得笔直，却在转身的瞬间露出一丝疲惫——那是同样困在笼中的人才会有的神情。主母接见时对她很严厉，立了一堆规矩，但散场后你听见主母低声对嬷嬷说：\"唉，又一个进来的。\"那语气里既有威严，也有一丝同病相怜。",
     "options": [
       {
         "id": "opt_help",
         "text": "A. 主动照拂，示好留缘",
         "apCost": 1,
         "reward": { "npc_rival": 3, "npc_matron": 1, "status": 1 },
-        "resultText": "她记住了你的情分，笑里带着分寸。她善于把人情做成一张网。"
+        "resultText": "她记住了你的情分，笑里带着分寸。她善于把人情做成一张网。临走时她压低声音：\"这宅子里女人为难女人，最没意思。咱们都不容易。\"你知道这话三分真七分假，但那三分真心已经足够珍贵。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": { "npc_rival": 3, "npc_matron": 1, "status": 1 },
+            "resultText": "她记住了你的情分，笑里带着分寸。你们照拂彼此，像两个困在同一个笼子里的人抱团取暖。可你心里清楚——你们争的不是男人的心，而是这个宅子里那一点可怜的话语权。她是你的盟友，也是镜子（名声+1）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "npc_rival": 3, "npc_matron": 1, "status": 1 },
+            "resultText": "她记住了你的情分，笑里带着分寸。你忽然有些难过——两个女人在院子里周旋，图的到底是什么？是爱，还是那个被称作'位分'的东西（名声+1）？"
+          }
+        ]
       },
       {
         "id": "opt_neutral",
@@ -610,8 +1181,8 @@
         "text": "C. 当众压她气势",
         "apCost": 1,
         "require": { "stat_status": ">= 30" },
-        "reward": { "npc_rival": -5, "status": -2, "npc_matron": -3 },
-        "resultText": "你压住了她，却惹了主母不快。强势也要看时候。",
+        "reward": { "npc_rival": -3, "status": -2, "npc_matron": -3 },
+        "resultText": "你压住了她，却惹了主母不快。当晚主母单独叫你过去，语气严厉：\"院里不许闹，这是规矩。\"但说完她顿了顿，目光复杂：\"你们女人何苦为难女人？我当年也见过这样的事，都是一笼子里的鸟，争来争去还不是困在笼里。\"她挥手让你退下，脸上的威严掩不住眉间的一丝倦意（名声-2，主母印象-3）。",
         "failText": "你底气不够，话没说出口。"
       }
     ]
@@ -626,13 +1197,13 @@
       "npc_rival": ">= 3"
     },
     "once": false,
-    "text": "新姨娘私下送来一份点心，话里话外示好，像在试探你的态度与底线。她看似柔顺，其实更在意的是谁能给她安全。",
+    "text": "新姨娘私下送来一份点心，话里话外示好，像在试探你的态度与底线。她看似柔顺，实则眼神锐利。但当你们独处时，她忽然卸下了那层小心翼翼的笑意，叹了口气：\"你我都是一样的人，在这府里谁不是看人眼色？我不想争，只想有口安稳饭吃。\"她说完又立刻警觉起来，仿佛刚才的示弱只是一瞬间的真心。",
     "options": [
       {
         "id": "opt_accept",
         "text": "A. 收下礼，表示谢意",
         "apCost": 1,
-        "reward": { "npc_rival": 4, "cash": 1 },
+        "reward": { "npc_rival": 3, "cash": 1 },
         "resultText": "你们暂时结了善缘，至少表面上无波无澜。她也在等你下一步。"
       },
       {
@@ -667,7 +1238,7 @@
       "item_preg_seed": "== 0"
     },
     "once": false,
-    "text": "今夜老爷忽然传话，你被点名去伺候安寝。正院的灯火亮得更久，你知道这是一道新机会。少爷在外头向来冷静，却也怕母亲看轻他身边的人。",
+    "text": "今夜少爷忽然传话，你被点名去伺候安寝。正院的灯火亮得更久，你知道这是一道新机会。少爷在外头向来冷静，却也不愿让妻子觉得他身边无人可用。",
     "options": [
       {
         "id": "opt_comply",
@@ -677,6 +1248,20 @@
         "chanceStat": "favor",
         "reward": { "favor": 3, "health": -2, "item_preg_seed": 1 },
         "resultText": "你得了眷顾，心里隐约有了盼头。屋外风停了，路却更险了。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": { "favor": 3, "health": -2, "item_preg_seed": 1 },
+            "resultText": "你顺从地去了。事毕，你望着帐顶的纹样，忽然想起一句话：生子是女人在宅门里唯一的上升之路。你说不清心里是什么滋味——是期待母凭子贵，还是悲哀于这条路如此狭窄。屋外风停了，你的心却没有（宠爱+3，健康-2）。"
+          },
+          { "min": 40 },
+          {
+            "min": 0,
+            "reward": { "favor": 3, "health": -2, "item_preg_seed": 1 },
+            "resultText": "你顺从地去了。那一夜你睡得很浅，梦里全是模糊的面孔。醒来时你想，这大概就是女人的筹码——用身体换位置，用子嗣换安稳。可你分不清，这份期待里有几分是真心，几分是算计（宠爱+3，健康-2）。"
+          }
+        ],
         "failReward": { "favor": -2, "health": -1 },
         "failResultText": "这一夜平平无奇，未起波澜。你把那点不甘压下去。"
       },
@@ -686,7 +1271,7 @@
         "apCost": 1,
         "require": { "stat_favor": ">= 55" },
         "reward": { "favor": -3, "npc_matron": 1, "status": -1 },
-        "resultText": "主母认可你的稳重，但老爷有些不悦。你得了一个人的体面，失了另一个人的心。两头都要顾，才是正院里真正的难。",
+        "resultText": "少夫人认可你的稳重，但少爷有些不悦。你得了一个人的体面，失了另一个人的心。两头都要顾，才是正院里真正的难。",
         "failText": "你没有足够的底气推辞。"
       },
       {
@@ -951,7 +1536,7 @@
         "id": "opt_accept",
         "text": "A. 静待过风",
         "apCost": 0,
-        "reward": { "npc_matron": -4, "status": -1 },
+        "reward": { "npc_matron": -3, "status": -1 },
         "resultText": "你被牵连了几分。要摆脱这层影子不容易。"
       }
     ]
@@ -973,7 +1558,7 @@
         "id": "opt_report",
         "text": "A. 向主母报喜，请她安排稳妥",
         "apCost": 1,
-        "reward": { "npc_matron": 6, "status": 2 },
+        "reward": { "npc_matron": 3, "status": 2 },
         "resultText": "主母派了人照看，你暂得安稳。稳中也有约束。"
       },
       {
@@ -985,10 +1570,10 @@
       },
       {
         "id": "opt_tell",
-        "text": "C. 先告知老爷",
+        "text": "C. 先告知少爷",
         "apCost": 1,
-        "reward": { "favor": 5, "npc_matron": -3 },
-        "resultText": "老爷欣然，却引来主母冷眼。喜讯也能结成疙瘩。"
+        "reward": { "favor": 3, "npc_matron": -3 },
+        "resultText": "少爷欣然，却引来少夫人冷眼。喜讯也能结成疙瘩。"
       }
     ]
   },
@@ -1009,7 +1594,7 @@
         "text": "A. 依主母安排调养",
         "apCost": 1,
         "cost": { "cash": -1 },
-        "reward": { "health": 4, "npc_matron": 2, "item_preg_stage": 1 },
+        "reward": { "health": 3, "npc_matron": 2, "item_preg_stage": 1 },
         "resultText": "你按规矩调养，脉象安稳。每一碗汤药都像一根绳。"
       },
       {
@@ -1060,7 +1645,7 @@
         "id": "opt_feast",
         "text": "C. 强撑去侍宴",
         "apCost": 1,
-        "reward": { "status": 3, "health": -5, "item_preg_stage": 1 },
+        "reward": { "status": 3, "health": -3, "item_preg_stage": 1 },
         "resultText": "你撑住了场面，但身子吃不消。强撑的代价迟早要还。"
       }
     ]
@@ -1075,7 +1660,7 @@
       "item_preg_stage": "== 3"
     },
     "once": false,
-    "text": "产期将近，产房由谁掌事成了众人关注的焦点。你明白，这不只是生死，也是名分。主母要的是家声，老爷要的是安稳，你要的是活路。",
+    "text": "产期将近，产房由谁掌事成了众人关注的焦点。你明白，这不只是生死，也是名分。少夫人要的是家声，少爷要的是子嗣，你要的是活路。",
     "options": [
       {
         "id": "opt_matron_room",
@@ -1083,7 +1668,7 @@
         "apCost": 1,
         "reward": {
           "health": 2,
-          "npc_matron": 4,
+          "npc_matron": 3,
           "status": 2,
           "item_child": 1,
           "item_preg_stage": -3,
@@ -1093,16 +1678,16 @@
       },
       {
         "id": "opt_lord_room",
-        "text": "B. 求老爷做主",
+        "text": "B. 求少爷做主",
         "apCost": 1,
         "reward": {
-          "favor": 6,
+          "favor": 3,
           "npc_matron": -2,
           "item_child": 1,
           "item_preg_stage": -3,
           "item_preg_confirm": -1
         },
-        "resultText": "老爷护你一程，但主母心里生了疙瘩。护得住人，护不住心。"
+        "resultText": "少爷护你一程，但少夫人心里生了疙瘩。护得住人，护不住心。"
       },
       {
         "id": "opt_busy",
@@ -1180,7 +1765,7 @@
         "id": "opt_apology",
         "text": "A. 主动请罪，求个台阶",
         "apCost": 1,
-        "reward": { "npc_matron": 4, "status": -1 },
+        "reward": { "npc_matron": 3, "status": -1 },
         "resultText": "你低了头，换来一线缓和。认输只是为了下一局。"
       },
       {
@@ -1189,7 +1774,7 @@
         "apCost": 1,
         "require": { "stat_network": ">= 25" },
         "cost": { "network": -3 },
-        "reward": { "npc_matron": 6, "cash": -1 },
+        "reward": { "npc_matron": 3, "cash": -1 },
         "resultText": "你托人说情，总算稳住局面。人情是银子花出来的路。",
         "failText": "你没有合适的人情可托。"
       },
@@ -1212,21 +1797,21 @@
       "item_child": ">= 1"
     },
     "once": false,
-    "text": "主母试探你，提出由她来抚养孩子，以稳名分。她说得轻巧，却是把刀柄递到你手里。她更在意府里的体面与秩序，你只是其中一环。",
+    "text": "少夫人试探你，提出由她来抚养孩子，以稳名分。她坐在正院的主位上，语气很轻，却字字是权衡：'这样对孩子好，对你也好。侯府现在无嫡子，这孩子若记在我名下，将来也是体面的。'她说得像是为你着想，其实更在意府里的体面与秩序。她暂时无子，对这个孩子似有几分期待，但规矩大过人情，她的宽和从来有限度。",
     "options": [
       {
         "id": "opt_accept",
         "text": "A. 顺势同意，求一个安稳",
         "apCost": 1,
-        "reward": { "npc_matron": 8, "status": 2, "favor": -3 },
-        "resultText": "你换来了名分上的安全。安稳背后，也是一层枷锁。"
+        "reward": { "npc_matron": 3, "status": 2, "favor": -3 },
+        "resultText": "你换来了名分上的安全。少夫人满意地点头，私下却让赵嬷嬷给你送了一包补品，附了句话：\"你识大体，我也不会让你吃亏。孩子我会好好养着。\"她说这话时语气真诚，你知道她暂时无子，对这孩子或许也有几分期待。只是安稳背后，也是一层枷锁。"
       },
       {
         "id": "opt_refuse",
         "text": "B. 坚持自己抚养",
         "apCost": 1,
-        "reward": { "npc_matron": -6, "status": 1 },
-        "resultText": "你保住了孩子，却得罪了正院。你把退路换成了锋利。"
+        "reward": { "npc_matron": -3, "status": 1 },
+        "resultText": "你保住了孩子，却得罪了正院。少夫人当场脸色阴沉，但散场后她却叫住你，声音冷静：\"你要明白，这是你的选择。以后孩子有什么事，别指望正院帮忙。但我也不会真的为难你母子。\"她说完转身就走，你看到她背影里的一丝疲惫——她也不想为难女人，只是规矩容不得你太顺心。你把退路换成了锋利。"
       },
       {
         "id": "opt_negotiate",
@@ -1234,9 +1819,118 @@
         "apCost": 1,
         "require": { "stat_scheming": ">= 60" },
         "cost": { "network": -2 },
-        "reward": { "npc_matron": 4, "cash": 3 },
+        "reward": { "npc_matron": 3, "cash": 3 },
         "resultText": "你换来一笔资源，但欠了人情。人情账最难清。",
         "failText": "你条件开得不巧，被主母断然回绝。"
+      }
+    ]
+  },
+  {
+    "id": "s2_1000",
+    "title": "本次行动",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [23, 120]
+    },
+    "text": "本月余下的时辰，你打算如何安排？",
+    "once": false,
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_sleep",
+        "text": "伺候安寝",
+        "apCost": 1,
+        "require": { "stat_status": ">= 12", "stat_health": ">= 40" },
+        "reward": { "favor": 3, "item_after_sleep": 1, "item_after_murmur": 1 },
+        "cost": { "health": -2 },
+        "resultText": "帐暖宵短（宠爱+3，健康-2）。",
+        "failText": "你名声不足或气色欠佳，被婉拒在外。"
+      },
+      {
+        "id": "opt_rules",
+        "text": "正院立规矩",
+        "apCost": 1,
+        "reward": { "npc_matron": 3, "status": 2 },
+        "cost": { "health": -3 },
+        "resultText": "你站得稳当（名声+2，主母印象+3，健康-3）。"
+      },
+      {
+        "id": "opt_sew",
+        "text": "抄录账目",
+        "apCost": 1,
+        "reward": { "status": 2, "cash": 0.5, "scheming": 1 },
+        "cost": { "health": -1 },
+        "resultText": "你把账页抄得清楚（名声+2，银钱+0.5，心机+1，健康-1）。"
+      },
+      {
+        "id": "opt_gift_matron",
+        "text": "送礼打点（赵嬷嬷）",
+        "apCost": 1,
+        "require": { "item_gift": ">= 1" },
+        "cost": { "item_gift": -1 },
+        "reward": { "npc_matron": 2, "status": 1, "network": 2 },
+        "resultText": "嬷嬷收了礼（名声+1，人脉+2）。",
+        "failText": "你手里没有合适的小礼。"
+      },
+      {
+        "id": "opt_tonic",
+        "text": "喝温补汤",
+        "apCost": 1,
+        "require": { "item_tonic": ">= 1" },
+        "cost": { "item_tonic": -1 },
+        "reward": { "health": 3 },
+        "resultText": "热汤入腹（健康+3）。",
+        "failText": "你手里没有温补汤。"
+      },
+      {
+        "id": "opt_gossip",
+        "text": "打探正院动静",
+        "apCost": 1,
+        "reward": { "scheming": 2, "network": 1, "item_gossip": 1 },
+        "resultText": "你摸清了些风向（心机+2，人脉+1）。"
+      },
+      {
+        "id": "opt_rest",
+        "text": "静养养颜",
+        "apCost": 1,
+        "reward": { "health": 2, "appearance": 1 },
+        "resultText": "你放缓脚步（健康+2，容貌+1）。"
+      },
+      {
+        "id": "opt_kitchen",
+        "text": "正院办差",
+        "apCost": 1,
+        "reward": { "npc_matron": 2, "status": 2 },
+        "cost": { "health": -2 },
+        "resultText": "你忙了一圈（名声+2，主母印象+2，健康-2）。"
+      },
+      {
+        "id": "opt_courtyard",
+        "text": "陪侍家宴",
+        "apCost": 1,
+        "require": { "stat_status": ">= 15" },
+        "reward": { "favor": 1, "status": 2, "appearance": 1 },
+        "cost": { "health": -2 },
+        "resultText": "你稳住场面（名声+2，宠爱+1，容貌+1，健康-2）。",
+        "failText": "你名声不足，未能入席。"
+      },
+      {
+        "id": "opt_rival_visit",
+        "text": "与姨娘往来",
+        "apCost": 1,
+        "reward": { "npc_rival": 2, "network": 1 },
+        "cost": { "cash": -0.5 },
+        "resultText": "你递了礼，维系表面和气（姨娘关系+2，人脉+1，银钱-0.5）。"
+      },
+      {
+        "id": "opt_child_care",
+        "text": "子嗣抚育",
+        "apCost": 1,
+        "require": { "item_child": ">= 1" },
+        "reward": { "status": 2, "favor": 1 },
+        "cost": { "health": -2 },
+        "resultText": "你亲自照看孩子（名声+2，宠爱+1，健康-2）。",
+        "failText": "你还没有孩子可抚育。"
       }
     ]
   }

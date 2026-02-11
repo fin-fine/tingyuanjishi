@@ -5,6 +5,7 @@ export class WorldState {
         this.ap = 3;
         this.maxAp = 3;
         this.maxTurn = 22;
+        this.stage = 1;
         this.monthsWithoutFavor = 0;
         this.startTimestamp = Date.now();
         this.actionCount = 0;
@@ -16,6 +17,7 @@ export class WorldState {
         this.ap = 3;
         this.maxAp = 3;
         this.maxTurn = 22;
+        this.stage = 1;
         this.monthsWithoutFavor = 0;
         this.startTimestamp = Date.now();
         this.actionCount = 0;
@@ -50,6 +52,7 @@ export class WorldState {
             ap: this.ap,
             maxAp: this.maxAp,
             maxTurn: this.maxTurn,
+            stage: this.stage,
             monthsWithoutFavor: this.monthsWithoutFavor,
             startTimestamp: this.startTimestamp,
             actionCount: this.actionCount,
@@ -75,6 +78,18 @@ export class WorldState {
         }
         if (typeof parsed.maxTurn === "number") {
             this.maxTurn = parsed.maxTurn;
+        }
+        if (typeof parsed.stage === "number") {
+            this.stage = parsed.stage;
+        }
+        else if (typeof parsed.turn === "number" && parsed.turn > 22) {
+            this.stage = 2;
+        }
+        else {
+            this.stage = 1;
+        }
+        if (this.stage >= 2 && this.maxTurn < 23) {
+            this.maxTurn = 120;
         }
         if (typeof parsed.monthsWithoutFavor === "number") {
             this.monthsWithoutFavor = parsed.monthsWithoutFavor;

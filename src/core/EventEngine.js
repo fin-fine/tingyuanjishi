@@ -68,19 +68,28 @@ export class EventEngine {
         let reward = option.reward;
         let resultText = option.resultText ?? "";
         let endState = option.end;
-        let chance = option.chance;
-        if (option.chanceStat && this.isStatKey(option.chanceStat)) {
-            const statKey = option.chanceStat;
-            const statValue = player.stats[statKey] ?? 0;
-            const derived = Math.max(0.05, Math.min(0.95, statValue / 100));
-            chance = typeof chance === "number" ? chance * derived : derived;
+        const outcome = this.pickOutcome(option, player);
+        if (outcome) {
+            cost = outcome.cost ?? cost;
+            reward = outcome.reward ?? reward;
+            resultText = outcome.resultText ?? resultText;
+            endState = outcome.end ?? endState;
         }
-        if (typeof chance === "number") {
-            const roll = Math.random();
-            if (roll > chance) {
-                cost = option.failCost;
-                reward = option.failReward;
-                resultText = option.failResultText ?? option.failText ?? resultText;
+        if (!outcome) {
+            let chance = option.chance;
+            if (option.chanceStat && this.isStatKey(option.chanceStat)) {
+                const statKey = option.chanceStat;
+                const statValue = player.stats[statKey] ?? 0;
+                const derived = Math.max(0.05, Math.min(0.95, statValue / 100));
+                chance = typeof chance === "number" ? chance * derived : derived;
+            }
+            if (typeof chance === "number") {
+                const roll = Math.random();
+                if (roll > chance) {
+                    cost = option.failCost;
+                    reward = option.failReward;
+                    resultText = option.failResultText ?? option.failText ?? resultText;
+                }
             }
         }
         const applied = {};
@@ -180,5 +189,21 @@ export class EventEngine {
     }
     isStatKey(key) {
         return key in this.statKeySet;
+    }
+    pickOutcome(option, player) {
+        const statKey = option.outcomeStat;
+        if (!statKey || !this.isStatKey(statKey) || !option.outcomes?.length) {
+            return null;
+        }
+        const statValue = player.stats[statKey] ?? 0;
+        const sorted = [...option.outcomes].sort((a, b) => (b.min ?? 0) - (a.min ?? 0));
+        for (const tier of sorted) {
+            const min = tier.min ?? 0;
+            const max = tier.max;
+            if (statValue >= min && (typeof max !== "number" || statValue <= max)) {
+                return tier;
+            }
+        }
+        return sorted[sorted.length - 1] ?? null;
     }
 }

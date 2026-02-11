@@ -17,24 +17,127 @@ export class IntroPanel {
         this.minStat = 10;
         this.maxStat = 90;
         this.currentBackgroundId = "maid";
+        // 所有身份的基础属性总和都是280点，但分配不同
         this.backgrounds = [
             {
                 id: "maid",
                 name: "府中旧仆",
-                desc: "熟悉规矩，人情更顺。",
+                desc: "自幼在府中长大，熟悉规矩人情。",
+                baseStats: {
+                    appearance: 35,
+                    scheming: 38,
+                    status: 45,
+                    network: 48,
+                    favor: 40,
+                    health: 40,
+                    cash: 34,
+                },
                 bonus: { network: 6, status: 4, appearance: -2 },
             },
             {
                 id: "scholar",
                 name: "书香遗孤",
-                desc: "识字懂礼，心思更深。",
+                desc: "诗书传家，因变故入府。识字懂礼。",
+                baseStats: {
+                    appearance: 40,
+                    scheming: 48,
+                    status: 44,
+                    network: 36,
+                    favor: 40,
+                    health: 38,
+                    cash: 34,
+                },
                 bonus: { scheming: 6, status: 3, cash: -2 },
             },
             {
                 id: "merchant",
                 name: "商贾之女",
-                desc: "银钱宽裕，交游更广。",
+                desc: "家道中落，仍有些积蓄和人脉。",
+                baseStats: {
+                    appearance: 38,
+                    scheming: 40,
+                    status: 35,
+                    network: 46,
+                    favor: 40,
+                    health: 39,
+                    cash: 42,
+                },
                 bonus: { cash: 8, network: 4, status: -3 },
+            },
+            {
+                id: "peasant",
+                name: "农家女子",
+                desc: "淳朴勤劳，身体强健，但见识有限。",
+                baseStats: {
+                    appearance: 40,
+                    scheming: 32,
+                    status: 34,
+                    network: 36,
+                    favor: 40,
+                    health: 50,
+                    cash: 48,
+                },
+                bonus: { health: 8, appearance: 2, scheming: -5, status: -3 },
+            },
+            {
+                id: "performer",
+                name: "梨园伶人",
+                desc: "曾入戏班学艺，容貌出众，善察言观色。",
+                baseStats: {
+                    appearance: 50,
+                    scheming: 44,
+                    status: 32,
+                    network: 35,
+                    favor: 40,
+                    health: 42,
+                    cash: 37,
+                },
+                bonus: { appearance: 8, scheming: 4, status: -4, network: -2 },
+            },
+            {
+                id: "doctor",
+                name: "医女之后",
+                desc: "略通医理，知药性，但出身微末。",
+                baseStats: {
+                    appearance: 38,
+                    scheming: 43,
+                    status: 36,
+                    network: 40,
+                    favor: 40,
+                    health: 48,
+                    cash: 35,
+                },
+                bonus: { health: 6, scheming: 3, network: 2, cash: -3 },
+            },
+            {
+                id: "fallen",
+                name: "没落世家",
+                desc: "祖上曾显赫一时，如今破落，徒有虚名。",
+                baseStats: {
+                    appearance: 42,
+                    scheming: 46,
+                    status: 48,
+                    network: 38,
+                    favor: 40,
+                    health: 34,
+                    cash: 32,
+                },
+                bonus: { status: 6, scheming: 5, cash: -4, health: -3 },
+            },
+            {
+                id: "orphan",
+                name: "无根浮萍",
+                desc: "自小流离失所，全凭己力求生。",
+                baseStats: {
+                    appearance: 37,
+                    scheming: 44,
+                    status: 30,
+                    network: 33,
+                    favor: 40,
+                    health: 45,
+                    cash: 51,
+                },
+                bonus: { scheming: 4, health: 3, status: -6, network: -4 },
             },
         ];
         const el = document.getElementById("event");
@@ -215,7 +318,10 @@ export class IntroPanel {
     applyBackground(backgroundId) {
         const preset = this.backgrounds.find((entry) => entry.id === backgroundId) ?? this.backgrounds[0];
         this.currentBonus = { ...preset.bonus };
-        this.currentStats = { ...this.baseStats };
+        // 使用该身份的基础属性
+        this.baseStats = { ...preset.baseStats };
+        this.currentStats = { ...preset.baseStats };
+        // 所有身份总属性点=280(基础)+10(自由分配)=290
         this.budget = this.sumStats(this.baseStats) + this.extraPoints;
         this.remaining = this.extraPoints;
     }
@@ -289,7 +395,10 @@ export class IntroPanel {
     }
     getBaseBounds(key) {
         const bonus = this.getBonusValue(key);
-        const min = Math.max(0, this.minStat - bonus);
+        // 最小值为该身份的基础属性值，不能低于此值
+        const preset = this.backgrounds.find((entry) => entry.id === this.currentBackgroundId) ?? this.backgrounds[0];
+        const baseValue = preset.baseStats[key];
+        const min = baseValue;
         const max = this.maxStat - bonus;
         return { min, max };
     }

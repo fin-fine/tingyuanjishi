@@ -9,14 +9,14 @@ export class SaveSystem {
             slot3: "三号存档",
         };
     }
-    saveAuto(player, world, logs) {
-        this.writeSlot("auto", player, world, logs);
+    saveAuto(player, world, logs, extra) {
+        this.writeSlot("auto", player, world, logs, extra);
     }
-    saveSlot(slotId, player, world, logs) {
+    saveSlot(slotId, player, world, logs, extra) {
         if (slotId === "auto") {
             return;
         }
-        this.writeSlot(slotId, player, world, logs);
+        this.writeSlot(slotId, player, world, logs, extra);
     }
     loadSlot(slotId) {
         if (!this.isSlotId(slotId)) {
@@ -37,7 +37,7 @@ export class SaveSystem {
             localStorage.removeItem(this.keyFor(slotId));
         });
     }
-    writeSlot(slotId, player, world, logs) {
+    writeSlot(slotId, player, world, logs, extra) {
         if (!this.isSlotId(slotId)) {
             return;
         }
@@ -46,6 +46,7 @@ export class SaveSystem {
             world: world.serialize(),
             meta: this.buildMeta(player, world),
             logs,
+            ...extra,
         };
         localStorage.setItem(this.keyFor(slotId), JSON.stringify(payload));
     }

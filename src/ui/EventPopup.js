@@ -1,3 +1,4 @@
+import { DialogPopup } from "./DialogPopup.js";
 export class EventPopup {
     constructor() {
         const el = document.getElementById("event");
@@ -5,6 +6,7 @@ export class EventPopup {
             throw new Error("Missing event container.");
         }
         this.container = el;
+        this.dialog = new DialogPopup();
     }
     render(event, onSelect, onCustom, onPlan) {
         this.container.innerHTML = "";
@@ -30,7 +32,7 @@ export class EventPopup {
         const title = document.createElement("h2");
         title.textContent = event.title;
         const text = document.createElement("p");
-        text.textContent = event.text;
+        text.innerHTML = this.formatLongText(event.text);
         const options = document.createElement("div");
         options.className = "options";
         const selection = [];
@@ -105,11 +107,11 @@ export class EventPopup {
             const customButton = document.createElement("button");
             customButton.textContent = "自定应对";
             customButton.addEventListener("click", () => {
-                const input = window.prompt("请描述你的应对方式：", "");
-                if (!input || !input.trim()) {
-                    return;
-                }
-                onCustom(input.trim());
+                this.dialog.showInput("自定应对", "请描述你的应对方式：", "", (input) => {
+                    if (input.trim()) {
+                        onCustom(input.trim());
+                    }
+                });
             });
             options.appendChild(customButton);
         }
@@ -127,7 +129,7 @@ export class EventPopup {
         const title = document.createElement("h2");
         title.textContent = event.title;
         const text = document.createElement("p");
-        text.textContent = event.text;
+        text.innerHTML = this.formatLongText(event.text);
         const options = document.createElement("div");
         options.className = "options";
         for (const opt of event.options) {
@@ -140,11 +142,11 @@ export class EventPopup {
             const customButton = document.createElement("button");
             customButton.textContent = "自定应对";
             customButton.addEventListener("click", () => {
-                const input = window.prompt("请描述你的应对方式：", "");
-                if (!input || !input.trim()) {
-                    return;
-                }
-                onCustom(input.trim());
+                this.dialog.showInput("自定应对", "请描述你的应对方式：", "", (input) => {
+                    if (input.trim()) {
+                        onCustom(input.trim());
+                    }
+                });
             });
             options.appendChild(customButton);
         }
@@ -202,7 +204,7 @@ export class EventPopup {
         const title = document.createElement("h2");
         title.textContent = "结果";
         const body = document.createElement("p");
-        body.textContent = text;
+        body.innerHTML = this.formatLongText(text);
         const button = document.createElement("button");
         button.textContent = "继续";
         button.addEventListener("click", onContinue);
@@ -224,8 +226,49 @@ export class EventPopup {
         const title = document.createElement("h2");
         title.textContent = titleText;
         const body = document.createElement("p");
-        body.textContent = text;
+        body.innerHTML = this.formatLongText(text);
         this.container.appendChild(title);
         this.container.appendChild(body);
+    }
+    /**
+     * 格式化长文本，自动分段
+     * 如果文本超过5句话，会自动按照句子进行合理分段
+     */
+    formatLongText(text) {
+        // 按照句子分割（根据。！？等标点）
+        const sentences = text.split(/([。！？])/);
+        // 重新组合句子（包含标点）
+        const fullSentences = [];
+        for (let i = 0; i < sentences.length; i += 2) {
+            if (sentences[i] && sentences[i].trim()) {
+                const sentence = sentences[i] + (sentences[i + 1] || '');
+                fullSentences.push(sentence);
+            }
+        }
+        // 如果句子数量少于等于5句，直接返回原文
+        if (fullSentences.length <= 5) {
+            return text;
+        }
+        // 超过5句，进行智能分段
+        // 策略：每3-4句组成一个段落
+        const paragraphs = [];
+        let currentParagraph = [];
+        for (let i = 0; i < fullSentences.length; i++) {
+            currentParagraph.push(fullSentences[i]);
+            // 每3-4句分一段，或者到达最后一句
+            const shouldBreak = currentParagraph.length >= 3 && (i === fullSentences.length - 1 ||
+                (currentParagraph.length >= 4) ||
+                (i < fullSentences.length - 1 && fullSentences.length - i - 1 >= 3));
+            if (shouldBreak) {
+                paragraphs.push(currentParagraph.join(''));
+                currentParagraph = [];
+            }
+        }
+        // 如果还有剩余句子，添加为最后一段
+        if (currentParagraph.length > 0) {
+            paragraphs.push(currentParagraph.join(''));
+        }
+        // 使用<br><br>连接各段落
+        return paragraphs.join('<br><br>');
     }
 }

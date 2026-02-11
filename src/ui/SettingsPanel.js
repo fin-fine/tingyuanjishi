@@ -1,4 +1,5 @@
 import { DEFAULT_AI_URL, loadAiSettings, saveAiSettings } from "../core/AiConfig.js";
+import { DialogPopup } from "./DialogPopup.js";
 export class SettingsPanel {
     constructor(onReset) {
         this.onReset = onReset;
@@ -7,6 +8,7 @@ export class SettingsPanel {
             throw new Error("Missing settings container.");
         }
         this.container = el;
+        this.dialog = new DialogPopup();
     }
     render() {
         this.container.innerHTML = `
@@ -121,10 +123,9 @@ export class SettingsPanel {
             }
         });
         resetButton?.addEventListener("click", () => {
-            const ok = window.confirm("确定要重新开局并清空存档吗？");
-            if (ok) {
+            this.dialog.showConfirm("重新开局", "确定要重新开局并清空所有存档吗？\n\n这个操作不可恢复！", () => {
                 this.onReset();
-            }
+            }, undefined, "确定重置", "取消");
         });
     }
 }
