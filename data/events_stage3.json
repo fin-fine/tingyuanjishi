@@ -1,0 +1,548 @@
+[
+  {
+    "id": "s3_1000",
+    "title": "日常养成（第三阶段）",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [
+        46,
+        100
+      ]
+    },
+    "text": "作为姨娘，你有了更多的自主权和责任。你可以培养子嗣，经营商业，或者继续巩固自己的地位。",
+    "once": false,
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_child",
+        "text": "A. 用心培养子嗣",
+        "apCost": 1,
+        "require": {
+          "has_children": true
+        },
+        "reward": {
+          "health": -2
+        },
+        "resultText": "你坐在孩子身边，手把手教他握笔。孩子的小手柔软而温暖，写出的字歪歪扭扭，却让你心里柔软得一塾糃糊。孩子抬头问你：'娘，这个字对不对？'你点点头，眼眶微湿。"
+      },
+      {
+        "id": "opt_business",
+        "text": "B. 经营铺面",
+        "apCost": 1,
+        "reward": {
+          "business": 3,
+          "cash": 2,
+          "health": -1
+        },
+        "resultText": "你在铺子里泡了一整天，从算盘珠子到布匹色差，一样样认真审视。帐房的张伯感叹：'姨娘这眼力，比老头子我都准。'关门时天已擦黑，但直到数银子的清脆声响起，你才觉得这一天没白费。"
+      },
+      {
+        "id": "opt_favor",
+        "text": "C. 维持宠爱",
+        "apCost": 1,
+        "reward": {
+          "favor": 2,
+          "health": -1
+        },
+        "resultText": "你在灯下小心地为少爷缝了一双鞋底。线头在指尖绕过，针脚抽得很密。少爷接过鞋子时摸了摸里子，眉头舞了一下，虽未多说什么，但答应今晚来坝上坐坐。"
+      },
+      {
+        "id": "opt_network",
+        "text": "D. 拓展人脉",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 1"
+        },
+        "cost": {
+          "cash": -1
+        },
+        "reward": {
+          "network": 2,
+          "status": 1
+        },
+        "resultText": "你带了一盒自制的糕点去拜访附近的绸缎铺掌柜娘，两人坐在柜台后边说了半天话。你用一两银子的人情，换来了当地商号的一手内幕消息。这个世道，一回生二回熟，六回就成了自己人。"
+      },
+      {
+        "id": "opt_rest",
+        "text": "E. 好好休息",
+        "apCost": 1,
+        "reward": {
+          "health": 5
+        },
+        "resultText": "你关上院门，在自己的小院中晴音告说。昼午打了个盹，梦里感觉自己变成了墙头上那只懒洋洋的狸花猫，而不是一个担心这担心那的姨娘。醒来时心里轻松了许多。"
+      }
+    ]
+  },
+  {
+    "id": "s3_0001",
+    "title": "主母诞子",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [
+        48,
+        48
+      ],
+      "item_matron_escaped": "<= 0",
+      "item_matron_confined": "<= 0"
+    },
+    "once": true,
+    "text": "鞭炮声连响了三天，府中上下都忙着张灯结彩——主母诞下了嫡子。\n\n那日你去正房请安，远远就听见婴儿嘹亮的啼哭声。产房门前的红绸挂了一溜，喜鹊灯笼从廊下一路延伸到二门口。少爷抱着那小小的婴孩，眼角的笑纹比你见过的任何时候都深。他用一种近乎虔诚的目光看着怀中的孩子，仿佛捧着全府的未来。\n\n你站在人群后面，手指不自觉地攥紧了袖口。嫡子降生，意味着嫡庶之分从此成为铁律。你的孩子再聪慧、再讨人喜欢，在宗法面前也只是庶出。你忽然想起赵嬷嬷说过的话：'在这府里，投胎比什么都重要。'\n\n主母半靠在床头，脸上虽有产后的疲惫，却掩不住志得意满的光彩。她的目光越过道贺的人群，稳稳地落在你脸上——那眼神像一把尺子，在量你的反应、你的表情、你嘴角弧度的每一分变化。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_congratulate",
+        "text": "A. 真心祝贺，表达对嫡子的祝福",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 8,
+          "status": 3
+        },
+        "resultText": "你恭敬地向主母道贺，言辞恳切。主母看出你的真诚，对你的态度更加和善。府中其他人也都看在眼里，你的名声提升了。"
+      },
+      {
+        "id": "opt_jealous",
+        "text": "B. 表面祝贺，内心嫉妒",
+        "apCost": 0,
+        "reward": {
+          "scheming": 3,
+          "npc_matron": -2
+        },
+        "resultText": "你表面上道贺，但内心的嫉妒难以掩饰。主母是何等精明的人，她察觉到了你的不真诚，眼神中多了几分警惕。"
+      },
+      {
+        "id": "opt_plan",
+        "text": "C. 平静应对，为自己的孩子谋划",
+        "apCost": 0,
+        "reward": {
+          "scheming": 5,
+          "network": 2
+        },
+        "resultText": "你平静地道贺，心中却在思考如何为自己的孩子争取更好的未来。嫡子虽尊贵，但庶子也有出头的机会。你开始暗中拓展人脉，为未来做准备。"
+      }
+    ]
+  },
+  {
+    "id": "s3_new_concubine",
+    "title": "新姨娘入府",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [
+        52,
+        80
+      ],
+      "chance": 0.5
+    },
+    "once": true,
+    "text": "新姨娘进门那天下着小雨。她撑着一把油纸伞，穿过垂花门时踩到了门槛上的水洼，险些滑倒。身旁的丫鬟赶忙扶住她，她不好意思地笑了笑，露出两个浅浅的梨涡。\n\n她不过十七八岁的模样，一双杏眼里还带着几分怯意。行礼时规矩做得不太标准，明显是临时学的。主母淡淡地看着，嘴角噙着一丝不以为然的笑。少爷倒是多看了她几眼。\n\n你站在廊下，看着这一幕，恍惚间想起自己初入府时的样子——也是这般战战兢兢，不知深浅。可你用了多少年才在这府里站稳？她又要花多少？你心里清楚，每多一个女人，蛋糕就要多切一份。少爷的宠爱、主母的耐心、府里的资源，都是有限的。你该如何面对这个新来的'妹妹'？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_befriend",
+        "text": "A. 主动示好，建立联盟",
+        "apCost": 0,
+        "reward": {
+          "network": 5,
+          "scheming": 2,
+          "favor": -2
+        },
+        "resultText": "你主动与新姨娘交好，帮她熟悉府中规矩。她对你心存感激，成为了你的盟友。但少爷似乎不太喜欢你的这种做法，对你的关注有所下降。"
+      },
+      {
+        "id": "opt_compete",
+        "text": "B. 努力维持，保住影响力",
+        "apCost": 0,
+        "reward": {
+          "favor": 3,
+          "scheming": 3,
+          "network": -3
+        },
+        "resultText": "你加倍用心伺候少爷，努力维持他对你的关注。虽然效果不错，但也得罪了新姨娘和其他人，人脉受损。"
+      },
+      {
+        "id": "opt_ignore",
+        "text": "C. 专心自己的事，不予理会",
+        "apCost": 0,
+        "reward": {
+          "business": 3,
+          "scheming": 1
+        },
+        "resultText": "你决定专心经营自己的产业，不参与这些争斗。这让你的商业能力有所提升，也避免了不必要的麻烦。"
+      }
+    ]
+  },
+  {
+    "id": "s3_business_opportunity",
+    "title": "协理内务",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [
+        50,
+        50
+      ]
+    },
+    "once": true,
+    "text": "主母近日身子不适，加之府里开销核对繁杂。她把你叫来，神色疲惫：\"外头的铺子有管事，但这内宅针线房和香料采买的对账，我竟一时找不出细心人。你平日里账目做得清楚，若愿意，便帮我分担一二。\"\n\n这虽不是大权，却是你第一次染指管家之权。若做得好，往后在府中的地位便不同了。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_accept",
+        "text": "A. 恭敬接下，承诺尽心",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 5,
+          "business": 3,
+          "status": 2
+        },
+        "resultText": "你接过了对牌和账册。这不仅是干活，更是向府中上下证明，你不仅仅是以色侍人的姨娘。主母对你道：\"好好做，我看着呢。\""
+      },
+      {
+        "id": "opt_hesitate",
+        "text": "B. 婉言推辞，表示能力不足",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": -3
+        },
+        "resultText": "你以能力不足为由推辞。主母眼中闪过一丝失望，似乎没想到你会拒绝。她随后找了府中其他人来打理。\n\n你失去了一个重要的机会。"
+      }
+    ]
+  },
+  {
+    "id": "s3_business_crisis",
+    "title": "铺面危机",
+    "type": "random",
+    "weight": 1.8,
+    "trigger": {
+      "turn_range": [
+        55,
+        90
+      ],
+      "stat_business": ">= 10",
+      "chance": 0.4
+    },
+    "once": false,
+    "text": "铺面的管事一大早就跑来报信，满头大汗，连话都说不利索。原来昨夜有人翻了后墙，偷走了半仓的绸缎。管事一脸苦相：'姨娘，这批货是赊来的，月底就要结账。如今货没了，账还在，供货的王掌柜已经放了话，说若不按时还钱，就要到府上来闹……'\n\n你翻看着账本，眉心紧锁。铺面好不容易有了起色，一场失窃就把利润吃得精光。更要紧的是，若消息传到主母耳中，她会不会觉得你能力不足，收回对你的信任？你深吸一口气——这是危机，也是你证明自己的机会。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_negotiation",
+        "text": "A. 用谈判解决",
+        "apCost": 1,
+        "reward": {
+          "business": 3,
+          "network": 2
+        },
+        "resultText": "你运用你的商业头脑和人脉关系，成功化解了危机。这次经历让你的能力进一步提升。",
+        "outcomeStat": "business",
+        "outcomes": [
+          {
+            "min": 40,
+            "reward": {
+              "business": 5,
+              "network": 3,
+              "cash": 3
+            },
+            "resultText": "你的谈判技巧高超，不仅解决了问题，还争取到了更好的条件。铺面生意更加红火，你也赚了不少银两。"
+          },
+          {
+            "min": 20
+          },
+          {
+            "min": 0,
+            "reward": {
+              "business": 1,
+              "cash": -2
+            },
+            "resultText": "你虽然解决了问题，但付出了一些代价，损失了些银两。"
+          }
+        ]
+      },
+      {
+        "id": "opt_authority",
+        "text": "B. 用威严镇压",
+        "apCost": 1,
+        "reward": {
+          "business": 1,
+          "scheming": 2,
+          "network": -1
+        },
+        "resultText": "你以姨娘的身份强势处理问题，虽然解决了，但也得罪了一些人。"
+      },
+      {
+        "id": "opt_ask_help",
+        "text": "C. 向主母求助",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 2,
+          "business": -1
+        },
+        "resultText": "你向主母汇报情况，请她出面解决。虽然问题解决了，但也暴露了你能力的不足。"
+      }
+    ]
+  },
+  {
+    "id": "s3_business_success",
+    "title": "铺面大获成功",
+    "type": "random",
+    "weight": 1.5,
+    "trigger": {
+      "turn_range": [
+        60,
+        95
+      ],
+      "stat_business": ">= 50",
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "账房的张伯笑呵呵地捧来了这个月的账册，指着最后一行的数字，老脸上的褶子都舒展开了：'姨娘，本月盈利足足翻了一倍！附近三条街的铺子都打听咱们的进货渠道呢。'\n\n你接过账册细细看了一遍，嘴角不由得微微上扬。从最初连算盘珠子都拨不利索，到如今把铺面打理得有模有样——这条路，你走了多少个不眠之夜？赵嬷嬷特意跑来道喜，附耳说：'主母今早听了，连连点头，还说要请你去喝茶。'你知道，在这府里，钱不是最重要的，重要的是钱带来的底气和话语权。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_share",
+        "text": "A. 将大部分利润上交主母",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 5,
+          "status": 3,
+          "cash": 2
+        },
+        "resultText": "你将大部分利润上交主母，只留下小部分。主母大为赞赏你的忠诚，你在府中的地位进一步提升。"
+      },
+      {
+        "id": "opt_keep",
+        "text": "B. 留下大部分利润，为自己打算",
+        "apCost": 0,
+        "reward": {
+          "cash": 8,
+          "scheming": 3,
+          "npc_matron": -2
+        },
+        "resultText": "你以需要再投资为由，留下了大部分利润。虽然积累了不少财富，但主母似乎有些不满。"
+      },
+      {
+        "id": "opt_invest",
+        "text": "C. 将利润投入扩大经营",
+        "apCost": 0,
+        "reward": {
+          "business": 5,
+          "cash": 1,
+          "npc_matron": 2
+        },
+        "resultText": "你用利润开设了新的铺面，生意规模进一步扩大。主母看到了长远收益，对你的做法表示认可。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_education",
+    "title": "子嗣教育",
+    "type": "random",
+    "weight": 1.6,
+    "trigger": {
+      "turn_range": [
+        55,
+        98
+      ],
+      "chance": 0.4
+    },
+    "once": false,
+    "text": "清晨推开窗子，你看见孩子蹲在院子里，拿树枝在地上歪歪扭扭地写字。写的是'天'字——大概是从哪个丫鬟嘴里学来的。孩子抬头看见你，咧嘴一笑，露出缺了一颗的门牙：'娘，你看我写的！'\n\n你心中一酸又一暖。这个府里，嫡子有最好的先生、最好的书房、最好的文房四宝。而你的孩子，只能拿树枝在泥地里描画。可你不甘心让孩子就这样长大——你受过的苦，不能让孩子再受一遍。你咬了咬牙，开始认真考虑孩子的教育。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_scholar",
+        "text": "A. 聘请名师，培养学识",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 3",
+          "has_children": true
+        },
+        "cost": {
+          "cash": -3
+        },
+        "reward": {},
+        "resultText": "你花重金请来了城中有名的秀才先生。先生初见孩子时摸了摸胡子，连连点头：'子可教也。'孩子背着新买的书箱，第一天上课回来就兴奋地说个不停。你看着他眼里的光，觉得银子花得值。",
+        "special": "child_education_scholar"
+      },
+      {
+        "id": "opt_martial",
+        "text": "B. 教授武艺，强健体魄",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 2",
+          "has_children": true
+        },
+        "cost": {
+          "cash": -2
+        },
+        "reward": {},
+        "resultText": "你请了武师来教孩子骑射武艺。孩子每天清晨在院子里打拳练桨，小胳膊上渐渐有了肌肉的线条。有一次他举起了比自己还高的木棍，握得稳稳的，眼神坚定得不像个孩子。你看得又欣慰又心疼。",
+        "special": "child_education_martial"
+      },
+      {
+        "id": "opt_business",
+        "text": "C. 亲自教导商业之道",
+        "apCost": 1,
+        "require": {
+          "stat_business": ">= 30",
+          "has_children": true
+        },
+        "reward": {
+          "business": 2
+        },
+        "resultText": "你带孩子去铺子里端了一整天，教他认绸缎的色差、算账的快法、和人说话的分寸。孩子学得认真，连算盘珠子都打得啊啊响。你看着他的背影，想：就算考不了功名，有一门手艺，这辈子也饿不死。",
+        "special": "child_education_business"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_discipline",
+    "title": "子嗣教育方式",
+    "type": "random",
+    "weight": 1.4,
+    "trigger": {
+      "turn_range": [
+        60,
+        95
+      ],
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "孩子今天又闯祸了。他把主母花园里的金鱼捞出来，说要'放生到河里'，惹得养鱼的婆子告了一状。你把孩子叫到跟前，他低着头，手指绞着衣角，嘴里嘟嘟囔囔：'可是鱼缸太小了，它们活得不开心……'\n\n你看着孩子纯真的眼睛，心中矛盾极了。这孩子心地善良，有自己的想法，可在这座府邸里，'有想法'往往意味着'不听话'。嫡子被十几个嬷嬷丫鬟看着，一举一动都合乎规矩。而你的孩子，是该学会这府里的规矩，低眉顺眼地活着？还是保留那份难得的天真，哪怕为此付出代价？\n\n你知道，你现在的选择，会深深影响这个孩子的一生。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_strict",
+        "text": "A. 严格管教，立下规矩",
+        "apCost": 0,
+        "require": {
+          "has_children": true
+        },
+        "reward": {
+          "scheming": 1
+        },
+        "resultText": "你对孩子立了规矩：每日卯时起床，镜子前先正衣冠，然后向嬷嬷是罩，再来读书。孩子起初不习惯，眼眸里常布着血丝。但渐渐地，他也学会了在人前规规矩矩，只是眼里少了些小孩子该有的光彩。你心里难受，又觉得这是必要的。",
+        "special": "child_personality_strict"
+      },
+      {
+        "id": "opt_free",
+        "text": "B. 给予自由，让孩子自由成长",
+        "apCost": 0,
+        "require": {
+          "has_children": true
+        },
+        "reward": {},
+        "resultText": "你不拦着孩子上树掉鱼、捕蝉胆、和院里的小狗赛跑。孩子每天都开开心心的，像一只小鸟在园子里扬着翅膀飞。可有时候他说出来的话让你又惊又怕——他当着嬷嬷的面说'我才不要当什么大少爷，我要当大侠'。你急忙捷住他的嘴，心里不确定这样的自由是好事还是坏事。",
+        "special": "child_personality_free"
+      },
+      {
+        "id": "opt_moderate",
+        "text": "C. 适度引导，不过分干涉",
+        "apCost": 0,
+        "require": {
+          "has_children": true
+        },
+        "reward": {
+          "scheming": 1
+        },
+        "resultText": "你选择适度引导，既给孩子自由，也教导孩子规矩。孩子性格比较平和。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_conflict",
+    "title": "子嗣冲突",
+    "type": "random",
+    "weight": 1.3,
+    "trigger": {
+      "turn_range": [
+        65,
+        98
+      ],
+      "chance": 0.3
+    },
+    "once": false,
+    "text": "孩子哭着跑回来，膝盖上破了一大块皮，衣裳也被扯裂了。你心疼地抱住孩子，他抽噎着说：'娘，大哥说我是姨娘生的，不配和他一起读书……他把我的书都撕了，还推我跌倒……'\n\n你的手微微发抖。大哥——那是主母的嫡子，整个府里的小祖宗。你看着孩子膝盖上渗出的血珠，心如刀割。可你也清楚，嫡庶之分是这个时代的铁律，你去找主母理论，只会让自己和孩子的处境更难。但如果你什么都不做，孩子心里会留下怎样的伤痕？\n\n窗外传来嫡子院里的欢笑声，衬得你这小院格外安静。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_teach_obey",
+        "text": "A. 教导孩子忍让，要懂规矩",
+        "apCost": 0,
+        "require": {
+          "has_children": true
+        },
+        "reward": {
+          "npc_matron": 2
+        },
+        "resultText": "你教导孩子要懂得身份尊卑，庶出就该懂得忍让。孩子虽然委屈，但还是接受了。主母对你的态度表示满意。",
+        "special": "child_personality_strict"
+      },
+      {
+        "id": "opt_encourage",
+        "text": "B. 安慰孩子，鼓励孩子坚强",
+        "apCost": 0,
+        "require": {
+          "has_children": true
+        },
+        "reward": {},
+        "resultText": "你安慰孩子，告诉他/她虽然出身不能选择，但可以通过努力改变命运。孩子听后若有所思，内心更加坚强。",
+        "special": "child_personality_encourage"
+      },
+      {
+        "id": "opt_protect",
+        "text": "C. 护着孩子，向主母求情",
+        "apCost": 0,
+        "require": {
+          "has_children": true
+        },
+        "reward": {
+          "npc_matron": -3
+        },
+        "resultText": "你为孩子出头，向主母求情。主母虽然表面上给了你面子，但心中对你颇有微词。孩子看到你护着他/她，心中感动。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_talent",
+    "title": "子嗣展现天赋",
+    "type": "random",
+    "weight": 1.5,
+    "trigger": {
+      "turn_range": [
+        70,
+        98
+      ],
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "先生今日来府上时，特意绕到你的院子，神色颇为激动：'姨娘，令郎的天赋着实了得！今日考课，其他孩子还在背诵，他已经能自己作诗了。那遣词造句的功力……恕我直言，就连嫡少爷也未必及得上。'\n\n你又惊又喜，随即又有些不安。你去书房偷偷看了看孩子写的功课——清秀的小楷一行行排列整齐，字迹工整中透着灵气。你忍不住用手指描摹那些笔画，眼眶一热。在这座大宅里，庶出的孩子想要出人头地，要付出嫡子十倍的努力。可你的孩子有这份天赋，就有了改变命运的可能。\n\n你深知，天赋若不加培养，只会白白荒废。可培养需要银子、需要门路、需要在这府里为孩子争一席之地。你愿意为此付出多少？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_intensive",
+        "text": "A. 加强培养，不惜代价",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 5",
+          "has_children": true
+        },
+        "cost": {
+          "cash": -5
+        },
+        "reward": {},
+        "resultText": "你花重金为孩子请来最好的师傅，布置了小小的书房，还偷偷托人买来了市面上很难弄到的古书。孩子像海绵吸水一样拼命学习，进步神速。先生私下对你说：'令郎若能参加秋闱，必定前途无量。'你听得心花怒放。",
+        "special": "child_education_scholar"
+      },
+      {
+        "id": "opt_normal",
+        "text": "B. 正常培养，不给孩子太大压力",
+        "apCost": 0,
+        "require": {
+          "has_children": true
+        },
+        "reward": {},
+        "resultText": "你没有给孩子太大的压力，让他每天读一个时辰的书，剩下的时间爱做什么做什么。孩子在这样轻松的环境里慢慢进步，虽不惊艳，却也稳当。有时你看着他在花园里追着蝴蝶跑，心想：这样也罗。"
+      }
+    ]
+  }
+]

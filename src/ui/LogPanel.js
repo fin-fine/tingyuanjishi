@@ -72,6 +72,7 @@ export class LogPanel {
             favor: "宠爱",
             health: "健康",
             cash: "银钱",
+            business: "生意",
         };
         const parts = [];
         for (const [key, value] of Object.entries(delta)) {
@@ -101,10 +102,40 @@ export class LogPanel {
     }
     labelForKey(key) {
         if (key.startsWith("npc_")) {
-            return `关系(${key.replace("npc_", "")})`;
+            const npcName = key.replace("npc_", "");
+            const npcLabels = {
+                matron: "主母",
+                master: "少爷",
+                overseer: "管事",
+                steward: "家仆",
+            };
+            return `${npcLabels[npcName] || npcName}印象`;
         }
         if (key.startsWith("item_")) {
-            return `物品(${key.replace("item_", "")})`;
+            const itemKey = key.replace("item_", "");
+            const itemLabels = {
+                after_sleep: "安寝",
+                after_murmur: "闲言",
+                pregnancy_risk: "怀孕风险",
+                in_study: "书房纸",
+                gift: "礼物",
+                white_moon: "白月",
+                gossip: "风声",
+                tonic: "补汤",
+                preg_seed: "孕种",
+                preg_confirm: "喜信",
+                preg_stage: "孕期",
+                rumor_active: "流言",
+                child: "子嗣",
+                child_care: "照看",
+                matron_escape_help: "主母出走·助",
+                matron_escape_refuse: "主母出走·拒",
+                matron_escape_ignore: "主母出走·弃",
+                matron_escaped: "主母出走·成",
+                matron_confined: "主母出走·囚",
+            };
+            const label = itemLabels[itemKey];
+            return label ? `物品(${label})` : "物品";
         }
         return key;
     }

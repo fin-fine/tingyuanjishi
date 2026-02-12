@@ -6,6 +6,7 @@ const STAT_LABELS = {
     favor: "宠爱",
     health: "健康",
     cash: "银钱",
+    business: "生意",
 };
 export class IntroPanel {
     constructor(player) {
@@ -17,6 +18,8 @@ export class IntroPanel {
         this.minStat = 10;
         this.maxStat = 90;
         this.currentBackgroundId = "maid";
+        this.legacyStats = null;
+        this.selectedLegacyStat = null;
         // 所有身份的基础属性总和都是280点，但分配不同
         this.backgrounds = [
             {
@@ -31,6 +34,7 @@ export class IntroPanel {
                     favor: 40,
                     health: 40,
                     cash: 34,
+                    business: 40,
                 },
                 bonus: { network: 6, status: 4, appearance: -2 },
             },
@@ -46,6 +50,7 @@ export class IntroPanel {
                     favor: 40,
                     health: 38,
                     cash: 34,
+                    business: 40,
                 },
                 bonus: { scheming: 6, status: 3, cash: -2 },
             },
@@ -61,6 +66,7 @@ export class IntroPanel {
                     favor: 40,
                     health: 39,
                     cash: 42,
+                    business: 40,
                 },
                 bonus: { cash: 8, network: 4, status: -3 },
             },
@@ -76,6 +82,7 @@ export class IntroPanel {
                     favor: 40,
                     health: 50,
                     cash: 48,
+                    business: 40,
                 },
                 bonus: { health: 8, appearance: 2, scheming: -5, status: -3 },
             },
@@ -91,6 +98,7 @@ export class IntroPanel {
                     favor: 40,
                     health: 42,
                     cash: 37,
+                    business: 40,
                 },
                 bonus: { appearance: 8, scheming: 4, status: -4, network: -2 },
             },
@@ -106,6 +114,7 @@ export class IntroPanel {
                     favor: 40,
                     health: 48,
                     cash: 35,
+                    business: 40,
                 },
                 bonus: { health: 6, scheming: 3, network: 2, cash: -3 },
             },
@@ -121,6 +130,7 @@ export class IntroPanel {
                     favor: 40,
                     health: 34,
                     cash: 32,
+                    business: 40,
                 },
                 bonus: { status: 6, scheming: 5, cash: -4, health: -3 },
             },
@@ -136,6 +146,7 @@ export class IntroPanel {
                     favor: 40,
                     health: 45,
                     cash: 51,
+                    business: 40,
                 },
                 bonus: { scheming: 4, health: 3, status: -6, network: -4 },
             },
@@ -148,7 +159,9 @@ export class IntroPanel {
         this.baseStats = { ...player.stats };
         this.currentStats = { ...player.stats };
     }
-    render(onConfirm) {
+    render(onConfirm, legacy) {
+        this.legacyStats = legacy ?? null;
+        this.selectedLegacyStat = null;
         this.baseStats = { ...this.player.stats };
         this.applyBackground(this.currentBackgroundId);
         this.container.innerHTML = "";
@@ -160,9 +173,42 @@ export class IntroPanel {
         story.className = "intro-story";
         story.innerHTML = `
       <p>大雍景和十二年三月初一，春寒料峭。侯府晨钟初响，你被唤至正院听命。</p>
-      <p>你原是大夫人身边的二等丫鬟，素以本分懂事著称。今晨奉命，指给侯府独子谢云峥（十八）作通房丫头。</p>
+      <p>你是府中的一个普通丫鬟，却意料之外被指给侯府独子谢云峥（十八）作通房丫头。</p>
       <p>主角姓名可自定，出身与资质未定，命数尚可改写。入院之前，需先定下底色，以应这深宅将来的风起云涌。</p>
     `;
+        // 周目遗产选择
+        let legacyWrap = null;
+        if (this.legacyStats) {
+            legacyWrap = document.createElement("div");
+            legacyWrap.className = "intro-section legacy-section";
+            legacyWrap.innerHTML = `<h3 class=\"panel-title\">前尘遗泽</h3>
+        <p class=\"muted\">你曾在此府中挣扎求存，虽已离去，却留下一点经验。选择一项属性继承前世余荫（+10点）：</p>`;
+            const legacyList = document.createElement("div");
+            legacyList.className = "intro-backgrounds";
+            const statKeys = Object.keys(STAT_LABELS);
+            statKeys.forEach((key) => {
+                const label = document.createElement("label");
+                label.className = "intro-background";
+                const input = document.createElement("input");
+                input.type = "radio";
+                input.name = "intro-legacy";
+                input.value = key;
+                input.addEventListener("change", () => {
+                    this.selectedLegacyStat = key;
+                });
+                const prevValue = Math.floor(this.legacyStats.stats[key] || 0);
+                const text = document.createElement("div");
+                text.className = "intro-background-text";
+                text.innerHTML = `
+          <div class=\"intro-background-name\">${STAT_LABELS[key]} +10</div>
+          <div class=\"muted\">上世达到 ${prevValue}</div>
+        `;
+                label.appendChild(input);
+                label.appendChild(text);
+                legacyList.appendChild(label);
+            });
+            legacyWrap.appendChild(legacyList);
+        }
         const backgroundWrap = document.createElement("div");
         backgroundWrap.className = "intro-section";
         backgroundWrap.innerHTML = "<h3 class=\"panel-title\">出身设定</h3>";
@@ -288,6 +334,7 @@ export class IntroPanel {
                 backgroundName: background.name,
                 stats: { ...this.currentStats },
                 backgroundBonus: this.getBonusStats(),
+                legacyStat: this.selectedLegacyStat ?? undefined,
             });
         });
         actions.appendChild(randomButton);
@@ -298,6 +345,9 @@ export class IntroPanel {
         statsWrap.appendChild(actions);
         wrap.appendChild(title);
         wrap.appendChild(story);
+        if (legacyWrap) {
+            wrap.appendChild(legacyWrap);
+        }
         wrap.appendChild(nameWrap);
         wrap.appendChild(backgroundWrap);
         wrap.appendChild(statsWrap);

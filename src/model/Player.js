@@ -8,16 +8,22 @@ export class Player {
             favor: 15,
             health: 70,
             cash: 0,
+            business: 0,
         };
         this.name = "";
         this.backgroundId = "";
         this.backgroundName = "";
+        this.position = "通房"; // 职位：通房 -> 姨娘 -> ...
         this.stats = { ...this.defaultStats };
         this.npcRelations = {
             jinshu: 0,
             matron: 0,
         };
+        this.npcImpressions = {};
+        this.npcImpressionsTurn = 0;
         this.inventory = {};
+        this.children = [];
+        this.pregnancyStartTurn = null;
         this.history = new Set();
     }
     setStats(stats) {
@@ -32,13 +38,18 @@ export class Player {
         this.name = "";
         this.backgroundId = "";
         this.backgroundName = "";
+        this.position = "通房";
         this.stats = { ...this.defaultStats };
         this.npcRelations = {
             jinshu: 0,
             matron: 0,
         };
+        this.npcImpressions = {};
+        this.npcImpressionsTurn = 0;
         this.inventory = {};
         this.history = new Set();
+        this.children = [];
+        this.pregnancyStartTurn = null;
     }
     applyDelta(delta) {
         for (const [key, value] of Object.entries(delta)) {
@@ -64,10 +75,15 @@ export class Player {
             name: this.name,
             backgroundId: this.backgroundId,
             backgroundName: this.backgroundName,
+            position: this.position,
             stats: this.stats,
             npcRelations: this.npcRelations,
+            npcImpressions: this.npcImpressions,
+            npcImpressionsTurn: this.npcImpressionsTurn,
             history: Array.from(this.history),
             inventory: this.inventory,
+            children: this.children,
+            pregnancyStartTurn: this.pregnancyStartTurn,
         };
     }
     load(data) {
@@ -84,17 +100,35 @@ export class Player {
         if (typeof parsed.backgroundName === "string") {
             this.backgroundName = parsed.backgroundName;
         }
+        if (typeof parsed.position === "string") {
+            this.position = parsed.position;
+        }
         if (parsed.stats) {
             this.stats = { ...this.stats, ...parsed.stats };
         }
         if (parsed.npcRelations) {
             this.npcRelations = { ...this.npcRelations, ...parsed.npcRelations };
         }
+        if (parsed.npcImpressions) {
+            this.npcImpressions = { ...this.npcImpressions, ...parsed.npcImpressions };
+        }
+        if (typeof parsed.npcImpressionsTurn === "number") {
+            this.npcImpressionsTurn = parsed.npcImpressionsTurn;
+        }
         if (parsed.history) {
             this.history = new Set(parsed.history);
         }
         if (parsed.inventory) {
             this.inventory = { ...this.inventory, ...parsed.inventory };
+        }
+        if (Array.isArray(parsed.children)) {
+            this.children = parsed.children;
+        }
+        if (typeof parsed.pregnancyStartTurn === "number") {
+            this.pregnancyStartTurn = parsed.pregnancyStartTurn;
+        }
+        else if (parsed.pregnancyStartTurn === null) {
+            this.pregnancyStartTurn = null;
         }
     }
 }

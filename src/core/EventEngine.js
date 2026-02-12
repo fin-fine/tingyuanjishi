@@ -10,11 +10,18 @@ export class EventEngine {
             favor: true,
             health: true,
             cash: true,
+            business: true,
         };
     }
     async loadAll() {
-        const response = await fetch("./data/events.json");
-        this.events = (await response.json());
+        const sources = [
+            "./data/events_stage1.json",
+            "./data/events_stage2.json",
+            "./data/events_stage3.json",
+        ];
+        const responses = await Promise.all(sources.map((path) => fetch(path)));
+        const payloads = await Promise.all(responses.map((response) => response.json()));
+        this.events = payloads.flat();
     }
     pickEvent(player, world, predicate) {
         const candidates = [];
@@ -173,6 +180,15 @@ export class EventEngine {
             }
             return Formula.compare(player.stats[statKey] ?? 0, value);
         }
+        if (key === "npc_matron_over_favor") {
+            const matronTrust = player.npcRelations["matron"] ?? 0;
+            const favor = player.stats.favor ?? 0;
+            const result = matronTrust > favor;
+            if (typeof value === "boolean") {
+                return result === value;
+            }
+            return result;
+        }
         if (key.startsWith("npc_")) {
             const npcKey = key.replace("npc_", "");
             return Formula.compare(player.npcRelations[npcKey] ?? 0, value);
@@ -181,9 +197,24 @@ export class EventEngine {
             const itemKey = key.replace("item_", "");
             return Formula.compare(player.inventory[itemKey] ?? 0, value);
         }
+        if (key.startsWith("event_")) {
+            const eventId = key.replace("event_", "");
+            const hasTriggered = player.history.has(eventId);
+            if (typeof value === "boolean") {
+                return hasTriggered === value;
+            }
+            return hasTriggered;
+        }
         if (key === "turn_range" && Array.isArray(value)) {
             const [start, end] = value;
             return world.turn >= start && world.turn <= end;
+        }
+        if (key === "has_children") {
+            const hasChildren = player.children.length > 0;
+            if (typeof value === "boolean") {
+                return hasChildren === value;
+            }
+            return hasChildren;
         }
         return true;
     }

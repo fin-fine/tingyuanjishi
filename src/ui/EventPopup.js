@@ -171,6 +171,7 @@ export class EventPopup {
                 text.includes("温补") ||
                 text.includes("伺候") ||
                 text.includes("安寝") ||
+                text.includes("子嗣") ||
                 text.includes("庭前")) {
                 add("养成类", option);
                 continue;
@@ -221,7 +222,7 @@ export class EventPopup {
         this.container.appendChild(title);
         this.container.appendChild(body);
     }
-    renderEnding(titleText, text) {
+    renderEnding(titleText, text, onRestart, statsHtml) {
         this.container.innerHTML = "";
         const title = document.createElement("h2");
         title.textContent = titleText;
@@ -229,14 +230,76 @@ export class EventPopup {
         body.innerHTML = this.formatLongText(text);
         this.container.appendChild(title);
         this.container.appendChild(body);
+        if (statsHtml) {
+            const statsSection = document.createElement("div");
+            statsSection.className = "ending-stats";
+            statsSection.innerHTML = statsHtml;
+            this.container.appendChild(statsSection);
+        }
+        if (onRestart) {
+            const actions = document.createElement("div");
+            actions.className = "ending-actions";
+            actions.style.marginTop = "20px";
+            actions.style.textAlign = "center";
+            const restartButton = document.createElement("button");
+            restartButton.textContent = "再次挑战（继承一项属性）";
+            restartButton.style.padding = "10px 20px";
+            restartButton.style.fontSize = "16px";
+            restartButton.addEventListener("click", () => {
+                onRestart();
+            });
+            actions.appendChild(restartButton);
+            this.container.appendChild(actions);
+        }
+    }
+    showEndingReviewLoading() {
+        const existing = this.container.querySelector("#ending-review-loading");
+        if (existing)
+            return;
+        const loadingDiv = document.createElement("div");
+        loadingDiv.id = "ending-review-loading";
+        loadingDiv.style.cssText = "text-align:center;color:#aaa;margin:20px 0;font-style:italic;";
+        loadingDiv.textContent = "✦ 正在撰写一生评传 ✦";
+        const actions = this.container.querySelector(".ending-actions");
+        if (actions) {
+            this.container.insertBefore(loadingDiv, actions);
+        }
+        else {
+            this.container.appendChild(loadingDiv);
+        }
+    }
+    appendEndingSection(text) {
+        this.removeEndingReviewLoading();
+        const endingActions = this.container.querySelector(".ending-actions");
+        if (!endingActions)
+            return;
+        const section = document.createElement("div");
+        section.className = "ending-review";
+        section.style.cssText = "margin:20px 0;padding:16px;border:1px solid #665544;background:rgba(42,34,24,0.6);border-radius:4px;";
+        const sectionTitle = document.createElement("h3");
+        sectionTitle.style.cssText = "text-align:center;margin-bottom:12px;color:#d4a574;letter-spacing:4px;";
+        sectionTitle.textContent = "═══ 一生评传 ═══";
+        const sectionBody = document.createElement("p");
+        sectionBody.innerHTML = this.formatLongText(text);
+        sectionBody.style.lineHeight = "1.8";
+        section.appendChild(sectionTitle);
+        section.appendChild(sectionBody);
+        this.container.insertBefore(section, endingActions);
+    }
+    removeEndingReviewLoading() {
+        const loading = this.container.querySelector("#ending-review-loading");
+        if (loading)
+            loading.remove();
     }
     /**
      * 格式化长文本，自动分段
      * 如果文本超过5句话，会自动按照句子进行合理分段
      */
     formatLongText(text) {
+        // 首先处理显式的 \n 换行符，将其转换为 <br>
+        const withBreaks = text.replace(/\n/g, '<br>');
         // 按照句子分割（根据。！？等标点）
-        const sentences = text.split(/([。！？])/);
+        const sentences = withBreaks.split(/([。！？])/);
         // 重新组合句子（包含标点）
         const fullSentences = [];
         for (let i = 0; i < sentences.length; i += 2) {
@@ -245,9 +308,9 @@ export class EventPopup {
                 fullSentences.push(sentence);
             }
         }
-        // 如果句子数量少于等于5句，直接返回原文
+        // 如果句子数量少于等于5句，直接返回处理后的文本
         if (fullSentences.length <= 5) {
-            return text;
+            return withBreaks;
         }
         // 超过5句，进行智能分段
         // 策略：每3-4句组成一个段落

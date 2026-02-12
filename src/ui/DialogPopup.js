@@ -5,11 +5,7 @@
 export class DialogPopup {
     constructor() {
         this.mask = null;
-        const el = document.getElementById("event");
-        if (!el) {
-            throw new Error("Missing event container.");
-        }
-        this.container = el;
+        // 不绑定到特定容器，而是直接添加到 body
     }
     /**
      * 显示输入弹窗
@@ -18,6 +14,9 @@ export class DialogPopup {
         this.clear();
         this.mask = document.createElement("div");
         this.mask.className = "special-mask";
+        this.mask.style.position = "fixed";
+        this.mask.style.inset = "0";
+        this.mask.style.zIndex = "10000";
         const card = document.createElement("div");
         card.className = "special-card";
         const titleEl = document.createElement("h2");
@@ -66,7 +65,7 @@ export class DialogPopup {
         card.appendChild(inputWrap);
         card.appendChild(buttons);
         this.mask.appendChild(card);
-        this.container.appendChild(this.mask);
+        document.body.appendChild(this.mask);
         // 聚焦输入框
         setTimeout(() => input.focus(), 100);
     }
@@ -77,6 +76,9 @@ export class DialogPopup {
         this.clear();
         this.mask = document.createElement("div");
         this.mask.className = "special-mask";
+        this.mask.style.position = "fixed";
+        this.mask.style.inset = "0";
+        this.mask.style.zIndex = "10000";
         const card = document.createElement("div");
         card.className = "special-card";
         const titleEl = document.createElement("h2");
@@ -110,7 +112,7 @@ export class DialogPopup {
         card.appendChild(messageEl);
         card.appendChild(buttons);
         this.mask.appendChild(card);
-        this.container.appendChild(this.mask);
+        document.body.appendChild(this.mask);
     }
     /**
      * 显示警告弹窗（只有确定按钮）
@@ -119,6 +121,9 @@ export class DialogPopup {
         this.clear();
         this.mask = document.createElement("div");
         this.mask.className = "special-mask";
+        this.mask.style.position = "fixed";
+        this.mask.style.inset = "0";
+        this.mask.style.zIndex = "10000";
         const card = document.createElement("div");
         card.className = "special-card";
         const titleEl = document.createElement("h2");
@@ -142,7 +147,7 @@ export class DialogPopup {
         card.appendChild(messageEl);
         card.appendChild(buttons);
         this.mask.appendChild(card);
-        this.container.appendChild(this.mask);
+        document.body.appendChild(this.mask);
     }
     /**
      * 清除弹窗

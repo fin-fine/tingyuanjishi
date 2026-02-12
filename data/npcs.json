@@ -4,5 +4,23 @@
     "name": "Jinshu",
     "favor": 0,
     "tags": ["rival", "petty"]
+  },
+  {
+    "id": "lin_concubine",
+    "name": "林姨娘",
+    "favor": 0,
+    "tags": ["concubine", "refined", "strategic"]
+  },
+  {
+    "id": "wang_concubine",
+    "name": "王姨娘",
+    "favor": 0,
+    "tags": ["concubine", "unfortunate", "rebellious"]
+  },
+  {
+    "id": "su_concubine",
+    "name": "苏姨娘",
+    "favor": 0,
+    "tags": ["concubine", "charming", "scheming"]
   }
 ]

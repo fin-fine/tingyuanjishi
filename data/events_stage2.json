@@ -1,0 +1,3481 @@
+[
+  {
+    "id": "s2_0001",
+    "title": "主母进门",
+    "type": "fixed",
+    "weight": 0.2,
+    "trigger": {
+      "turn_range": [
+        23,
+        23
+      ]
+    },
+    "text": "景和十四年正月初八，少爷要娶亲了。新夫人进门，正院灯火通明，人人都屏着气等她开口立规矩。侯府家务逐渐交到她手中，外头都说她持家有方。你被安排在侧门迎接，风里全是新漆的味道。她出身清贵，爱整洁，也爱掌控，进门第一步便在衡量每个人的分寸。她当众立了一堆规矩，声音不高却带着不容置疑的威严。但当晚散场后，她却让赵嬷嬷给每个人发了见面赏银，还附了一句：'从此大家都在一个院子里，互相体谅。'你第一次感受到，她立威时冷如霜雪，施恩时却还有些人情。",
+    "once": true,
+    "options": [
+      {
+        "id": "opt_greet",
+        "text": "A. 依礼迎接，言辞得体",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 3,
+          "status": 3
+        },
+        "resultText": "你规矩周全，主母多看了你一眼，那眼神像在掂量一枚新棋。晚间她当众立威，私下却让赵嬷嬷给你额外赏了一两银子，附了句话：'你做得好，我看在眼里。以后好好做事，我不是不通人情的人。'她喜欢的是可用之人，也懂得赏罚分明。"
+      },
+      {
+        "id": "opt_low",
+        "text": "B. 低调避让，先观风向",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 2,
+          "status": 1,
+          "favor": 1
+        },
+        "resultText": "你不抢风头，却也不失礼数。你把自己放在恰到好处的位置。"
+      },
+      {
+        "id": "opt_gift",
+        "text": "C. 备一份薄礼讨巧",
+        "apCost": 0,
+        "require": {
+          "stat_cash": ">= 3"
+        },
+        "cost": {
+          "cash": -3
+        },
+        "reward": {
+          "npc_matron": 3,
+          "status": 2,
+          "network": 2
+        },
+        "resultText": "礼不在贵，在心意。主母态度缓和了些，轻声道：'你有心了。女人在这府里，得懂得进退，也得懂得人情。'你知道这点小面子值钱，也看到了她严厉下面的那些宽和。",
+        "failText": "你囊中羞涩，只好作罢。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0002",
+    "title": "主母查账",
+    "type": "random",
+    "weight": 1.2,
+    "trigger": {
+      "turn_range": [
+        24,
+        40
+      ]
+    },
+    "once": false,
+    "text": "少夫人接管家务不久，便开始抽查各处账目。今日她点名让你协助核对小厨房的账。她坐在主位上，声音不高却带着不容置疑的威严，帐页翻动的声音比训斥更锋利。但当其他人退下后，她挥手让你坐下，声音缓了些：\"这些事得有人管，不然就乱了套。虽说我初掌家务，但该立的规矩还是要立。你记着，规矩是立给别人看的，私底下我也明白大家都不容易。\"",
+    "options": [
+      {
+        "id": "opt_check",
+        "text": "A. 细细核对，务求无错",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 3,
+          "status": 2
+        },
+        "cost": {
+          "health": -2
+        },
+        "resultText": "你把账目一笔不漏抄清，得了个稳妥的评价。主母的眼神少了几分戒备。"
+      },
+      {
+        "id": "opt_delegate",
+        "text": "B. 交给管事，自己做旁观",
+        "apCost": 1,
+        "require": {
+          "stat_network": ">= 20"
+        },
+        "cost": {
+          "network": -2
+        },
+        "reward": {
+          "status": 1,
+          "npc_matron": -2,
+          "cash": 1
+        },
+        "resultText": "你借人力省了心，却被主母看出敷衍。她没说话，但你心里发紧。",
+        "failText": "你在府中没有合适的人情可借。"
+      },
+      {
+        "id": "opt_hold",
+        "text": "C. 暗留一笔作私房",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 60"
+        },
+        "cost": {
+          "status": -2
+        },
+        "reward": {
+          "cash": 3,
+          "scheming": 2,
+          "npc_matron": -3
+        },
+        "resultText": "你拿到了银子，但也埋下隐患。账上的缺口像一颗刺，迟早会扎到人。",
+        "failText": "你手脚不够快，最终只能照规矩行事。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0101",
+    "title": "新规矩试行",
+    "type": "random",
+    "weight": 1,
+    "trigger": {
+      "turn_range": [
+        23,
+        60
+      ]
+    },
+    "once": false,
+    "text": "少夫人立下新规，要求院内丫头每日立规矩一刻钟。她坐在主位上，不提高声，却句句压得住人。你们站成一排，大气都不敢喊。但第二日少夫人却私下让赵嬷嬷给每个人发了跨脚的薄垫，附了句话：\"规矩要立，但人也不能真的站坏了。\"你心里有了些许明白：她严厉时是规矩，宽和时是人情。",
+    "options": [
+      {
+        "id": "opt_stand",
+        "text": "A. 站得端正，不出差错",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 2,
+          "status": 2
+        },
+        "cost": {
+          "health": -2
+        },
+        "resultText": "你站得稳当，规矩看得住。旁人看你的眼神多了几分慎重。"
+      },
+      {
+        "id": "opt_advise",
+        "text": "B. 找机会献一条更省力的法子",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 40"
+        },
+        "reward": {
+          "npc_matron": 3,
+          "favor": 1
+        },
+        "resultText": "你话说得巧，主母点头采纳。她看着你，目光里有些认可：\"你有心也有眼色，难得。咱们女人在这府里，得会用脑子，不然就只能被人拿捐。\"你在正院的分量悄悄加了一点。",
+        "failText": "你话没说到点上，只能闭嘴退下。"
+      },
+      {
+        "id": "opt_ignore",
+        "text": "C. 佯装不懂，混过去",
+        "apCost": 1,
+        "reward": {
+          "status": -2,
+          "npc_matron": -3
+        },
+        "resultText": "被主母撞见，你当众挨了几句训斥，声色俱厉。但晚间她却私下叫你过去，声音平静了许多：\"人前我得立威，但规矩不是死的。下次长点眼色，别让我为难。\"你看到她眼中的疲惫，明白她的严厉也是被逼出来的。规矩从此更难糊弄。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0201",
+    "title": "林姨娘初来乍到",
+    "type": "random",
+    "weight": 0.6,
+    "trigger": {
+      "turn_range": [
+        38,
+        50
+      ],
+      "npc_lin_concubine": ">= 0",
+      "event_s2_lin_concubine_enter": true
+    },
+    "once": true,
+    "text": "林姨娘入府已有些时日，府里的人都在议论这位新来的姨娘。她举止端庄，谈吐不凡，琴棋书画样样精通，确实有大家闺秀的风范。\n她爱好香料，袖口常有淡淡檀香，话说得柔顺，目光却是锐利的。你看见她行礼时脊背挺得笔直，却在转身的瞬间露出一丝疲惫——那是同样困在笼中的人才会有的神情。\n主母接见时对她很严厉，立了一堆规矩，但散场后你听见主母低声对嬷嬷说：\"唉，又一个进来的。\"那语气里既有威严，也有一丝同病相怜。",
+    "options": [
+      {
+        "id": "opt_help",
+        "text": "A. 主动照拂，示好留缘",
+        "apCost": 1,
+        "reward": {
+          "npc_lin_concubine": 3,
+          "npc_matron": 1,
+          "status": 1
+        },
+        "resultText": "她记住了你的情分，笑里带着分寸。她善于把人情做成一张网。临走时她压低声音：\"这宅子里女人为难女人，最没意思。咱们都不容易。\"你知道这话三分真七分假，但那三分真心已经足够珍贵。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": {
+              "npc_lin_concubine": 4,
+              "npc_matron": 1,
+              "status": 2,
+              "scheming": 1
+            },
+            "resultText": "她记住了你的情分，笑里带着分寸。你们照拂彼此，像两个困在同一个笼子里的人抱团取暖。可你心里清楚——你们争的不是男人的心，而是这个宅子里那一点可怜的话语权。她是你的盟友，也是镜子。"
+          },
+          {
+            "min": 40
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_lin_concubine": 2,
+              "status": 1
+            },
+            "resultText": "她记住了你的情分，笑里带着分寸。你忽然有些难过——两个女人在院子里周旋，图的到底是什么？是爱，还是那个被称作'位分'的东西？"
+          }
+        ]
+      },
+      {
+        "id": "opt_neutral",
+        "text": "B. 客气疏离，不惹是非",
+        "apCost": 1,
+        "reward": {
+          "npc_lin_concubine": 1,
+          "status": 1
+        },
+        "resultText": "你留了礼数，也留了退路。你打算先看她脚下的路。"
+      },
+      {
+        "id": "opt_press",
+        "text": "C. 当众压她气势",
+        "apCost": 1,
+        "require": {
+          "stat_status": ">= 30"
+        },
+        "reward": {
+          "npc_lin_concubine": -3,
+          "status": -2,
+          "npc_matron": -3
+        },
+        "resultText": "你压住了她，却惹了主母不快。当晚主母单独叫你过去，语气严厉：\"院里不许闹，这是规矩。\"但说完她顿了顿，目光复杂：\"你们女人何苦为难女人？我当年也见过这样的事，都是一笼子里的鸟，争来争去还不是困在笼里。\"她挥手让你退下，脸上的威严掩不住眉间的一丝倦意。",
+        "failText": "你底气不够，话没说出口。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0202",
+    "title": "林姨娘示好",
+    "type": "random",
+    "weight": 1,
+    "trigger": {
+      "turn_range": [
+        40,
+        80
+      ],
+      "npc_lin_concubine": ">= 3",
+      "event_s2_lin_concubine_enter": true
+    },
+    "once": false,
+    "text": "林姨娘私下送来一份点心，话里话外示好，像在试探你的态度与底线。她看似柔顺，实则眼神锐利。但当你们独处时，她忽然卸下了那层小心翼翼的笑意，叹了口气：\"你我都是一样的人，在这府里谁不是看人眼色？我不想争，只想有口安稳饭吃。\"她说完又立刻警觉起来，仿佛刚才的示弱只是一瞬间的真心。",
+    "options": [
+      {
+        "id": "opt_accept",
+        "text": "A. 收下礼，表示谢意",
+        "apCost": 1,
+        "reward": {
+          "npc_lin_concubine": 3,
+          "cash": 1
+        },
+        "resultText": "你们暂时结了善缘，至少表面上无波无澜。她也在等你下一步。"
+      },
+      {
+        "id": "opt_distance",
+        "text": "B. 保持距离，婉拒回礼",
+        "apCost": 1,
+        "reward": {
+          "status": 1,
+          "npc_lin_concubine": -1
+        },
+        "resultText": "你守住分寸，却也显得疏冷。对方目光淡了三分。"
+      },
+      {
+        "id": "opt_trade",
+        "text": "C. 借机交换些消息",
+        "apCost": 1,
+        "require": {
+          "stat_network": ">= 20"
+        },
+        "cost": {
+          "network": -2
+        },
+        "reward": {
+          "npc_lin_concubine": 2,
+          "item_gossip": 1,
+          "scheming": 1
+        },
+        "resultText": "你换到一条可用的风声，像在掌心多握了一把钥匙。林姨娘见识广，消息灵通，与她交换情报或许是个不错的选择。",
+        "failText": "你人脉不足，话递不出去。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0301",
+    "title": "夜里召见",
+    "type": "random",
+    "weight": 1,
+    "trigger": {
+      "turn_range": [
+        24,
+        90
+      ],
+      "stat_status": ">= 12",
+      "stat_health": ">= 40",
+      "item_preg_stage": "== 0",
+      "item_preg_seed": "== 0"
+    },
+    "once": false,
+    "text": "今夜少爷忽然传话，你被点名去伺候安寝。正院的灯火亮得更久，你知道这是一道新机会。少爷在外头向来冷静，却也不愿让妻子觉得他身边无人可用。",
+    "options": [
+      {
+        "id": "opt_comply",
+        "text": "A. 顺从安排，稳住眷顾",
+        "apCost": 1,
+        "chance": 0.4,
+        "chanceStat": "favor",
+        "reward": {
+          "favor": 3,
+          "health": -2,
+          "item_preg_seed": 1
+        },
+        "resultText": "你得了眷顾，心里隐约有了盼头。屋外风停了，路却更险了。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": {
+              "favor": 3,
+              "health": -2,
+              "item_preg_seed": 1
+            },
+            "resultText": "你顺从地去了。事毕，你望着帐顶的纹样，忽然想起一句话：生子是女人在宅门里唯一的上升之路。你说不清心里是什么滋味——是期待母凭子贵，还是悲哀于这条路如此狭窄。屋外风停了，你的心却没有。"
+          },
+          {
+            "min": 40
+          },
+          {
+            "min": 0,
+            "reward": {
+              "favor": 3,
+              "health": -2,
+              "item_preg_seed": 1
+            },
+            "resultText": "你顺从地去了。那一夜你睡得很浅，梦里全是模糊的面孔。醒来时你想，这大概就是女人的筹码——用身体换位置，用子嗣换安稳。可你分不清，这份期待里有几分是真心，几分是算计。"
+          }
+        ],
+        "failReward": {
+          "favor": -2,
+          "health": -1
+        },
+        "failResultText": "这一夜平平无奇，未起波澜。你把那点不甘压下去。"
+      },
+      {
+        "id": "opt_decline",
+        "text": "B. 推辞称疲，求个清静",
+        "apCost": 1,
+        "require": {
+          "stat_favor": ">= 55"
+        },
+        "reward": {
+          "favor": -3,
+          "npc_matron": 1,
+          "status": -1
+        },
+        "resultText": "少夫人认可你的稳重，但少爷有些不悦。你得了一个人的体面，失了另一个人的心。两头都要顾，才是正院里真正的难。",
+        "failText": "你没有足够的底气推辞。"
+      },
+      {
+        "id": "opt_ill",
+        "text": "C. 借口养病不去",
+        "apCost": 1,
+        "reward": {
+          "status": -1,
+          "favor": -2
+        },
+        "resultText": "你避过一夜，也避开了机会。机会不会天天开门。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_preg_high",
+    "title": "喜脉确证",
+    "type": "random",
+    "weight": 3,
+    "trigger": {
+      "turn_range": [
+        24,
+        90
+      ],
+      "item_preg_seed": ">= 1",
+      "item_preg_confirm": "== 0",
+      "stat_favor": ">= 70",
+      "stat_health": ">= 70",
+      "stat_status": ">= 30",
+      "chance": 0.6
+    },
+    "once": false,
+    "text": "你近来嗜睡乏力，脉象与往日不同。连茶汤的味道都淡了几分。",
+    "options": [
+      {
+        "id": "opt_check",
+        "text": "A. 请大夫仔细诊脉",
+        "apCost": 0,
+        "reward": {
+          "item_preg_confirm": 1,
+          "item_preg_stage": 1,
+          "item_preg_seed": -1,
+          "favor": 2,
+          "npc_matron": 1
+        },
+        "resultText": "大夫说你确有喜，府中气氛陡然不同。人心像被拨亮的灯，一下子全醒了。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_preg_mid",
+    "title": "喜脉微动",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [
+        24,
+        90
+      ],
+      "item_preg_seed": ">= 1",
+      "item_preg_confirm": "== 0",
+      "stat_favor": ">= 55",
+      "stat_health": ">= 60",
+      "stat_status": ">= 20",
+      "chance": 0.4
+    },
+    "once": false,
+    "text": "你忽觉胃口变小，身上也有些倦意。窗外的风一吹，你都忍不住缩肩。",
+    "options": [
+      {
+        "id": "opt_check",
+        "text": "A. 让人悄悄请大夫",
+        "apCost": 0,
+        "reward": {
+          "item_preg_confirm": 1,
+          "item_preg_stage": 1,
+          "item_preg_seed": -1,
+          "favor": 1,
+          "npc_matron": 1
+        },
+        "resultText": "诊脉后，你被叮嘱要多加小心。屋里多了看守，也多了眼睛。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_preg_low",
+    "title": "似有喜讯",
+    "type": "random",
+    "weight": 1,
+    "trigger": {
+      "turn_range": [
+        24,
+        90
+      ],
+      "item_preg_seed": ">= 1",
+      "item_preg_confirm": "== 0",
+      "stat_favor": ">= 40",
+      "stat_health": ">= 45",
+      "chance": 0.25
+    },
+    "once": false,
+    "text": "你心口发闷，隐约觉得有些不对劲。心里一丝火苗忽明忽暗。",
+    "options": [
+      {
+        "id": "opt_check",
+        "text": "A. 咬牙去问诊",
+        "apCost": 0,
+        "reward": {
+          "item_preg_confirm": 1,
+          "item_preg_stage": 1,
+          "item_preg_seed": -1,
+          "status": 1
+        },
+        "resultText": "你被告知有喜，却也要格外谨慎。喜讯像风，风里也有刀。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_preg_fail",
+    "title": "月信如期",
+    "type": "random",
+    "weight": 1,
+    "trigger": {
+      "turn_range": [
+        24,
+        90
+      ],
+      "item_preg_seed": ">= 1",
+      "item_preg_confirm": "== 0",
+      "chance": 0.25
+    },
+    "once": false,
+    "text": "月信如期而至，你把心里的念头放下。盼望与失落混在一起，像一口凉水。",
+    "options": [
+      {
+        "id": "opt_continue",
+        "text": "A. 收起心思，照旧行事",
+        "apCost": 0,
+        "reward": {
+          "item_preg_seed": -1,
+          "health": -1
+        },
+        "resultText": "你稳住情绪，重新安排日常。心里那点火被你按住了。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_rumor_high",
+    "title": "流言扩散",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [
+        30,
+        90
+      ],
+      "item_gossip": ">= 1",
+      "stat_status": "<= 20",
+      "stat_network": "<= 15",
+      "chance": 0.5
+    },
+    "once": false,
+    "text": "闲话传得厉害，似乎有人刻意推波助澜。你能感觉到有人在暗处笑。",
+    "options": [
+      {
+        "id": "opt_notice",
+        "text": "A. 先按下不提",
+        "apCost": 0,
+        "reward": {
+          "item_rumor_active": 1,
+          "item_gossip": -1,
+          "status": -2,
+          "npc_matron": -1
+        },
+        "resultText": "流言坐大，你不得不应对。再不动手就要被风裹走。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_rumor_mid",
+    "title": "闲话起势",
+    "type": "random",
+    "weight": 1.5,
+    "trigger": {
+      "turn_range": [
+        30,
+        90
+      ],
+      "item_gossip": ">= 1",
+      "stat_status": "<= 40",
+      "stat_network": "<= 25",
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "院里有人低声议论，你隐约听到几句自己的名字。脚步声在廊下来回，像踩在你的心上。",
+    "options": [
+      {
+        "id": "opt_notice",
+        "text": "A. 暂且观望",
+        "apCost": 0,
+        "reward": {
+          "item_rumor_active": 1,
+          "item_gossip": -1,
+          "status": -1
+        },
+        "resultText": "你察觉风向有变。风起时不动，往往是最难的。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_rumor_low",
+    "title": "风声浅浅",
+    "type": "random",
+    "weight": 1,
+    "trigger": {
+      "turn_range": [
+        30,
+        90
+      ],
+      "item_gossip": ">= 1",
+      "stat_status": ">= 41",
+      "stat_network": ">= 20",
+      "chance": 0.2
+    },
+    "once": false,
+    "text": "几句闲话在院里掠过，却没能成势。有人想点火，却没找到引线。",
+    "options": [
+      {
+        "id": "opt_notice",
+        "text": "A. 心中警惕",
+        "apCost": 0,
+        "reward": {
+          "item_rumor_active": 1,
+          "item_gossip": -1,
+          "status": -1
+        },
+        "resultText": "你仍需提防后续动静。小火也能成势。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_matron_warm",
+    "title": "主母态度转暖",
+    "type": "random",
+    "weight": 0.8,
+    "trigger": {
+      "turn_range": [
+        23,
+        120
+      ],
+      "stat_status": ">= 35",
+      "stat_favor": ">= 45",
+      "stat_network": ">= 20",
+      "item_gossip": "<= 0",
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "主母对你言辞缓和了些，差事也顺当起来。她的态度像门缝，终于开了一点光。",
+    "options": [
+      {
+        "id": "opt_accept",
+        "text": "A. 稳住规矩",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 3,
+          "status": 1
+        },
+        "resultText": "正院对你多了几分认可。你知道这一步来之不易。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_matron_cold",
+    "title": "主母态度转冷",
+    "type": "random",
+    "weight": 0.8,
+    "trigger": {
+      "turn_range": [
+        23,
+        120
+      ],
+      "stat_status": "<= 20",
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "主母对你更挑剔了些，差事也不好做。她的眼神像冷雨，落在你身上。",
+    "options": [
+      {
+        "id": "opt_accept",
+        "text": "A. 先忍一忍",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": -3,
+          "status": -1
+        },
+        "resultText": "你感到压力渐大。每一步都像走在薄冰上。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_matron_gossip",
+    "title": "风声牵连",
+    "type": "random",
+    "weight": 0.8,
+    "trigger": {
+      "turn_range": [
+        23,
+        120
+      ],
+      "item_gossip": ">= 1",
+      "chance": 0.4
+    },
+    "once": false,
+    "text": "风声传进正院，主母面色不善。你听见她拨弄茶盖的声响，心里一紧。",
+    "options": [
+      {
+        "id": "opt_accept",
+        "text": "A. 静待过风",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": -3,
+          "status": -1
+        },
+        "resultText": "你被牵连了几分。要摆脱这层影子不容易。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0302",
+    "title": "有喜风声",
+    "type": "random",
+    "weight": 0.8,
+    "trigger": {
+      "turn_range": [
+        24,
+        90
+      ],
+      "item_preg_confirm": ">= 1",
+      "item_preg_stage": "== 1"
+    },
+    "once": false,
+    "text": "你近来倦怠嗜睡，府中有人私下议论你是否有喜。风声像潮水，一退一涨。",
+    "options": [
+      {
+        "id": "opt_report",
+        "text": "A. 向主母报喜，请她安排稳妥",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 3,
+          "status": 2
+        },
+        "resultText": "主母派了人照看，你暂得安稳。稳中也有约束。"
+      },
+      {
+        "id": "opt_hide",
+        "text": "B. 暂时隐瞒，静观动静",
+        "apCost": 1,
+        "reward": {
+          "scheming": 2,
+          "status": -1
+        },
+        "resultText": "你把话咽回肚里，心里更谨慎。你要自己先稳住。"
+      },
+      {
+        "id": "opt_tell",
+        "text": "C. 先告知少爷",
+        "apCost": 1,
+        "reward": {
+          "favor": 3,
+          "npc_matron": -3
+        },
+        "resultText": "少爷欣然，却引来少夫人冷眼。喜讯也能结成疙瘩。"
+      }
+    ]
+  },
+  {
+    "id": "s2_preg_stage_to_2",
+    "title": "孕期渐显",
+    "type": "random",
+    "weight": 5,
+    "trigger": {
+      "turn_range": [
+        29,
+        98
+      ],
+      "item_preg_stage": "== 1",
+      "item_preg_confirm": ">= 1"
+    },
+    "once": true,
+    "text": "三个月过去，你的孕相已经显露。府里的人看你的眼神都不同了，腹中的孩子成了你在这深宅里的筹码。大夫诊脉后说胎相稳固，已经进入孕中期。",
+    "options": [
+      {
+        "id": "opt_continue",
+        "text": "A. 继续小心调养",
+        "apCost": 0,
+        "reward": {
+          "item_preg_stage": 1,
+          "health": 2,
+          "npc_matron": 2
+        },
+        "resultText": "你更加小心翼翼，生怕有任何闪失。这个孩子是你的希望，也是你的命。主母也更加重视你，派了专人照看。"
+      }
+    ]
+  },
+  {
+    "id": "s2_preg_stage_to_3",
+    "title": "临盆在即",
+    "type": "random",
+    "weight": 5,
+    "trigger": {
+      "turn_range": [
+        32,
+        104
+      ],
+      "item_preg_stage": "== 2"
+    },
+    "once": true,
+    "text": "又过了三个月，你的肚子已经很大了。产婆来看过，说胎位正，再过些时日就要临盆了。你的心情既期待又恐惧——这一关关乎生死。",
+    "options": [
+      {
+        "id": "opt_prepare",
+        "text": "A. 准备待产",
+        "apCost": 0,
+        "reward": {
+          "item_preg_stage": 1,
+          "status": 3,
+          "favor": 2
+        },
+        "resultText": "你开始为生产做准备。主母派人送来了补品，还安排了最好的稳婆。少爷也时常来看你，眼中藏着期待。你知道，这一关过了，你在府里的地位就稳了。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0310",
+    "title": "孕中期调养",
+    "type": "random",
+    "weight": 0.9,
+    "trigger": {
+      "turn_range": [
+        26,
+        95
+      ],
+      "item_preg_stage": "== 1"
+    },
+    "once": false,
+    "text": "你腹中渐稳，正院送来调养安排。屋里添了药香，连步子都变得小心。",
+    "options": [
+      {
+        "id": "opt_matron",
+        "text": "A. 依主母安排调养",
+        "apCost": 1,
+        "cost": {
+          "cash": -1
+        },
+        "reward": {
+          "health": 3,
+          "npc_matron": 2
+        },
+        "resultText": "你按规矩调养，脉象安稳。每一碗汤药都像一根绳。"
+      },
+      {
+        "id": "opt_self",
+        "text": "B. 自行调养，避开正院",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 40"
+        },
+        "reward": {
+          "health": 2,
+          "scheming": 2
+        },
+        "resultText": "你用自己的法子护着身子，既谨慎也更自由。",
+        "failText": "你没有把握，只能顺从正院安排。"
+      },
+      {
+        "id": "opt_work",
+        "text": "C. 忍着继续干活",
+        "apCost": 1,
+        "reward": {
+          "status": 2,
+          "health": -4
+        },
+        "resultText": "你强撑着做事，脸色却越来越差。你知道自己在赌。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0320",
+    "title": "孕后期风波",
+    "type": "random",
+    "weight": 0.9,
+    "trigger": {
+      "turn_range": [
+        28,
+        98
+      ],
+      "item_preg_stage": "== 2"
+    },
+    "once": false,
+    "text": "你怀相渐显，府中来访多了几分试探。每一句好话背后都有秤砣。",
+    "options": [
+      {
+        "id": "opt_diet",
+        "text": "A. 严控饮食，稳住胎象",
+        "apCost": 1,
+        "reward": {
+          "health": 3,
+          "npc_matron": 1
+        },
+        "resultText": "你小心谨慎，胎气稳了些。你把每一口都当成护身符。"
+      },
+      {
+        "id": "opt_visit",
+        "text": "B. 接受姨娘探视",
+        "apCost": 1,
+        "reward": {
+          "npc_rival": 3,
+          "status": 1
+        },
+        "resultText": "你借探视稳住表面交情。面子稳了，心却不敢放松。"
+      },
+      {
+        "id": "opt_feast",
+        "text": "C. 强撑去侍宴",
+        "apCost": 1,
+        "reward": {
+          "status": 3,
+          "health": -3
+        },
+        "resultText": "你撑住了场面，但身子吃不消。强撑的代价迟早要还。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0330",
+    "title": "临产安排",
+    "type": "random",
+    "weight": 0.7,
+    "trigger": {
+      "turn_range": [
+        30,
+        110
+      ],
+      "item_preg_stage": "== 3"
+    },
+    "once": false,
+    "text": "产期将近，产房由谁掌事成了众人关注的焦点。你明白，这不只是生死，也是名分。少夫人要的是家声，少爷要的是子嗣，你要的是活路。",
+    "options": [
+      {
+        "id": "opt_matron_room",
+        "text": "A. 依主母安排产房",
+        "apCost": 1,
+        "reward": {
+          "health": 2,
+          "npc_matron": 3,
+          "status": 2
+        },
+        "resultText": "产房安排妥当，你暂时稳住了位置。"
+      },
+      {
+        "id": "opt_lord_room",
+        "text": "B. 求少爷做主",
+        "apCost": 1,
+        "reward": {
+          "favor": 3,
+          "npc_matron": -2
+        },
+        "resultText": "少爷护你一程，但少夫人心里生了疙瘩。护得住人，护不住心。"
+      },
+      {
+        "id": "opt_busy",
+        "text": "C. 强撑奔走，照顾两头",
+        "apCost": 1,
+        "chance": 0.5,
+        "chanceStat": "health",
+        "reward": {
+          "status": 1
+        },
+        "resultText": "你熬过奔走，把产房安排住了。手心都是汗，却还得笑着站稳。",
+        "failReward": {
+          "health": -20,
+          "status": -5
+        },
+        "failResultText": "你精力不济，胎气大伤。屋里的空气都跟着沉下去。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0401",
+    "title": "流言四起",
+    "type": "random",
+    "weight": 0.8,
+    "trigger": {
+      "turn_range": [
+        30,
+        90
+      ],
+      "item_rumor_active": ">= 1"
+    },
+    "once": false,
+    "text": "院里流言暗涌，有人影影绰绰说起你的去处。风里都是半句话，却句句要命。",
+    "options": [
+      {
+        "id": "opt_suppress",
+        "text": "A. 花钱压下去",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 2"
+        },
+        "cost": {
+          "cash": -2,
+          "item_rumor_active": -1
+        },
+        "reward": {
+          "status": 1,
+          "npc_matron": 1
+        },
+        "resultText": "你打点了几处口风，暂时安静。银钱换来一段缓冲。",
+        "failText": "你银钱不足，打点不动。"
+      },
+      {
+        "id": "opt_ride",
+        "text": "B. 顺水推舟，把话头引开",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 50"
+        },
+        "cost": {
+          "item_rumor_active": -1
+        },
+        "reward": {
+          "scheming": 2,
+          "npc_rival": -2,
+          "status": -1
+        },
+        "resultText": "你转移了矛头，但名声也受了损。成事也要付代价。",
+        "failText": "你心计不足，话头反而落到自己身上。"
+      },
+      {
+        "id": "opt_ignore",
+        "text": "C. 装作无知，任其流传",
+        "apCost": 1,
+        "cost": {
+          "item_rumor_active": -1
+        },
+        "reward": {
+          "status": -2
+        },
+        "resultText": "流言慢慢发酵，你名声受损。人言像风，吹久了就成势。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0410",
+    "title": "主母转冷",
+    "type": "random",
+    "weight": 0.6,
+    "trigger": {
+      "turn_range": [
+        30,
+        90
+      ],
+      "npc_matron": "<= -5"
+    },
+    "once": false,
+    "text": "主母对你态度渐冷，正院差事也被冷了下来。你被晾在风口，连暖都难捂。",
+    "options": [
+      {
+        "id": "opt_apology",
+        "text": "A. 主动请罪，求个台阶",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 3,
+          "status": -1
+        },
+        "resultText": "你低了头，换来一线缓和。认输只是为了下一局。"
+      },
+      {
+        "id": "opt_mediate",
+        "text": "B. 请人说和",
+        "apCost": 1,
+        "require": {
+          "stat_network": ">= 25"
+        },
+        "cost": {
+          "network": -3
+        },
+        "reward": {
+          "npc_matron": 3,
+          "cash": -1
+        },
+        "resultText": "你托人说情，总算稳住局面。人情是银子花出来的路。",
+        "failText": "你没有合适的人情可托。"
+      },
+      {
+        "id": "opt_retreat",
+        "text": "C. 以退为进，先保全自己",
+        "apCost": 1,
+        "reward": {
+          "favor": 2,
+          "npc_matron": -1,
+          "status": -2
+        },
+        "resultText": "你避开锋芒，但也被正院边缘。退一步是为了不被推下去。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0501",
+    "title": "过继提议",
+    "type": "random",
+    "weight": 0.5,
+    "trigger": {
+      "turn_range": [
+        34,
+        110
+      ],
+      "item_child": ">= 1"
+    },
+    "once": false,
+    "text": "少夫人试探你，提出由她来抚养孩子，以稳名分。她坐在正院的主位上，语气很轻，却字字是权衡：'这样对孩子好，对你也好。侯府现在无嫡子，这孩子若记在我名下，将来也是体面的。'她说得像是为你着想，其实更在意府里的体面与秩序。她暂时无子，对这个孩子似有几分期待，但规矩大过人情，她的宽和从来有限度。",
+    "options": [
+      {
+        "id": "opt_accept",
+        "text": "A. 顺势同意，求一个安稳",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 3,
+          "status": 2,
+          "favor": -3
+        },
+        "resultText": "你换来了名分上的安全。少夫人满意地点头，私下却让赵嬷嬷给你送了一包补品，附了句话：\"你识大体，我也不会让你吃亏。孩子我会好好养着。\"她说这话时语气真诚，你知道她暂时无子，对这孩子或许也有几分期待。只是安稳背后，也是一层枷锁。"
+      },
+      {
+        "id": "opt_refuse",
+        "text": "B. 坚持自己抚养",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": -3,
+          "status": 1
+        },
+        "resultText": "你保住了孩子，却得罪了正院。少夫人当场脸色阴沉，但散场后她却叫住你，声音冷静：\"你要明白，这是你的选择。以后孩子有什么事，别指望正院帮忙。但我也不会真的为难你母子。\"她说完转身就走，你看到她背影里的一丝疲惫——她也不想为难女人，只是规矩容不得你太顺心。你断了退路，换成了一把利刃。"
+      },
+      {
+        "id": "opt_negotiate",
+        "text": "C. 提条件换资源",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 60"
+        },
+        "cost": {
+          "network": -2
+        },
+        "reward": {
+          "npc_matron": 3,
+          "cash": 3
+        },
+        "resultText": "你换来一笔资源，但欠了人情。人情账最难清。",
+        "failText": "你条件开得不巧，被主母断然回绝。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0510",
+    "title": "夜啼难眠",
+    "type": "random",
+    "weight": 0.8,
+    "trigger": {
+      "turn_range": [
+        35,
+        120
+      ],
+      "item_child": ">= 1"
+    },
+    "once": false,
+    "text": "孩子夜里忽然大哭，屋里一阵乱。你披衣坐起，手心里都是汗。",
+    "options": [
+      {
+        "id": "opt_soothe",
+        "text": "A. 亲自抱着哄到天亮",
+        "apCost": 1,
+        "reward": {
+          "favor": 2,
+          "status": 1,
+          "health": -3
+        },
+        "resultText": "你抱着孩子直到天色发白。人都看见你的辛苦，却也知道你舍不得放手。"
+      },
+      {
+        "id": "opt_matron_help",
+        "text": "B. 请赵嬷嬷安排乳母",
+        "apCost": 1,
+        "require": {
+          "npc_matron": ">= 3"
+        },
+        "cost": {
+          "cash": -1
+        },
+        "reward": {
+          "npc_matron": 2,
+          "status": 1,
+          "health": 1
+        },
+        "resultText": "乳母接了孩子，你也缓了一口气。赵嬷嬷笑了笑：\"府里规矩是护人的\"。",
+        "failText": "你还请不动正院的人手，只能自己哄。"
+      },
+      {
+        "id": "opt_rest",
+        "text": "C. 让乳母抱走，自己歇着",
+        "apCost": 1,
+        "reward": {
+          "health": 2,
+          "favor": -1,
+          "status": -1
+        },
+        "resultText": "你保了体力，却也被人悄声议论。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0520",
+    "title": "小病一场",
+    "type": "random",
+    "weight": 0.7,
+    "trigger": {
+      "turn_range": [
+        36,
+        120
+      ],
+      "item_child": ">= 1"
+    },
+    "once": false,
+    "text": "孩子发热，脸颊滚烫，你心里也烧着一把火。",
+    "options": [
+      {
+        "id": "opt_doctor",
+        "text": "A. 请郎中诊治",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 2"
+        },
+        "cost": {
+          "cash": -2
+        },
+        "reward": {
+          "status": 1,
+          "health": 1
+        },
+        "resultText": "郎中来得快，药方也稳。你把银子花在心头肉上。",
+        "failText": "你手头银钱不足，迟迟请不到郎中。"
+      },
+      {
+        "id": "opt_tonic",
+        "text": "B. 用温补汤缓一缓",
+        "apCost": 1,
+        "require": {
+          "item_tonic": ">= 1"
+        },
+        "cost": {
+          "item_tonic": -1
+        },
+        "reward": {
+          "health": 2,
+          "status": 1
+        },
+        "resultText": "汤药下去，孩子总算安稳些。你心里才松一口气。",
+        "failText": "你手里没有温补汤，只能干着急。"
+      },
+      {
+        "id": "opt_wait",
+        "text": "C. 忍一忍，等它自己退",
+        "apCost": 1,
+        "reward": {
+          "status": -2,
+          "health": -3
+        },
+        "resultText": "你在床边守了一夜。孩子退了热，你却被人说成心硬。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0530",
+    "title": "抱子见面",
+    "type": "random",
+    "weight": 0.6,
+    "trigger": {
+      "turn_range": [
+        38,
+        120
+      ],
+      "item_child": ">= 1"
+    },
+    "once": false,
+    "text": "少爷路过廊下，孩子醒着，眼睛亮得像星。你一时踌躇。",
+    "options": [
+      {
+        "id": "opt_show_child",
+        "text": "A. 抱过去让少爷看一眼",
+        "apCost": 1,
+        "reward": {
+          "favor": 3,
+          "status": 1
+        },
+        "resultText": "少爷停了脚步，眼神软了些。你知道，这是你们的筹码，也是牵绊。"
+      },
+      {
+        "id": "opt_salute",
+        "text": "B. 远远行礼，不上前",
+        "apCost": 1,
+        "reward": {
+          "favor": 1,
+          "status": 1
+        },
+        "resultText": "你守住分寸，少爷点了点头便走。"
+      },
+      {
+        "id": "opt_avoid",
+        "text": "C. 绕开正院，不惹闲话",
+        "apCost": 1,
+        "reward": {
+          "scheming": 1,
+          "npc_matron": -1
+        },
+        "resultText": "你避开了风口，却也让正院少了几分好感。"
+      }
+    ]
+  },
+  {
+    "id": "s2_0540",
+    "title": "启蒙小课",
+    "type": "random",
+    "weight": 0.6,
+    "trigger": {
+      "turn_range": [
+        44,
+        120
+      ],
+      "item_child": ">= 1"
+    },
+    "once": false,
+    "text": "孩子渐懂人事，你开始考虑启蒙。书声在院里回荡，像一根新的线。",
+    "options": [
+      {
+        "id": "opt_hire",
+        "text": "A. 请识字丫头教一教",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 1"
+        },
+        "cost": {
+          "cash": -1
+        },
+        "reward": {
+          "status": 2,
+          "network": 1
+        },
+        "resultText": "你买来了规矩和名声，也买来了一点安心。",
+        "failText": "你手里银钱不足，请不到合适的人。"
+      },
+      {
+        "id": "opt_selfteach",
+        "text": "B. 自己教，慢慢磨",
+        "apCost": 1,
+        "require": {
+          "stat_status": ">= 15"
+        },
+        "reward": {
+          "status": 1,
+          "scheming": 1,
+          "health": -1
+        },
+        "resultText": "你把自己仅有的体面和识字都教给了孩子。",
+        "failText": "你底子不够，教起来心里发虚。"
+      },
+      {
+        "id": "opt_nurse",
+        "text": "C. 随乳母，顺其自然",
+        "apCost": 1,
+        "reward": {
+          "health": 1,
+          "favor": -1
+        },
+        "resultText": "你省了力气，却也少了主动权。"
+      }
+    ]
+  },
+  {
+    "id": "s2_1000",
+    "title": "本次行动",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [
+        23,
+        120
+      ]
+    },
+    "text": "本月余下的时辰，你打算如何安排？",
+    "once": false,
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_sleep",
+        "text": "伺候安寝",
+        "apCost": 1,
+        "require": {
+          "stat_status": ">= 12",
+          "stat_health": ">= 40"
+        },
+        "reward": {
+          "favor": 3,
+          "item_after_sleep": 1,
+          "item_after_murmur": 1
+        },
+        "cost": {
+          "health": -2
+        },
+        "resultText": "红烛摇曳，帐幔低垂。你在暗中听见他均匀的呼吸，心里不知是安贴还是苦涩。第二日他先起身，走时用指尖碰了碰你的颔角——这已算是他难得的温柔。",
+        "failText": "你在门外站了片刻，小丫鬟歉意地向你摇头：'少爷说今夜不必了。'你转身时，窗里的灯光没有多停留一刻。"
+      },
+      {
+        "id": "opt_rules",
+        "text": "正院立规矩",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 3,
+          "status": 2
+        },
+        "cost": {
+          "health": -3
+        },
+        "resultText": "你在正院站了一整个上午，脚踝酸痛却不敢捂一下。主母打量你的眼神温和了几分，似乎对你的规矩还算满意。"
+      },
+      {
+        "id": "opt_sew",
+        "text": "抄录账目",
+        "apCost": 1,
+        "reward": {
+          "status": 2,
+          "cash": 0.5,
+          "scheming": 1
+        },
+        "cost": {
+          "health": -1
+        },
+        "resultText": "油灯下，你一笔一划地抄录账目，号码之间渐渐看出门道。哪家的绸缎高了三分，哪家的豆油少了三引——这些数字里藏着的人情世故，比书本有用得多。"
+      },
+      {
+        "id": "opt_gift_matron",
+        "text": "送礼打点（赵嬷嬷）",
+        "apCost": 1,
+        "require": {
+          "item_gift": ">= 1"
+        },
+        "cost": {
+          "item_gift": -1
+        },
+        "reward": {
+          "npc_matron": 2,
+          "status": 1,
+          "network": 2
+        },
+        "resultText": "嬷嬷接过礼盒，掉了掉分量，脸上浮出一丝满意的笑。她拍了拍你的手背：'你这孩子，懂事。'嬷嬷嘴里这句话，比什么赏银都值钱。",
+        "failText": "你翻遍了夷层，手里实在拿不出像样的礼。空着手去又无礼，只好作罢。"
+      },
+      {
+        "id": "opt_tonic",
+        "text": "喝温补汤",
+        "apCost": 1,
+        "require": {
+          "item_tonic": ">= 1"
+        },
+        "cost": {
+          "item_tonic": -1
+        },
+        "reward": {
+          "health": 3
+        },
+        "resultText": "一盏温补汤端在手里，热气熟的药香笼在鼻端。你一口一口慢慢啲，感觉暖意从能中一点点散开。身子是在这府里活下去的本钱，马虎不得。",
+        "failText": "你的药箱里空空如也，只能喇一口凉茶凑合。"
+      },
+      {
+        "id": "opt_gossip",
+        "text": "打探正院动静",
+        "apCost": 1,
+        "reward": {
+          "scheming": 2,
+          "network": 1,
+          "item_gossip": 1
+        },
+        "resultText": "你端着茶盘在正院外廊下慢慢踱，一边端茶一边听壁。斑驳的光影中，你拼凑出府中最新的风向。谁失宠了，谁得意了，谁又在暗中伸了爪子——这些消息，每一条都可能是救命的稻草。"
+      },
+      {
+        "id": "opt_rest",
+        "text": "静养养颜",
+        "apCost": 1,
+        "reward": {
+          "health": 2,
+          "appearance": 1
+        },
+        "resultText": "你关上院门，放下一切心思。在自己的小院中晒了会儿太阳，用花水包了头发，还用剩的蛋清敲了敲脸。镜中的自己气色红润了几分，像是探出墙头的一枝桃花。"
+      },
+      {
+        "id": "opt_kitchen",
+        "text": "正院办差",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 2,
+          "status": 2
+        },
+        "cost": {
+          "health": -2
+        },
+        "resultText": "你在正院里章前章后地忙活了一整天，端茶送水、传话回事、授窗钨绞，事无巨细都做得干净利落。虽然累得腮窗发酸，但嬷嬷们的眼神里多了几分认可。"
+      },
+      {
+        "id": "opt_courtyard",
+        "text": "陪侍家宴",
+        "apCost": 1,
+        "require": {
+          "stat_status": ">= 15"
+        },
+        "reward": {
+          "favor": 1,
+          "status": 2,
+          "appearance": 1
+        },
+        "cost": {
+          "health": -2
+        },
+        "resultText": "宴席上你得体地端坐，适时帮少爷添茶换盏，引得客人纷纷称赞'这位姨娘倪是大方'。少爷的眼神扫过你时，带着一点欣慰。这就是你要的——在人前有份体面。",
+        "failText": "丫鬟在门口拦下了你：'家宴席位有限，姨娘的位分……'那张嘴脏尽管了一截，愁味却已够明白。"
+      },
+      {
+        "id": "opt_rival_visit",
+        "text": "与姨娘往来",
+        "apCost": 1,
+        "require": {
+          "event_s2_lin_concubine_enter": true
+        },
+        "reward": {
+          "npc_rival": 2,
+          "network": 1
+        },
+        "cost": {
+          "cash": -0.5
+        },
+        "resultText": "你带了一盒自制的桂花酒去拜访姨娘。两人坐在廊下，就着小莉花茶聊了半个下午，话里有试探也有真心。分别时姨娘送你到门口，说：'常来坐坐。'你知道这是一句带价的客气话。",
+        "failText": "你还未与府中妾室相识，去了也只是拿热脸贴冷屁股。"
+      },
+      {
+        "id": "opt_child_care",
+        "text": "子嗣抚育",
+        "apCost": 1,
+        "require": {
+          "event_s2_birth": true
+        },
+        "reward": {
+          "status": 2,
+          "favor": 1
+        },
+        "cost": {
+          "health": -2
+        },
+        "resultText": "你亲自给孩子换了尿布，嗂了汤药，又抱着他在院子里晕了好几圈。孩子戚开的小嘴没有牙齿，哭起来却浑身是劲。你累得腮窗生疼，心里却踏实得很——自己的孩子，自己抱着，谁也抢不走。",
+        "failText": "你还没有孩子，却在空荡荡的院子里站了一会儿，心里不是滋味。"
+      }
+    ]
+  },
+  {
+    "id": "s2_lin_concubine_enter",
+    "title": "林姨娘入府",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [
+        36,
+        42
+      ]
+    },
+    "once": true,
+    "text": "新主母进门已一年有余，却迟迟未有身孕的消息。府里开始有人窃窃私语，主母脸上也渐显倦意与焦虑。这日，府中张灯结彩，主母为少爷纳了一房妾室——林姨娘。\n轿子抬进府时，你从帘缝中瞥见她的容貌：眉目清秀，举止端庄，浑身透着书卷气。她在正堂跪拜时，腰身挺得笔直，一举一动都显示出良好的教养。赵嬷嬷在你耳边低语：\"听说是官宦人家的小姐，家道中落后被主母相中纳进府来。这样的人，琴棋书画样样精通，可不好对付。\"\n主母当众宣布规矩时语气严厉，但你能看出她眼中的复杂——林姨娘是她亲自为少爷挑选的，既是为延续香火，也是向府中上下交代。散场后，你听见主母在后院对嬷嬷说：\"若她能生下孩子给我抚养，我这主母之位也算稳了。只是……唉。\"那一声叹息里，藏着多少无奈。",
+    "options": [
+      {
+        "id": "opt_friendly_approach",
+        "text": "A. 主动上前问安，示好交情",
+        "apCost": 1,
+        "reward": {
+          "npc_lin_concubine": 4,
+          "npc_matron": 1,
+          "status": 1,
+          "scheming": 1
+        },
+        "resultText": "林姨娘向你还礼，动作优雅而得体。她轻声道：\"久闻姑娘在府中颇有体面，日后还请多多照应。\"你从她的眼神中看出一丝真诚，也看出一丝算计——她在试探你的态度。你们之间，建立了一种微妙的联系。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 50,
+            "reward": {
+              "npc_lin_concubine": 5,
+              "npc_matron": 2,
+              "status": 2,
+              "scheming": 2
+            },
+            "resultText": "你的措辞恰到好处，既表示了善意，又不失身份。林姨娘眼中闪过一丝欣赏：\"姑娘是个明白人。这府里，女人何苦为难女人？\"她说这话时看了一眼主母的方向，眼神复杂。你明白，你们可能成为盟友，也可能成为对手，全看日后如何行事。"
+          },
+          {
+            "min": 30
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_lin_concubine": 3,
+              "status": 1
+            },
+            "resultText": "你的话略显生疏，林姨娘微笑应对，但眼神已经冷了几分。她只是客气地点点头，随后便转身离去。"
+          }
+        ]
+      },
+      {
+        "id": "opt_observe",
+        "text": "B. 保持距离，暗中观察",
+        "apCost": 0,
+        "reward": {
+          "npc_lin_concubine": 0,
+          "status": 1,
+          "scheming": 1
+        },
+        "resultText": "你选择先观望。林姨娘的目光扫过你时停顿了片刻，似乎在评估你的态度。她没有主动靠近，你也保持了距离。这个府里，知己难寻，敌人却易树。"
+      },
+      {
+        "id": "opt_support_matron",
+        "text": "C. 靠近主母，表明立场",
+        "apCost": 0,
+        "require": {
+          "npc_matron": ">= 25"
+        },
+        "reward": {
+          "npc_matron": 3,
+          "status": 2,
+          "npc_lin_concubine": -2
+        },
+        "resultText": "你选择站在主母身边，表现出对主母的忠心。主母眼中闪过一丝满意，散场后对你多说了几句体己话。但林姨娘看向你的眼神，却多了几分防备和疏离。在这深宅大院里，你选择了站队。",
+        "failText": "你与主母的关系还不够亲近，此时贸然示好反而显得刻意。"
+      },
+      {
+        "id": "opt_show_hostility",
+        "text": "D. 暗中较劲，展示地位",
+        "apCost": 1,
+        "require": {
+          "stat_status": ">= 35",
+          "stat_scheming": ">= 45"
+        },
+        "reward": {
+          "npc_lin_concubine": -4,
+          "status": 1,
+          "npc_matron": -2
+        },
+        "resultText": "你借着行礼的机会，略施小计，在众人面前显示出你在府中的地位。林姨娘脸色微变，但很快恢复了平静。她记住了这一出，你们之间的梁子算是结下了。主母对此也有所察觉，眉头微蹙。",
+        "failText": "你的地位和心计还不足以在众目睽睽下压制她。"
+      }
+    ]
+  },
+  {
+    "id": "s2_birth",
+    "title": "生子成事",
+    "type": "random",
+    "weight": 3,
+    "trigger": {
+      "turn_range": [
+        35,
+        110
+      ],
+      "item_preg_stage": ">= 3",
+      "stat_favor": ">= 40",
+      "stat_health": ">= 40"
+    },
+    "once": true,
+    "text": "一阵急促的脚步声，稳婆在房外喊：\"是个小郎君！\"外头的鞭炮声响起来，府里上下都沸腾了。你躺在床上，听着外头的欢呼和里外的哭声，眼泪却流了满脸。一个新的生命从你身体里来到这个世界，一个女人因此在这深宅里获得了新的名分和筹码。少爷在门外听到消息，脚步停顿了许久才离开。少夫人甚至来了产房，语气难得温和：\"辛苦你了。孩子我会好好抚养，你就好好养身子。\"你在生死边缘走了一遭，换来的是这个府里第一声婴儿的啼哭。它是你的骨肉，也是你在这府里活命的筹码。",
+    "options": [
+      {
+        "id": "opt_live",
+        "text": "A. 咬牙活了下来",
+        "apCost": 0,
+        "reward": {
+          "favor": 5,
+          "npc_matron": 3,
+          "status": 3,
+          "item_child": 1,
+          "health": -10
+        },
+        "resultText": "你挺过了生死关头。一个新的位置等待着你，代价是身体的创伤和永远的记忆。少爷会记得你，少夫人会善待你，府里的人都会改口叫你'孩子的娘'。你有了名分，也有了责任。"
+      }
+    ]
+  },
+  {
+    "id": "s2_lin_concubine_poetry",
+    "title": "林姨娘的诗会",
+    "type": "random",
+    "weight": 1.2,
+    "trigger": {
+      "turn_range": [
+        40,
+        70
+      ],
+      "npc_lin_concubine": ">= 2",
+      "event_s2_lin_concubine_enter": true
+    },
+    "once": true,
+    "text": "林姨娘在自己的院子里办了一场小型诗会，邀请了府中几位识字的姐妹，也向你递了请帖。她坐在雕花窗前，抚琴吟诗，一派大家闺秀的风范。少爷闻讯也来了，静静地坐在一旁听她弹琴。你看到少爷脸上难得露出的欣赏之色，心中五味杂陈。\n赵嬷嬷在你耳边低语：\"林姨娘这是在展示才华，也是在告诉府里人，她与寻常妾室不同。\"诗会结束后，林姨娘特意走到你身边，微笑道：\"今日多谢姐姐赏光。姐姐若有兴致，日后可常来坐坐，咱们也好说说话。\"",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_show_talent",
+        "text": "A. 借机展示自己的才华与见识",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 55",
+          "stat_status": ">= 30"
+        },
+        "reward": {
+          "favor": 3,
+          "npc_lin_concubine": -2,
+          "status": 2,
+          "scheming": 2
+        },
+        "resultText": "你引经据典，点评诗词，展现出不俗的见识。林姨娘眼中闪过一丝惊讶，随即又恢复了笑容，但笑意不达眼底。少爷也多看了你几眼，眼中有几分意外。你知道，你今日压了林姨娘的风头，她不会忘记这一笔。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": {
+              "favor": 4,
+              "npc_lin_concubine": -3,
+              "status": 3,
+              "scheming": 2
+            },
+            "resultText": "你的见解让在场所有人都眼前一亮，就连少爷都忍不住与你探讨了几句。林姨娘脸上的笑容僵了片刻，她没想到你会有这般才学。这场诗会，你才是最大的赢家。"
+          },
+          {
+            "min": 40
+          },
+          {
+            "min": 0,
+            "reward": {
+              "favor": 2,
+              "npc_lin_concubine": -1,
+              "status": 1
+            },
+            "resultText": "你的表现中规中矩，虽然展现了一些才学，但还不足以盖过林姨娘的风头。不过至少让少爷知道，你也并非不学无术之人。"
+          }
+        ],
+        "failText": "你的学识还不够深厚，贸然开口只会露怯。"
+      },
+      {
+        "id": "opt_support",
+        "text": "B. 适时捧场，与她结交",
+        "apCost": 1,
+        "reward": {
+          "npc_lin_concubine": 4,
+          "scheming": 1,
+          "status": 1
+        },
+        "resultText": "你恰到好处地赞美林姨娘的才华，让她在少爷面前更显光彩。林姨娘对你的态度明显亲近了许多，散场后还私下送了你一支簪子。你明白，今日你给足了她面子，她也会记得这份情。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 50,
+            "reward": {
+              "npc_lin_concubine": 5,
+              "scheming": 2,
+              "status": 2,
+              "cash": 1
+            },
+            "resultText": "你的捧场恰到好处，既让林姨娘在少爷面前大放异彩，又不显得刻意谄媚。林姨娘对你大为满意，私下对你说：\"姐姐是个明白人，咱们日后可要多亲近才是。\"你们之间的联盟更加牢固。"
+          },
+          {
+            "min": 30
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_lin_concubine": 3,
+              "status": 1
+            },
+            "resultText": "你的捧场略显生硬，林姨娘虽然接受了，但眼神中透出几分审视。你们之间的关系有所改善，但还谈不上真正的信任。"
+          }
+        ]
+      },
+      {
+        "id": "opt_low_profile",
+        "text": "C. 保持低调，不出风头",
+        "apCost": 0,
+        "reward": {
+          "npc_lin_concubine": 0,
+          "scheming": 1
+        },
+        "resultText": "你选择安静地坐在角落，既不捧场也不争锋。林姨娘偶尔看向你，眼神中有几分探究。这样的你，让她摸不透，也让她无法轻视。"
+      },
+      {
+        "id": "opt_leave_early",
+        "text": "D. 借故提前离开",
+        "apCost": 0,
+        "reward": {
+          "npc_lin_concubine": -2,
+          "status": -1
+        },
+        "resultText": "你称身体不适，提前告退。林姨娘脸上的笑容淡了几分，少爷也看了你一眼，眼神中有几分不悦。府里的人会说，你是看不得林姨娘在主母面前风光，不愿给她抬轿。"
+      }
+    ]
+  },
+  {
+    "id": "s2_lin_concubine_pregnant_threat",
+    "title": "林姨娘的身孕",
+    "type": "random",
+    "weight": 1.5,
+    "trigger": {
+      "turn_range": [
+        48,
+        75
+      ],
+      "npc_lin_concubine": ">= 1",
+      "stat_favor": "< 60",
+      "event_s2_lin_concubine_enter": true
+    },
+    "once": true,
+    "text": "府里传来消息——林姨娘有了身孕。主母亲自去探望，赏赐了一堆珍贵的补品。少爷也对林姨娘更加关照，时常去她院中坐坐。你看着府中的人都围着林姨娘转，心中涌起复杂的情绪。\n赵嬷嬷叹气道：\"林姨娘本就是主母为少爷纳的，就是为了延续香火。如今有了这个孩子，她在府里的地位更稳了。\"你听到这话，忽然明白——生子嗣是女人在这府里站稳脚跟、握住话语权的最快途径。有了孩子，就有了底气，就有了在府里说话的分量。数日后，林姨娘派人送来一盒点心，附上一张便笺：\"同在一府，还望姐姐多多关照。\"这话说得客气，却透着几分炫耀的意味。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_congratulate",
+        "text": "A. 登门道贺，表示祝福",
+        "apCost": 1,
+        "reward": {
+          "npc_lin_concubine": 3,
+          "npc_matron": 1,
+          "status": 1
+        },
+        "resultText": "你备了一份厚礼去林姨娘处道贺。林姨娘接待你时态度温和，但眼神中透着一种胜利者的从容。你明白，她已经占据了先机，而你必须另寻出路。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": {
+              "npc_lin_concubine": 4,
+              "npc_matron": 2,
+              "status": 2,
+              "scheming": 1
+            },
+            "resultText": "你的道贺既得体又真诚，让林姨娘很是受用。她拉着你的手说了许多体己话，还说日后孩子出生，一定要你当干娘。主母听说了这事，也夸你懂事大度。面子你都给足了，但你心中明白，她有了孩子，地位就稳了，而你还得另寻出路。生子嫂只是手段，你要的是结果——在这府里站稳脚跟，有说话的分量。"
+          },
+          {
+            "min": 35
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_lin_concubine": 2,
+              "status": 1
+            },
+            "resultText": "你的道贺虽然得体，但林姨娘能看出你眼中的复杂情绪。她只是淡淡一笑，说了几句客套话，便让你离去了。你知道，她有了孩子，就有了底气，而你还得继续奋斗。"
+          }
+        ]
+      },
+      {
+        "id": "opt_sabotage",
+        "text": "B. 暗中使坏，破坏她的身孕",
+        "apCost": 2,
+        "require": {
+          "stat_scheming": ">= 70",
+          "npc_lin_concubine": "< 0"
+        },
+        "reward": {
+          "scheming": 3
+        },
+        "resultText": "你动了歹心，暗中在林姨娘的饮食中做了手脚。然而此事风险极大，一旦败露，你将万劫不复。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 80,
+            "reward": {
+              "scheming": 5,
+              "npc_lin_concubine": -10,
+              "status": -3
+            },
+            "resultText": "你的计策成功了，林姨娘小产。但她隐约察觉到不对，开始在府中调查。主母也派人暗查此事，府中气氛变得紧张压抑。你必须小心行事，绝不能露出任何破绽。",
+            "special": "lin_concubine_miscarriage"
+          },
+          {
+            "min": 0,
+            "reward": {},
+            "resultText": "你的手段被人发现了！林姨娘当场揭发你的恶行，主母震怒，少爷也对你失望至极。你被立即打入冷院，等待发落。你的野心和不择手段，最终毁了你自己。",
+            "gameOver": true,
+            "gameOverReason": "因谋害主母所纳妾室之子嗣，被发卖出府"
+          }
+        ],
+        "failText": "你的心计还不够深，不敢冒这个险。"
+      },
+      {
+        "id": "opt_compete",
+        "text": "C. 努力争取，也要怀上孩子",
+        "apCost": 1,
+        "reward": {
+          "favor": 2,
+          "scheming": 2,
+          "health": -2
+        },
+        "resultText": "你暗下决心，一定要怀上少爷的孩子。你开始更加努力地伺候少爷，想方设法吸引他的注意。因为你知道，有了孩子，才有在府中说话的分量。这条路虽然艰难，但是通往权力的必经之路。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 55,
+            "reward": {
+              "favor": 4,
+              "scheming": 2,
+              "health": -3,
+              "item_night_effort": 2
+            },
+            "resultText": "你的努力没有白费，少爷对你的态度有所改善，开始更频繁地召你侍寝。虽然身体疲惫，但你看到了希望。只要能怀上孩子，能在府中站稳脚跟，一切都值得。"
+          },
+          {
+            "min": 35
+          },
+          {
+            "min": 0,
+            "reward": {
+              "favor": 1,
+              "health": -2
+            },
+            "resultText": "你虽然努力，但少爷似乎更关心林姨娘的状况，对你的殷勤反应平平。你的付出没有得到应有的回报，心中的焦虑日益加深。"
+          }
+        ]
+      },
+      {
+        "id": "opt_accept",
+        "text": "D. 坦然接受，寻找其他出路",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2,
+          "network": 2,
+          "status": 1
+        },
+        "resultText": "你明白，生子嫂并非唯一的出路。你开始在府中经营人脉，打理自己的产业，为自己谋求其他的立足之地。权力不只来自生育，还可以来自资源、人脉和手段。你要找到属于自己的道路。"
+      }
+    ]
+  },
+  {
+    "id": "s2_wang_concubine_enter",
+    "title": "王姨娘入府",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [
+        40,
+        46
+      ]
+    },
+    "once": true,
+    "text": "就在林姨娘入府不久，大夫人（少爷的母亲）也为少爷赐下了一房妾室——王姨娘。与林姨娘的风光入府不同，王姨娘的到来显得低调而仓促。\n你从丫鬟口中得知，王姨娘是大夫人陪房的女儿，自幼在府中长大，容貌姣好但出身低微。大夫人此次赐她给少爷，既是为了制衡主母所纳的林姨娘，也是为了在少爷身边安插自己的耳目。\n见到王姨娘时，你发现她眉眼间带着几分怯懦，但又隐藏着一股不服输的倔强。她向主母行礼时，主母只是冷淡地点了点头，连赏赐都较林姨娘少了许多。赵嬷嬷低声道：\"这是大夫人的人，主母自然不会给好脸色。可怜这位王姨娘，夹在婆媳之间，日子怕是不好过。\"\n更让人意外的是，少爷对王姨娘的态度极为冷淡，几乎从不召她侍寝。府里渐渐传出闲话，说王姨娘不得宠，只是个摆设。你看着王姨娘独自坐在院中的背影，竟生出几分同病相怜的感觉。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_befriend",
+        "text": "A. 主动示好，拉拢她为盟友",
+        "apCost": 1,
+        "reward": {
+          "npc_wang_concubine": 5,
+          "scheming": 1,
+          "network": 1
+        },
+        "resultText": "你私下去找王姨娘，递给她一些自己的体己东西。王姨娘眼眶一红，紧紧握住你的手：\"姐姐是第一个对我好的人。在这府里，我就认姐姐这一个亲人了。\"你明白，一个在府中没有影响力的姨娘，或许正是最可靠的盟友。而且，她背后是大夫人，这层关系也许能成为你未来的助力。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 45,
+            "reward": {
+              "npc_wang_concubine": 7,
+              "scheming": 2,
+              "network": 2,
+              "status": 1
+            },
+            "resultText": "你的示好来得正是时候。王姨娘在府中孤立无援，你的雪中送炭让她感激涕零。她向你倾诉了自己的委屈和不甘，你们结成了深厚的姐妹情谊。有了王姨娘这个盟友，你在府中又多了一双眼睛和一张嘴。"
+          },
+          {
+            "min": 25
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_wang_concubine": 3,
+              "network": 1
+            },
+            "resultText": "王姨娘虽然接受了你的好意，但眼神中仍有几分戒备。她在府中受够了冷落，已经不敢轻易相信任何人了。"
+          }
+        ]
+      },
+      {
+        "id": "opt_ignore",
+        "text": "B. 保持距离，不想惹麻烦",
+        "apCost": 0,
+        "reward": {
+          "npc_wang_concubine": 0
+        },
+        "resultText": "你选择不介入这桩复杂的关系。王姨娘是大夫人的人，与她交好可能会引起主母的不满；但若是落井下石，又显得太过刻薄。保持距离是最安全的选择。"
+      },
+      {
+        "id": "opt_report",
+        "text": "C. 向主母示好，监视王姨娘",
+        "apCost": 1,
+        "require": {
+          "npc_matron": ">= 30"
+        },
+        "reward": {
+          "npc_matron": 3,
+          "npc_wang_concubine": -5,
+          "status": 2,
+          "scheming": 2
+        },
+        "resultText": "你私下向主母表示，愿意留意王姨娘的动向，防止大夫人借王姨娘在府中生事。主母赞许地看了你一眼：\"你倒是个明白人。这府里，我就需要你这样的人。\"从此你成了主母的耳目，但也与王姨娘结下了梁子。",
+        "special": "wang_spy",
+        "failText": "你与主母的关系还不够亲近，贸然提出监视之事反而会引起怀疑。"
+      },
+      {
+        "id": "opt_pity",
+        "text": "D. 暗中同情，但不表露",
+        "apCost": 0,
+        "reward": {
+          "scheming": 1
+        },
+        "resultText": "你看着王姨娘孤零零的背影，心中涌起一阵悲凉。女人在这深宅大院中，不过都是棋子。但你明白，同情归同情，在这个府里，还是要先保全自己。"
+      }
+    ]
+  },
+  {
+    "id": "s2_matron_escape_request",
+    "title": "主母的隐痛",
+    "type": "random",
+    "weight": 1.1,
+    "trigger": {
+      "turn_range": [
+        32,
+        46
+      ],
+      "npc_matron": ">= 45"
+    },
+    "once": true,
+    "text": "主母罕见地屏退了人，看着手中的一封家书出神。你能看出她神色凝重，眉间有化不开的忧愁。她犹豫片刻，终于开口：\"娘家遭了难，急需一笔银子周转。但这笔钱不能走公账，更不能让侯爷知道我贴补娘家。\"她看着你，目光复杂：\"你是个嘴严的，我手里有几件体己的首饰，你若能替我悄悄当了换成银票送出去……这事关系重大，全凭你愿不愿意。\"",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_help_secret",
+        "text": "A. 替她分忧，成为心腹",
+        "apCost": 0,
+        "require": {
+          "stat_scheming": ">= 40"
+        },
+        "reward": {
+          "npc_matron": 10,
+          "scheming": 2,
+          "network": 2
+        },
+        "resultText": "你办得隐秘妥当，避开府中耳目，将银票安全送达。主母虽未多言，但从此看你的眼神不再只是看一个姨娘，而是半个自己人。数日后，她私下赏了你一支金簪，轻声道：\"这份情，我记着。\"",
+        "special": "matron_secret_help",
+        "failText": "你心中发怵，这事若露馅，怕是难以收场。"
+      },
+      {
+        "id": "opt_refuse_secret",
+        "text": "B. 借故推脱，不敢沾手",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": -5
+        },
+        "resultText": "你不敢涉险，以能力不足为由婉拒。主母眼中闪过失望，虽未责罚，但那是信任的大门关上的声音。她只淡淡说了句\"也罢\"，随后便让你退下。"
+      },
+      {
+        "id": "opt_suggest",
+        "text": "C. 提供其他办法",
+        "apCost": 0,
+        "require": {
+          "stat_scheming": ">= 50",
+          "stat_network": ">= 15"
+        },
+        "reward": {
+          "npc_matron": 8,
+          "scheming": 3,
+          "status": 2
+        },
+        "resultText": "你提议借用府中生意往来的商户之手，既能周转银两又不露痕迹。主母眼睛一亮，赞道：\"你这脑子，确实好使。\"此计果然奏效，主母对你更加器重。",
+        "special": "matron_secret_help",
+        "failText": "你想不出更稳妥的法子。"
+      }
+    ]
+  },
+  {
+    "id": "s2_matron_escape_success",
+    "title": "主母的感激",
+    "type": "random",
+    "weight": 1.2,
+    "trigger": {
+      "turn_range": [
+        36,
+        52
+      ],
+      "item_matron_secret_help": ">= 1"
+    },
+    "once": true,
+    "text": "数日后，主母私下召见你，神色轻松了许多。\"娘家来信了，说银子送到得及时，解了燃眉之急。\"她顿了顿，从匣子里取出一支制作精美的金簪，\"这是我的私房，权当谢礼。往后有什么为难处，只管同我说。\"你接过金簪，知道这不仅是赏赐，更是一种认可——你成了她的心腹。府里渐渐传言，说你是主母跟前的红人。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_accept_thanks",
+        "text": "A. 恭敬收下，表示忠心",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 5,
+          "status": 3,
+          "cash": 2
+        },
+        "resultText": "你跪地道谢，表示日后定当尽心。主母满意地点头，你在府中的地位又稳固了几分。"
+      }
+    ]
+  },
+  {
+    "id": "s2_wang_concubine_despair",
+    "title": "王姨娘的绝望",
+    "type": "random",
+    "weight": 1.3,
+    "trigger": {
+      "turn_range": [
+        50,
+        70
+      ],
+      "npc_wang_concubine": ">= 2"
+    },
+    "once": true,
+    "text": "你路过王姨娘的院子，听见里面传来压抑的哭声。推门进去，只见王姨娘独自坐在床边，双眼红肿。见你进来，她反而擦干眼泪，苦笑道：\"让姐姐见笑了。\"\n她向你倾诉：自from入府以来，少爷从未召她侍寝超过三次，每次都是应付了事。主母对她冷眼相待，大夫人虽然是她的靠山，却也不过是把她当棋子使唤。府里的下人都看不起她，背地里叫她\"空头姨娘\"。\n\"我在这府里，到底算什么？\"王姨娘眼中满是迷惘和绝望，\"既不受宠，又无子嗣，就这么耗着，耗到什么时候是个头？有时候我想，还不如当初死了干净……\"她的话让你心中一惊，隐隐感觉到什么不祥的预兆。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_comfort",
+        "text": "A. 真心安慰，劝她坚持",
+        "apCost": 1,
+        "reward": {
+          "npc_wang_concubine": 5,
+          "scheming": 1
+        },
+        "resultText": "你握住王姨娘的手，劝她要坚持下去，总会有转机的。王姨娘感激地看着你，眼中的绝望稍稍减轻了些。但你知道，安慰终究只是安慰，改变不了她的处境。",
+        "outcomeStat": "npc_wang_concubine",
+        "outcomes": [
+          {
+            "min": 10,
+            "reward": {
+              "npc_wang_concubine": 7,
+              "scheming": 2,
+              "network": 1
+            },
+            "resultText": "你不仅安慰了她，还给她出主意，教她如何在府中谋得一席之地。王姨娘眼中重新燃起了希望，她紧紧握着你的手：\"姐姐就是我的救命恩人。\"你们的关系更加亲密。",
+            "special": "wang_hope_restored"
+          },
+          {
+            "min": 0
+          },
+          {
+            "min": -5,
+            "reward": {
+              "npc_wang_concubine": 3
+            },
+            "resultText": "你的安慰虽然真诚，但在王姨娘看来不过是站着说话不腰疼。她勉强笑了笑，眼中的绝望依旧。"
+          }
+        ]
+      },
+      {
+        "id": "opt_escape_plan",
+        "text": "B. 暗示她可以逃离这里",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 60",
+          "npc_wang_concubine": ">= 10"
+        },
+        "reward": {
+          "npc_wang_concubine": 3,
+          "scheming": 3
+        },
+        "resultText": "你压低声音，暗示王姨娘既然在府中没有活路，不如另寻出路。王姨娘眼睛一亮，随即又黯淡下去：\"逃？谈何容易……\"但你知道，这颗种子已经种在她心里了。",
+        "special": "wang_escape_seed",
+        "failText": "这话太过危险，你不敢轻易说出口。"
+      },
+      {
+        "id": "opt_ignore",
+        "text": "C. 敷衍几句，避免深交",
+        "apCost": 0,
+        "reward": {
+          "npc_wang_concubine": -2,
+          "scheming": 1
+        },
+        "resultText": "你说了几句无关痛痒的话，便匆匆离去。王姨娘眼中的光彩彻底消失了，她意识到，自己在这府里是真的孤立无援。"
+      },
+      {
+        "id": "opt_report",
+        "text": "D. 向主母汇报王姨娘的异常",
+        "apCost": 1,
+        "require": {
+          "item_wang_spy": ">= 1"
+        },
+        "reward": {
+          "npc_matron": 3,
+          "npc_wang_concubine": -8,
+          "scheming": 2
+        },
+        "resultText": "你将王姨娘的异常上报给主母。主母点点头：\"密切注意她的动向，别让她闹出什么乱子。\"你忠心耿耿地执行着监视的任务，但心中也隐隐不安——你的监视，或许会将王姨娘逼上绝路。",
+        "special": "wang_being_watched",
+        "failText": "你不是主母的耳目，无法向主母汇报此事。"
+      }
+    ]
+  },
+  {
+    "id": "s2_wang_concubine_escape_omen",
+    "title": "王姨娘的异动",
+    "type": "random",
+    "weight": 1.5,
+    "trigger": {
+      "turn_range": [
+        58,
+        75
+      ],
+      "item_wang_escape_seed": ">= 1"
+    },
+    "once": true,
+    "text": "最近你发现王姨娘的行为越来越反常。她开始频繁地去庙里上香，还偷偷变卖自己的首饰。更奇怪的是，你曾经在夜里看见一个陌生男子的身影在她院子外徘徊。\n有一天，王姨娘神色慌张地找到你，塞给你一封信：\"姐姐，这封信你帮我保管。如果有一天我出了什么事，就把它交给大夫人。\"她的话让你心中警铃大作——她要做什么？\n你隐隐感觉到，王姨娘正在策划着什么惊人的举动，而这个举动一旦败露，不仅会害了她自己，可能还会牵连到你。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_stop_her",
+        "text": "A. 劝阻她，阻止她冒险",
+        "apCost": 1,
+        "require": {
+          "npc_wang_concubine": ">= 15"
+        },
+        "reward": {
+          "npc_wang_concubine": 5,
+          "scheming": 2
+        },
+        "resultText": "你把王姨娘拉到一边，严厉地告诉她不要冲动。王姨娘犹豫了许久，最终流着泪答应你再等等。但你从她眼中看出，这只是暂时的妥协。",
+        "special": "wang_escape_delayed",
+        "failText": "你与王姨娘的关系还不够亲密，她不会听你的劝告。"
+      },
+      {
+        "id": "opt_help_her",
+        "text": "B. 暗中帮她，成全她的计划",
+        "apCost": 2,
+        "require": {
+          "stat_scheming": ">= 70",
+          "npc_wang_concubine": ">= 18"
+        },
+        "reward": {
+          "scheming": 4,
+          "network": 3
+        },
+        "resultText": "你决定冒险帮助王姨娘。你暗中为她打探消息，帮她准备逃跑的路线和盘缠。王姨娘感激涕零，发誓日后必有重谢。但你知道，一旦事情败露，你也将万劫不复。",
+        "special": "wang_escape_helped",
+        "failText": "你的心计还不够深，不敢冒这个险；或者你与王姨娘的关系还不足以让你为她冒这种风险。"
+      },
+      {
+        "id": "opt_report_immediately",
+        "text": "C. 立即向主母告密",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 5,
+          "npc_wang_concubine": -15,
+          "status": 3,
+          "scheming": 2
+        },
+        "resultText": "你立即将王姨娘的异动上报给主母。主母大惊，命人严密监视王姨娘的一举一动。你的告密保护了府里的安宁，也断送了王姨娘最后的希望。",
+        "special": "wang_escape_prevented"
+      },
+      {
+        "id": "opt_stay_out",
+        "text": "D. 保持中立，不参与其中",
+        "apCost": 0,
+        "reward": {
+          "scheming": 1
+        },
+        "resultText": "你婉拒了王姨娘的请求，表示自己帮不了她。王姨娘失望地看着你，随后独自离去。你选择了明哲保身，但心中也隐隐不安——王姨娘的命运，将会如何？"
+      }
+    ]
+  },
+  {
+    "id": "s2_wang_concubine_escape",
+    "title": "王姨娘私奔败露",
+    "type": "random",
+    "weight": 1.4,
+    "trigger": {
+      "turn_range": [
+        62,
+        80
+      ],
+      "npc_wang_concubine": ">= -5"
+    },
+    "once": true,
+    "text": "夜半时分，府中忽然传来一阵喧哗。你披衣起来，只见灯火通明，家丁们在后院来回搜查。很快，你就听到了震惊的消息——王姨娘试图与外男私奔，在后门被当场抓获！\n次日一早，你被召到正堂。只见王姨娘跪在地上，衣衫不整，头发凌乱，脸上全是泪痕和绝望。主母高坐其上，脸色铁青。大夫人也在，神色尴尬而愤怒——王姨娘是她赐给少爷的人，如今出了这样的丑事，她的脸上也无光。\n少爷坐在一旁，面无表情地看着这一切。赵嬷嬷厉声斥责：\"好大的胆子！身为姨娘，竟敢做出这等不知廉耻之事！\"王姨娘不再辩解，只是死死低着头，偶尔发出压抑的哭声。\n主母冷冷地宣布：\"来人，把她发卖到南方。从今以后，府里再也没有王姨娘这个人。\"王姨娘被拖出去时，眼神与你对上了一瞬间，那眼神里有绝望、有解脱，也有一丝对你的询问——你会为她说话吗？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_silent",
+        "text": "A. 保持沉默，明哲保身",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2,
+          "status": 1
+        },
+        "resultText": "你低着头，一言不发。王姨娘被拖走了，你听见她在门外的哭喊声渐渐远去。府中规矩更严了，你也更加小心翼翼地守着本分。你明白，在这个府里，保全自己才是第一要务。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 50,
+            "reward": {
+              "scheming": 3,
+              "status": 2,
+              "npc_matron": 1
+            },
+            "resultText": "你的沉默被主母看在眼里。散场后，主母单独叫你过去，语气缓和了些：\"你倒是个识时务的。记住，在这府里，守规矩比什么都重要。\"你明白，今日的沉默，为你换来了主母的认可。"
+          },
+          {
+            "min": 30
+          },
+          {
+            "min": 0,
+            "reward": {
+              "scheming": 1
+            },
+            "resultText": "你只是普通地保持了沉默，如同府中其他人一样。没有人注意到你，你也没有引起任何注意。但王姨娘临走前的眼神，却深深印在了你的心里。"
+          }
+        ]
+      },
+      {
+        "id": "opt_plead",
+        "text": "B. 为她求情，请求从轻发落",
+        "apCost": 2,
+        "require": {
+          "npc_wang_concubine": ">= 15",
+          "stat_status": ">= 35"
+        },
+        "reward": {
+          "npc_matron": -5,
+          "status": -2,
+          "scheming": 2
+        },
+        "resultText": "你跪下为王姨娘求情，说她也是一时糊涂，请主母从轻发落。主母勃然大怒：\"你算什么东西，也敢在这里说话？！\"你被斥责得灰头土脸，王姨娘却感激地看了你一眼。你的求情没有改变她的命运，反而让你自己也陷入了不利的境地。",
+        "outcomeStat": "npc_wang_concubine",
+        "outcomes": [
+          {
+            "min": 20,
+            "reward": {
+              "npc_matron": -3,
+              "status": -1,
+              "favor": -2,
+              "scheming": 3
+            },
+            "resultText": "虽然你的求情激怒了主母，但你看到少爷眉头微蹙，似乎对主母的处置也有几分不满。散场后，你收到了一封王姨娘托人捎来的信，信中她感激涕零，发誓来世必报你的恩情。你的义气为你赢得了名声，但也付出了代价。"
+          },
+          {
+            "min": 0
+          },
+          {
+            "min": -10,
+            "reward": {
+              "npc_matron": -8,
+              "status": -3,
+              "favor": -3
+            },
+            "resultText": "你的求情被视为对府规的挑衅。主母当众呵斥你，说你与王姨娘一丘之貉。从此你在府中的处境变得艰难，连下人们看你的眼神都变了。"
+          }
+        ],
+        "failText": "你的地位不够，或者与王姨娘的关系不足以让你冒险为她求情。"
+      },
+      {
+        "id": "opt_expose",
+        "text": "C. 趁机揭发王姨娘的更多罪证",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 65"
+        },
+        "reward": {
+          "npc_matron": 4,
+          "status": 3,
+          "scheming": 3,
+          "npc_wang_concubine": -20
+        },
+        "resultText": "你抓住机会，揭发了王姨娘更多的罪证，包括她变卖首饰、与外男勾结的细节。主母对你大加赞赏：\"还是你办事牢靠。\"你的告发让王姨娘的处境更加凄惨，她被发卖到南方的妓院，再无翻身之日。你用王姨娘的鲜血，为自己铺了一条向上的路。",
+        "failText": "你的心计还不够深，无法在这种场合落井下石。"
+      },
+      {
+        "id": "opt_sympathy",
+        "text": "D. 默默同情，暗中帮助",
+        "apCost": 1,
+        "require": {
+          "npc_wang_concubine": ">= 12",
+          "stat_cash": ">= 3"
+        },
+        "cost": {
+          "cash": -3
+        },
+        "reward": {
+          "scheming": 2,
+          "network": 2
+        },
+        "resultText": "明面上你保持沉默，但暗地里你托人给王姨娘送去了一些银两和衣物，让她在被发卖后的日子能稍微好过一些。王姨娘托人带话给你，说这份恩情她记下了，日后若有机会必定相报。",
+        "special": "wang_secret_help",
+        "failText": "你与王姨娘的关系不够亲近，或者你没有足够的银两帮助她。"
+      }
+    ]
+  },
+  {
+    "id": "s2_wang_escape_aftermath",
+    "title": "王姨娘事件的余波",
+    "type": "random",
+    "weight": 1,
+    "trigger": {
+      "turn_range": [
+        66,
+        85
+      ]
+    },
+    "once": true,
+    "text": "王姨娘被发卖后，府中的气氛变得压抑而紧张。主母下令加强对所有姨娘的管束，连出入都要报备。大夫人因为王姨娘的事颜面尽失，与主母的关系更加紧张。\n赵嬷嬷在府中敲打所有人：\"看看，这就是不守规矩的下场！你们都给我记清楚了，在这府里，规矩比天大！\"林姨娘也因此受到波及，行动受到更严格的限制，她看向你的眼神中多了几分防备。\n更让人惊讶的是，几日后你听到传言，说王姨娘的那个外男竟然是她青梅竹马的表哥。他们从小就有婚约，但因为家道中落，王姨娘被大夫人送进了府中。那个男子一直不死心，最终酿成了这场悲剧。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_reflect",
+        "text": "A. 反思女人的命运",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2
+        },
+        "resultText": "你想到王姨娘的遭遇，不禁悲从中来。女人在这个时代，真的有选择的权利吗？是守着不爱的人苟活，还是为了爱情赌上性命？你不知道答案。"
+      },
+      {
+        "id": "opt_warning",
+        "text": "B. 引以为戒，更加遵守规矩",
+        "apCost": 0,
+        "reward": {
+          "scheming": 1,
+          "npc_matron": 2,
+          "status": 1
+        },
+        "resultText": "你暗暗告诫自己，绝不能走王姨娘的老路。在这府里，只有守规矩、讨主子欢心，才能活得长久。你变得加倍谨慎小心。"
+      },
+      {
+        "id": "opt_opportunity",
+        "text": "C. 趁机巩固自己的地位",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 55"
+        },
+        "reward": {
+          "scheming": 3,
+          "status": 3,
+          "npc_matron": 2
+        },
+        "resultText": "你抓住这个机会，在主母面前表现得更加恭顺懂事。你还主动帮助主母加强对其他姨娘的管束，赢得了主母的信任。府中少了一个竞争对手，你的地位更加稳固了。",
+        "failText": "你的心计还不足以抓住这个机会。"
+      }
+    ]
+  },
+  {
+    "id": "s2_su_concubine_enter",
+    "title": "苏姨娘入府",
+    "type": "random",
+    "weight": 1.6,
+    "trigger": {
+      "turn_range": [
+        55,
+        70
+      ],
+      "stat_favor": "< 45",
+      "npc_lin_concubine": ">= -2"
+    },
+    "once": true,
+    "text": "就在王姨娘事件尘埃落定后不久，府里又传来消息——少爷在外看中了一位姑娘，要纳进府来做妾。\n你心中一紧。主母纳了林姨娘，大夫人赐了王姨娘，如今少爷自己又要纳妾，这说明什么？说明府中又要多一个分蛋糕的人，你在少爷身边的影响力会被进一步稀释。\n很快，你就见到了那位苏姨娘。她年纪轻轻，不过十六七岁，生得娇俏可爱，一双眼睛会说话。她是城中富商的女儿，原本要嫁给商户人家，不知怎么被少爷看上了。她进府时带着满满的嫁妆，少爷亲自去接她进门，这份殊荣连林姨娘都没有享受过。\n主母脸色铁青，虽然当众还算客气，但你能看出她心中的不悦——她为少爷纳的林姨娘还没生下孩子，少爷就自己纳妾，这是在打主母的脸。\n更让你警惕的是，少爷对苏姨娘明显十分看重，连着数日都住在她的院子里。府里的下人们都在窃窃私语，说苏姨娘深得少爷欢心。你听着这些话，心中明白——又一个竞争者出现了，而她手握的筹码比你想象的更重。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_hostile",
+        "text": "A. 对她抱有敌意，暗中较劲",
+        "apCost": 1,
+        "reward": {
+          "npc_su_concubine": -4,
+          "scheming": 2,
+          "status": -1
+        },
+        "resultText": "你对苏姨娘充满了敌意。这个小丫头凭什么一进门就享受这样的待遇？你决定给她点颜色看看，让她知道在这府里不是所有人都能被她哄住的。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 65,
+            "reward": {
+              "npc_su_concubine": -6,
+              "scheming": 3,
+              "status": 0
+            },
+            "resultText": "你借着府中规矩，给苏姨娘设了几个小障碍。苏姨娘虽然深得少爷欢心，但初来乍到，不熟悉府中规矩，被你弄得有些狼狈。她记住了你，眼神中多了几分防备和怨恨。"
+          },
+          {
+            "min": 40
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_su_concubine": -3,
+              "favor": -2
+            },
+            "resultText": "你的敌意太过明显，反而让少爷不悦。他警告你不要欺负新人，还因此冷落了你好几天。你的敌意没有伤到苏姨娘，反而伤了你自己。"
+          }
+        ]
+      },
+      {
+        "id": "opt_friendly",
+        "text": "B. 示好交往，拉拢她为盟友",
+        "apCost": 1,
+        "reward": {
+          "npc_su_concubine": 4,
+          "scheming": 2,
+          "network": 1
+        },
+        "resultText": "你压下心中的复杂情绪，主动去拜访苏姨娘。你送上精心准备的礼物，还帮她熟悉府中的规矩。苏姨娘对你很是感激，拉着你的手说：\"姐姐真是个好人，日后还请多多关照。\"",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 55,
+            "reward": {
+              "npc_su_concubine": 6,
+              "scheming": 3,
+              "network": 2,
+              "favor": 1
+            },
+            "resultText": "你的示好恰到好处。苏姨娘年纪轻，心思单纯，很快就把你当成了知己。她在少爷面前时常提起你的好，让少爷对你的印象也有所改善。你用智慧将一个潜在的对手变成了盟友。"
+          },
+          {
+            "min": 30
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_su_concubine": 2,
+              "network": 1
+            },
+            "resultText": "苏姨娘接受了你的示好，但她并不傻，能看出你的虚伪。你们表面和睦，实际上各怀心思。"
+          }
+        ]
+      },
+      {
+        "id": "opt_observe",
+        "text": "C. 暗中观察，先看清底细",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2
+        },
+        "resultText": "你选择先观察苏姨娘。她虽然看起来天真娇憨，但能被少爷看中，必有过人之处。你要先摸清她的底细，再决定如何应对。知己知彼，方能百战不殆。"
+      },
+      {
+        "id": "opt_matron_alliance",
+        "text": "D. 向主母靠拢，共同对抗她",
+        "apCost": 1,
+        "require": {
+          "npc_matron": ">= 35"
+        },
+        "reward": {
+          "npc_matron": 4,
+          "status": 2,
+          "npc_su_concubine": -3
+        },
+        "resultText": "你找到主母，暗示苏姨娘的得宠会威胁到主母的地位。主母眼神一冷：\"我自有分寸。你只需要盯牢她，别让她闹出什么幺蛾子。\"你与主母结成了针对苏姨娘的联盟。",
+        "special": "su_opposition",
+        "failText": "你与主母的关系还不够亲密，无法提出这样的建议。"
+      }
+    ]
+  },
+  {
+    "id": "s2_lin_concubine_origin",
+    "title": "林姨娘身世·倾诉",
+    "type": "random",
+    "weight": 1,
+    "trigger": {
+      "turn_range": [
+        45,
+        85
+      ],
+      "npc_lin_concubine": ">= 8",
+      "stat_scheming": ">= 35",
+      "event_s2_lin_concubine_enter": true
+    },
+    "once": true,
+    "text": "林姨娘在你面前终于卸下了笑容。她说起自己的前半生——曾是官家小姐，琴棋书画样样精通，诗词歌赋无所不通。她本该嫁入门当户对的人家，过着锦衣玉食的生活，却因为父亲的政治风波，从云端跌到泥地。\n家道中落后，亲戚避之不及，曾经的姐妹也都断了往来。无人敢娶一个落魄官员的女儿，她只能眼睁睁看着年华老去。最后是主母相中了她的才华和那张脸，纳她为妾给少爷延续香火。\n她苦笑道：\"那才是真正的死。我有才能，有教养，却只能用这些换口饭吃。如今连教养都成了累赘，只有肚子里能生出儿子才是最值钱的本事。\"她看着你，眼中有悲伤，也有不甘：\"我们这些人啊，生是不由己，死也不由己。\"那一刻，你看到两种女人的样本：一种生来卑微，学会了接受；另一种曾经高贵，被迫学会了屈辱。都是困，却困的方式全然不同。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_sympathy",
+        "text": "A. 真诚表示同情",
+        "apCost": 1,
+        "reward": {
+          "npc_lin_concubine": 4,
+          "scheming": 2
+        },
+        "resultText": "你的眼泪和她的叹息混在一起。女人对女人的理解，有时候比男人的承诺更贵重。林姨娘握住你的手：\"姐姐能懂我，真是难得。\"你们的关系因这次倾诉而更加亲密。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 50,
+            "reward": {
+              "npc_lin_concubine": 6,
+              "scheming": 3,
+              "network": 2
+            },
+            "resultText": "你不仅给予了她同情，还与她深入探讨了女人在这个时代的处境。你们达成了深刻的理解和共鸣，建立了超越表面的真诚友谊。林姨娘将你视为知己，愿意与你分享更多秘密和资源。"
+          },
+          {
+            "min": 30
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_lin_concubine": 3,
+              "scheming": 1
+            },
+            "resultText": "你的同情虽然真诚，但林姨娘能感觉到你们之间仍有距离。她淡淡一笑：\"多谢姐姐，我说得太多了。\"你们的关系有所改善，但还谈不上知己。"
+          }
+        ]
+      },
+      {
+        "id": "opt_advise",
+        "text": "B. 劝她看开，各有其道",
+        "apCost": 1,
+        "reward": {
+          "npc_lin_concubine": 2,
+          "status": 1,
+          "scheming": 1
+        },
+        "resultText": "你虽然想帮，却说不出有力的话。各人有各人的困，很难互相救赎。林姨娘点点头：\"也是，抱怨无用，还是要活下去。\"她重新戴上了面具。"
+      },
+      {
+        "id": "opt_alliance",
+        "text": "C. 提议结盟，互相扶持",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 55"
+        },
+        "reward": {
+          "npc_lin_concubine": 7,
+          "scheming": 4,
+          "network": 3,
+          "status": 2
+        },
+        "resultText": "你趁机提出，既然你们都是困在笼中的鸟，不如抱团取暖，互相扶持。林姨娘眼睛一亮：\"姐姐说得极是。在这府里，多个盟友总比多个敌人强。\"你们结成了坚固的联盟。",
+        "special": "lin_deep_alliance",
+        "failText": "你的心计还不够深，无法在此时提出结盟。"
+      },
+      {
+        "id": "opt_pity",
+        "text": "D. 暗自庆幸，自己出身更低",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2
+        },
+        "resultText": "你听着林姨娘的故事，心中却在想：或许从一开始就在低处，反而不用承受从云端跌落的痛苦。你没有她那么多的不甘，也因此活得更坦然一些。"
+      }
+    ]
+  },
+  {
+    "id": "s2_su_concubine_competition",
+    "title": "苏姨娘的到来",
+    "type": "random",
+    "weight": 1.4,
+    "trigger": {
+      "turn_range": [
+        60,
+        85
+      ],
+      "npc_su_concubine": ">= -2",
+      "stat_favor": "< 50"
+    },
+    "once": true,
+    "text": "自从苏姨娘进府后，少爷几乎夜夜宿在她的院子里。你已经有半个月没见到少爷了。府里的下人们都在议论，说苏姨娘深得少爷欢心，连带着她在府中的地位也水涨船高。\n这天，你在花园里碰到了正在赏花的苏姨娘。她身边跟着少爷，少爷正温柔地为她摘下一朵海棠花，簪在她的鬓边。苏姨娘娇笑着，一副小女儿姿态。\n看到你，苏姨娘眼中闪过一丝得意，她挽住少爷的胳膊，娇声道：\"少爷，我们去那边看看吧。\"少爷温柔地应了，路过你身边时，只是淡淡点了点头，连话都没说一句。\n你站在原地，看着他们远去的背影，心中清楚地明白——你在少爷身边的影响力正在被边缘化。苏姨娘有少爷的青睐，就有了在府中说话的分量，而你却在一点点失去这份影响力。你需要他的温柔，需要通过他获得权力和地位。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_jealous_action",
+        "text": "A. 当场发作，质问少爷",
+        "apCost": 2,
+        "reward": {
+          "favor": -5,
+          "npc_su_concubine": -5,
+          "status": -3
+        },
+        "resultText": "你再也忍不住，当场哭着质问少爷为何如此冷落你。少爷脸色一沉：\"你这是在闹什么？成何体统！\"他拂袖而去，留下你在众人的指指点点中羞愤欲绝。你的失态不仅没有改变什么，反而让你在府中的地位更加尴尬。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 0,
+            "reward": {
+              "favor": -8,
+              "npc_su_concubine": -6,
+              "status": -5,
+              "scheming": -2
+            },
+            "resultText": "你的发作让少爷大为光火。他当众斥责你不知分寸，让你回去好好反省。府里的人都在背后议论你，说你是恋栈成性的泼妇。苏姨娘则越发在府中站稳了脚跟，而你的处境却一落千丈。"
+          }
+        ]
+      },
+      {
+        "id": "opt_endure",
+        "text": "B. 忍气吞声，独自伤心",
+        "apCost": 0,
+        "reward": {
+          "health": -3,
+          "scheming": 2
+        },
+        "resultText": "你强忍着泪水，转身离开。回到自己的院子，你独自哭了一整夜。你明白，在这府里，争夺话语权要靠手段，不靠眼泪。你要变得更强，才能夺回属于你的地位。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 50,
+            "reward": {
+              "health": -2,
+              "scheming": 3,
+              "favor": 1
+            },
+            "resultText": "你的隐忍被少爷看在眼里。第二天，少爷竟然主动来看你，问你身体可好。你强颜欢笑，说一切都好。少爷眼中闪过一丝愧疚，那晚留在了你的院中。你明白，有时候退一步，反而能赢得更多。"
+          },
+          {
+            "min": 30
+          },
+          {
+            "min": 0,
+            "reward": {
+              "health": -4,
+              "scheming": 1
+            },
+            "resultText": "你的隐忍并没有换来少爷的关注。他甚至不知道你伤心。你独自舔舐伤口，心中的委屈无处诉说。"
+          }
+        ]
+      },
+      {
+        "id": "opt_sabotage",
+        "text": "C. 暗中破坏苏姨娘的名声",
+        "apCost": 2,
+        "require": {
+          "stat_scheming": ">= 70",
+          "stat_network": ">= 20"
+        },
+        "reward": {
+          "scheming": 4,
+          "npc_su_concubine": -8,
+          "network": 1
+        },
+        "resultText": "你决定用更隐蔽的手段。你在府中散布一些关于苏姨娘的流言，说她出身商户，不懂规矩，还说她私下奢侈浪费。这些流言传到主母耳中，主母果然对苏姨娘更加不满。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 75,
+            "reward": {
+              "scheming": 5,
+              "npc_su_concubine": -10,
+              "network": 2,
+              "npc_matron": 2
+            },
+            "resultText": "你的流言传播得天衣无缝，没有人发现是你在背后操纵。主母开始对苏姨娘横加指责，处处刁难。少爷虽然宠爱苏姨娘，但也不得不顾及主母的脸面，对她的宠爱有所收敛。你用计谋击败了对手。"
+          },
+          {
+            "min": 50
+          },
+          {
+            "min": 0,
+            "reward": {
+              "scheming": 2,
+              "npc_su_concubine": -12,
+              "favor": -5,
+              "status": -3
+            },
+            "resultText": "你的手段被苏姨娘察觉了。她在少爷面前哭诉，说有人在背后诋毁她。少爷大怒，查明是你所为，对你大为失望。你不仅没有伤到苏姨娘，反而自己陷入了困境。"
+          }
+        ],
+        "failText": "你的心计和人脉还不足以在府中散布流言而不被发现。"
+      },
+      {
+        "id": "opt_improve_self",
+        "text": "D. 努力提升自己，重新吸引少爷",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 2"
+        },
+        "cost": {
+          "cash": -2
+        },
+        "reward": {
+          "appearance": 2,
+          "scheming": 2,
+          "favor": 2
+        },
+        "resultText": "你决定从自身入手。你花钱买了上好的胭脂水粉，学习新的才艺，改善自己的谈吐。你要让少爷知道，你比那个小丫头强百倍。",
+        "outcomeStat": "appearance",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": {
+              "appearance": 3,
+              "scheming": 3,
+              "favor": 4,
+              "status": 2
+            },
+            "resultText": "你的努力有了成效。少爷在一次宴会上看到焕然一新的你，眼中闪过惊艳的神色。他主动与你搭话，还夸你越来越有韵味。那晚，少爷时隔多日又来了你的院子。你明白，女人要靠自己的魅力，而不是眼泪。"
+          },
+          {
+            "min": 50
+          },
+          {
+            "min": 0,
+            "reward": {
+              "appearance": 1,
+              "favor": 1
+            },
+            "resultText": "你虽然有所改善，但并没有达到让少爷惊艳的程度。少爷对你的态度略有好转，但离重新得宠还有很长的路要走。"
+          }
+        ],
+        "failText": "你没有足够的银两来提升自己。"
+      }
+    ]
+  },
+  {
+    "id": "s2_su_concubine_scheming",
+    "title": "苏姨娘的挑拨",
+    "type": "random",
+    "weight": 1.3,
+    "trigger": {
+      "turn_range": [
+        65,
+        90
+      ],
+      "npc_su_concubine": "< 0",
+      "npc_lin_concubine": ">= 3"
+    },
+    "once": true,
+    "text": "你无意中听到苏姨娘在少爷面前说话。她娇声道：\"少爷，我听说林姐姐和某某姐姐走得很近，时常在一起密谈。她们是不是在背后说少爷的坏话呀？\"她说这话时，故意提高了声音，让经过的你能听见。\n少爷皱眉道：\"哪有那么多事。\"但你看得出，他心中已经起了疑心。苏姨娘见状，又补充道：\"我也是为少爷着想嘛。这府里的女人心思多得很，少爷可要当心才是。\"\n你这才明白，苏姨娘看似天真无邪，实则心机深重。她这是在挑拨你和林姨娘的关系，也在破坏你们在少爷心中的形象。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_confront",
+        "text": "A. 当面揭穿她的挑拨",
+        "apCost": 1,
+        "require": {
+          "stat_scheming": ">= 60"
+        },
+        "reward": {
+          "npc_su_concubine": -6,
+          "favor": 1,
+          "scheming": 2
+        },
+        "resultText": "你走上前，从容地说：\"苏妹妹说的是我吧？我和林姐姐只是闲聊家常，可不是什么密谋。少爷明鉴。\"苏姨娘脸色一变，想要辩解，却被你一一驳回。少爷看出了苏姨娘的小心思，对她的话也不再全信。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 70,
+            "reward": {
+              "npc_su_concubine": -8,
+              "favor": 3,
+              "scheming": 3,
+              "npc_lin_concubine": 2
+            },
+            "resultText": "你不仅揭穿了苏姨娘的挑拨，还借机展现了自己的睿智和大度。少爷对你刮目相看，还批评了苏姨娘不该胡乱猜疑。林姨娘事后也感激你的维护，你们的关系更加牢固。苏姨娘则恨你入骨。"
+          },
+          {
+            "min": 50
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_su_concubine": -4,
+              "favor": -1
+            },
+            "resultText": "你的揭穿虽然有理有据，但苏姨娘梨花带雨地哭诉，反而让少爷觉得是你在欺负她。你的正面对抗没有取得预期效果。"
+          }
+        ],
+        "failText": "你的心计还不足以在当面对质中占上风。"
+      },
+      {
+        "id": "opt_alliance",
+        "text": "B. 私下联合林姨娘，共同应对",
+        "apCost": 1,
+        "require": {
+          "npc_lin_concubine": ">= 5"
+        },
+        "reward": {
+          "npc_lin_concubine": 4,
+          "scheming": 3,
+          "network": 2
+        },
+        "resultText": "你找到林姨娘，将苏姨娘的挑拨告诉她。林姨娘眼中闪过一丝怒意：\"这个小丫头，年纪不大心眼倒多。咱们得提防着她。\"你们商议对策，决定联手对抗苏姨娘。",
+        "special": "lin_su_alliance",
+        "failText": "你与林姨娘的关系还不够亲密，她不会与你结盟。"
+      },
+      {
+        "id": "opt_ignore",
+        "text": "C. 装作没听见，暗中提防",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2
+        },
+        "resultText": "你若无其事地走开，但心中已经对苏姨娘有了防备。小丫头片子，以为自己那点小伎俩能瞒得过谁？你暗自冷笑，日后有她好看的。"
+      },
+      {
+        "id": "opt_counter",
+        "text": "D. 以其人之道还治其人之身",
+        "apCost": 2,
+        "require": {
+          "stat_scheming": ">= 75"
+        },
+        "reward": {
+          "scheming": 4,
+          "npc_su_concubine": -10,
+          "favor": 2
+        },
+        "resultText": "既然苏姨娘爱挑拨，你就让她尝尝被挑拨的滋味。你私下向少爷透露，苏姨娘背地里说少爷管她管得太严，还说想念家里的自由。少爷果然对苏姨娘起了疑心，开始冷落她。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 80,
+            "reward": {
+              "scheming": 5,
+              "npc_su_concubine": -15,
+              "favor": 4,
+              "status": 2
+            },
+            "resultText": "你的反击精准而致命。苏姨娘百口莫辩，在少爷面前失了宠。少爷转而想起你的好，重新来你的院中。你用苏姨娘的手段击败了她，也让少爷明白，不是年轻貌美就能长久得宠的。"
+          },
+          {
+            "min": 60
+          },
+          {
+            "min": 0,
+            "reward": {
+              "scheming": 2,
+              "favor": -3,
+              "npc_su_concubine": -8
+            },
+            "resultText": "你的反击被苏姨娘察觉，她在少爷面前哭诉是你在陷害她。少爷虽然对你们都有所不满，但还是更相信苏姨娘一些。你们的斗争更加激烈了。"
+          }
+        ],
+        "failText": "你的心计还不够深，无法完美地反击。"
+      }
+    ]
+  },
+  {
+    "id": "s2_su_concubine_pregnant",
+    "title": "苏姨娘的喜讯",
+    "type": "random",
+    "weight": 1.5,
+    "trigger": {
+      "turn_range": [
+        72,
+        95
+      ],
+      "npc_su_concubine": ">= 0",
+      "stat_favor": "< 55"
+    },
+    "once": true,
+    "text": "府里传来消息——苏姨娘有了身孕！\n这个消息如同晴天霹雳，震撼了整个府邸。少爷大喜过望，亲自去苏姨娘的院中，陪她说了一整天的话。主母虽然脸色难看，但苏姨娘毕竟怀的是少爷的骨肉，也不好过分苛责。\n更让你震惊的是，就连林姨娘都还没有身孕的消息，苏姨娘却后来居上。府里的风向再次改变，所有人都围着苏姨娘转，生怕她有个闪失。\n赵嬷嬷在你耳边叹气：\"苏姨娘这回算是熬出头了。只要这孩子顺利生下来，她在府里的地位就稳如泰山了。\"你听着这话，心如刀绞。你在府里这么多年，却还没有为少爷诞下一儿半女，而苏姨娘进府不到一年就怀孕了，这让你情何以堪？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_congratulate",
+        "text": "A. 登门道贺，表面和气",
+        "apCost": 1,
+        "reward": {
+          "npc_su_concubine": 3,
+          "scheming": 2,
+          "status": 1
+        },
+        "resultText": "你强忍着心中的复杂情绪，备了一份厚礼去苏姨娘处道贺。苏姨娘喜笑颜开，拉着你的手说了许多感激的话。但你们心里都清楚，这不过是表面文章罢了。"
+      },
+      {
+        "id": "opt_sabotage",
+        "text": "B. 暗中破坏她的身孕（极度危险）",
+        "apCost": 3,
+        "require": {
+          "stat_scheming": ">= 85",
+          "npc_su_concubine": "< -10"
+        },
+        "reward": {
+          "scheming": 5
+        },
+        "resultText": "你动了歹念，想要破坏苏姨娘的身孕。但这种事风险极大，一旦败露，你将死无葬身之地。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 90,
+            "reward": {
+              "scheming": 7,
+              "npc_su_concubine": -20,
+              "status": -5,
+              "favor": -5
+            },
+            "resultText": "你的计策成功了，苏姨娘小产了。但府里立即展开了严密的调查，你必须极其小心，不能露出任何破绽。整个府邸都陷入了恐慌和猜疑之中，你的处境也变得极其危险。",
+            "special": "su_miscarriage_danger"
+          },
+          {
+            "min": 0,
+            "reward": {},
+            "resultText": "你的恶行被当场发现！少爷震怒，主母也无法容忍你这种恶毒行径。你被立即打入死牢，等待处置。你为了一己私欲，害人害己，最终落得身败名裂的下场。",
+            "gameOver": true,
+            "gameOverReason": "因谋害姨娘子嗣，被处死"
+          }
+        ],
+        "failText": "你的心计还不够深，不敢冒这个险；或者你对苏姨娘的恨意还不足以让你做出这种极端举动。"
+      },
+      {
+        "id": "opt_compete_pregnancy",
+        "text": "C. 加倍努力，也要怀上孩子",
+        "apCost": 2,
+        "reward": {
+          "favor": 3,
+          "scheming": 2,
+          "health": -5
+        },
+        "resultText": "你暗下决心，一定要尽快怀上孩子。你不惜一切代价努力争取少爷的关注，希望能尽快有喜。因为你明白，有了孩子，才有在府中立足的资本。这条路虽然艰辛，但是通往权力的必经之路。",
+        "outcomeStat": "favor",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": {
+              "favor": 5,
+              "health": -8,
+              "item_night_effort": 3
+            },
+            "resultText": "你的努力感动了少爷，他对你更加关照。虽然身体疲惫不堪，但你看到了希望。只要能怀上孩子，就能与苏姨娘分庭抗礼，就能在府中拥有更多话语权。"
+          },
+          {
+            "min": 40
+          },
+          {
+            "min": 0,
+            "reward": {
+              "favor": 1,
+              "health": -6
+            },
+            "resultText": "你拼命努力，但少爷的心思都在苏姨娘身上。你的付出没有得到应有的回报，身体却越来越虚弱。"
+          }
+        ]
+      },
+      {
+        "id": "opt_give_up",
+        "text": "D. 认清现实，另谋出路",
+        "apCost": 1,
+        "reward": {
+          "scheming": 3,
+          "network": 3,
+          "business": 2
+        },
+        "resultText": "你意识到，在生育这条路上，你可能永远比不过别人。与其把所有希望都寄托在少爷身上，不如为自己打算。你开始经营自己的产业，拓展人脉，寻找其他的立足之地。"
+      }
+    ]
+  },
+  {
+    "id": "s2_three_concubines_conflict",
+    "title": "三姨娘的明争暗斗",
+    "type": "random",
+    "weight": 1.2,
+    "trigger": {
+      "turn_range": [
+        75,
+        100
+      ],
+      "npc_lin_concubine": ">= -2",
+      "npc_su_concubine": ">= -2"
+    },
+    "once": true,
+    "text": "府里如今有了三位姨娘（王姨娘已经被发卖）——林姨娘、苏姨娘，还有你。三个女人一台戏，府里的气氛变得微妙而紧张。\n主母为了平衡，召集你们三人,确立规矩。林姨娘端庄优雅，说话得体；苏姨娘娇俏可人，频频向少爷抛媚眼；而你夹在中间，感受着两边的压力。\n散场后，林姨娘向你递来一个眼神，似乎想要拉拢你对抗苏姨娘。而苏姨娘也私下找过你，说林姨娘太过高傲，不如你们这些寻常出身的姐妹亲近。\n你站在十字路口，该如何选择？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_lin_alliance",
+        "text": "A. 与林姨娘结盟，共同对抗苏姨娘",
+        "apCost": 1,
+        "require": {
+          "npc_lin_concubine": ">= 8"
+        },
+        "reward": {
+          "npc_lin_concubine": 5,
+          "npc_su_concubine": -6,
+          "scheming": 3,
+          "status": 2
+        },
+        "resultText": "你选择与林姨娘结盟。她有教养，有手段，是个可靠的盟友。你们联手在府中对抗苏姨娘的嚣张气焰。虽然苏姨娘有少爷的宠爱，但面对你们的联合，也不得不收敛几分。",
+        "special": "lin_alliance_formed",
+        "failText": "你与林姨娘的关系还不够亲密，无法结成联盟。"
+      },
+      {
+        "id": "opt_su_alliance",
+        "text": "B. 与苏姨娘结盟，对抗林姨娘",
+        "apCost": 1,
+        "require": {
+          "npc_su_concubine": ">= 8"
+        },
+        "reward": {
+          "npc_su_concubine": 5,
+          "npc_lin_concubine": -6,
+          "favor": 2,
+          "scheming": 2
+        },
+        "resultText": "你选择与苏姨娘结盟。她得少爷宠爱，跟着她有肉吃。你们联手对付林姨娘，经常在少爷面前说她的坏话。林姨娘虽然有才华，但架不住你们的联合挤兑，处境也变得艰难起来。",
+        "special": "su_alliance_formed",
+        "failText": "你与苏姨娘的关系还不够亲密，无法结成联盟。"
+      },
+      {
+        "id": "opt_neutral",
+        "text": "C. 保持中立，谁也不得罪",
+        "apCost": 0,
+        "reward": {
+          "scheming": 3,
+          "status": 1
+        },
+        "resultText": "你选择两不相帮，保持中立。林姨娘和苏姨娘斗得越凶，你的处境反而越安全。你明白，鹬蚌相争，渔翁得利的道理。让她们去斗吧，你只需要坐山观虎斗。"
+      },
+      {
+        "id": "opt_manipulate",
+        "text": "D. 挑拨离间，让她们互斗",
+        "apCost": 2,
+        "require": {
+          "stat_scheming": ">= 80"
+        },
+        "reward": {
+          "scheming": 5,
+          "status": 3,
+          "favor": 2
+        },
+        "resultText": "你表面与两边都保持友好，暗地里却在挑拨她们的矛盾。你在林姨娘面前说苏姨娘的坏话，又在苏姨娘面前说林姨娘看不起她。两人的矛盾越来越深，而你却置身事外，坐收渔利。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 85,
+            "reward": {
+              "scheming": 7,
+              "status": 5,
+              "favor": 4,
+              "npc_lin_concubine": -8,
+              "npc_su_concubine": -8
+            },
+            "resultText": "你的挑拨天衣无缝，林姨娘和苏姨娘完全被你玩弄于股掌之中。她们明争暗斗，闹得府里鸡犬不宁，而你却独善其身，还在少爷面前博得了识大体的好名声。你成了最大的赢家。"
+          },
+          {
+            "min": 70
+          },
+          {
+            "min": 0,
+            "reward": {
+              "scheming": 2,
+              "npc_lin_concubine": -15,
+              "npc_su_concubine": -15,
+              "status": -5,
+              "favor": -5
+            },
+            "resultText": "你的挑拨被她们识破了！林姨娘和苏姨娘放下恩怨，联手对付你这个两面三刀的小人。少爷也对你的行为大为不齿，你在府里的处境变得极其艰难。"
+          }
+        ],
+        "failText": "你的心计还不够深，无法完美地挑拨她们。"
+      }
+    ]
+  },
+  {
+    "id": "s2_jinshu_memory",
+    "title": "往事·锦书",
+    "type": "random",
+    "weight": 0.5,
+    "trigger": {
+      "turn_range": [
+        25,
+        80
+      ],
+      "stat_scheming": ">= 40"
+    },
+    "once": true,
+    "text": "深夜难眠，你想起了锦书。\n\n她本是府里管事的女儿，自幼在府里长大，容貌娇美，因父亲犯错一家被贬为奴籍。从千金小姐跌落为奴女，她学会了用美色和心计求生。\n\n她曾极力接近少爷，想借此获得在府中立足的机会，但少爷对她始终冷淡。后来主母进门前，她因一件小事得罪了老夫人，被当场打发出府。你记得她被赶走那日的样子——手里抽着一个包袱，背影急快而僵硬，像被抽走了骨头的纸人。她走过你身边时，嘴角抽动了一下，好像想说什么，终究没有开口。\n\n如今你成了府里唯一留下的通房，不知是幸还是不幸。锦书的前车之鉴时刻提醒你——女人在这深宅大院里的争斗，从来不是为了爱情，而是为了权力和生存。你在月光下摸了摸自己的脸，想着：她当时是不是也像你这样，在深夜里睡不着觉，反复掣摩自己的路该怎么走？",
+    "options": [
+      {
+        "id": "opt_pity",
+        "text": "A. 为她的结局感到唏嘘",
+        "apCost": 0,
+        "reward": {
+          "scheming": 1
+        },
+        "resultText": "她也曾拥有过光鲜的日子，所以失去时才更痛。你想起她被赶出去那天的背影，肩上的包袱很小，她却而像提着千斤重。你曾经也站在那个位置——不，你比她还低。你从未拥有过，所以无从失去。可这也说不上是幸运。"
+      },
+      {
+        "id": "opt_warning",
+        "text": "B. 将她的教训记在心里",
+        "apCost": 0,
+        "reward": {
+          "status": 1,
+          "scheming": 2
+        },
+        "resultText": "你在心里把锦书的故事从头到尾梳理了一遍：她错在哪一步？是太急于接近少爷，还是小看了老夫人的威严？每一步错棋都不是偶然。你把这些教训刻在心底——在这府里，每一步都要三思后行。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_gift_matron",
+    "title": "主母赠礼",
+    "type": "random",
+    "weight": 1.2,
+    "trigger": {
+      "turn_range": [
+        23,
+        120
+      ],
+      "npc_matron": ">= 15",
+      "chance": 0.4
+    },
+    "once": false,
+    "text": "赵嬷嬷送来一个信封，说是主母的意思。里面是一两碎银和几支绒花簪。嬷嬷附了句话：\"老爷人说，你这段日子做得稳当，夫人问我意思如何，我说你是个有分寸的。\"你手里握着这点赏银，明白这不仅是银子，更是认可。",
+    "options": [
+      {
+        "id": "opt_accept",
+        "text": "A. 感恩收下，好生保护",
+        "apCost": 0,
+        "reward": {
+          "cash": 1,
+          "npc_matron": 1,
+          "status": 1
+        },
+        "resultText": "赏银和簪子都被你妥善保管。这是主母的善意，也是你在府里的筹码。"
+      }
+    ]
+  },
+  {
+    "id": "s2_sys_gift_concubines",
+    "title": "姨娘赠礼",
+    "type": "random",
+    "weight": 0.9,
+    "trigger": {
+      "turn_range": [
+        42,
+        120
+      ],
+      "chance": 0.35
+    },
+    "once": false,
+    "text": "府中姨娘派人送来一个雕花的木盒，里面是名贵的胭脂和几两银子。来人说：\"咱们都在一条船上，互相扶持才能活得长远。这点小东西，当我姨娘的一点心意。\"你打开盒子，看着那口脂粉，想着府里姨娘们互相取暖，也互相提防的日子。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_accept_lin",
+        "text": "A. 是林姨娘的礼，回礼表示感谢",
+        "apCost": 0,
+        "require": {
+          "stat_cash": ">= 1",
+          "npc_lin_concubine": ">= 8"
+        },
+        "cost": {
+          "cash": -1
+        },
+        "reward": {
+          "npc_lin_concubine": 2,
+          "network": 1
+        },
+        "resultText": "你的回礼让林姨娘很满意。你们的盟友关系更加稳固了。",
+        "failText": "来人说不是林姨娘的礼。"
+      },
+      {
+        "id": "opt_accept_su",
+        "text": "B. 是苏姨娘的礼，回礼表示感谢",
+        "apCost": 0,
+        "require": {
+          "stat_cash": ">= 1",
+          "npc_su_concubine": ">= 8"
+        },
+        "cost": {
+          "cash": -1
+        },
+        "reward": {
+          "npc_su_concubine": 2,
+          "network": 1
+        },
+        "resultText": "你的回礼让苏姨娘很高兴。你们的关系更加亲近了。",
+        "failText": "来人说不是苏姨娘的礼。"
+      },
+      {
+        "id": "opt_keep",
+        "text": "C. 收下却不回礼",
+        "apCost": 0,
+        "reward": {
+          "cash": 0.5,
+          "scheming": 1
+        },
+        "resultText": "你欠了她一份人情，也失了一份交情。有些机会错过了，就很难再来。但你也省下了一笔开销。"
+      }
+    ]
+  },
+  {
+    "id": "s2_1000",
+    "title": "日常养成（第二阶段）",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [
+        23,
+        45
+      ]
+    },
+    "text": "已是通房身份，你需要更加小心经营自己在府中的地位。是生子巩固地位，还是靠手腕赢得信任？",
+    "once": false,
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_serve",
+        "text": "A. 用心伺候少爷",
+        "apCost": 1,
+        "reward": {
+          "favor": 3,
+          "health": -2
+        },
+        "resultText": "你尽心伺候少爷，把他爱吃的莱莉花糕学着做了，虽然样子不够好看，但少爷尝了一块后笑了笑。会志的男人话照例不多，但那个笑容让你的疲惫消散了大半。"
+      },
+      {
+        "id": "opt_network",
+        "text": "B. 打点院中关系",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 1"
+        },
+        "cost": {
+          "cash": -1
+        },
+        "reward": {
+          "status": 2,
+          "npc_matron": 1
+        },
+        "resultText": "你花了一两银子买了几包精细的点心，又托人送了一包上好的茶叶给府里的管事娘子。她们见了你都领头喜欢笑，嘴里叫着'姨娘客气了'，背地里办事却比前利落了不少。"
+      },
+      {
+        "id": "opt_matron",
+        "text": "C. 拜访主母，表达忠心",
+        "apCost": 1,
+        "reward": {
+          "npc_matron": 3,
+          "scheming": 1
+        },
+        "resultText": "你在主母面前规规矩矩地行了礼，又陆续说了些体己话。主母拿着绣花圈，似听非听地应着，但你注意到她嘴角微微上扬了一下。离开时嬷嬷送你到门口，多说了一句：'常来坐坐，夫人其实挥喜欢有10话人。'"
+      },
+      {
+        "id": "opt_rest",
+        "text": "D. 好好休息，调养身体",
+        "apCost": 1,
+        "reward": {
+          "health": 5
+        },
+        "resultText": "你在床上躺了一整天，丫鬟给你端来了热粥和花生糕。窗外的陽光照在被子上，暖暖的，像小时候娘抱着你的感觉。你难得放空了一次脑子，身体却认真地吸收着每一分休息。第二天起来时，镜子里的自己看起来鲜活了不少。"
+      }
+    ]
+  },
+  {
+    "id": "s2_pregnancy_notice",
+    "title": "怀孕迹象",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [
+        26,
+        52
+      ],
+      "stat_favor": ">= 40",
+      "stat_health": ">= 50",
+      "chance": 0.35
+    },
+    "once": true,
+    "text": "这个月你总觉得身体有些异样。早起时反胃的感觉越来越明显，连最喜欢的红豆糕都吃不下去。你以为是前些天淘了身子，可连着几日都是如此。\n\n院中老嬷嬷某日突然抽着你的脖子看了看气色，又摸了摸你的手腕，神情变得十分微妙。她凑到你耳边，压低了声音：'姑娘，这怕是有喜了。'你的心一下子悬了起来，手不由得覆上小腹——这是你的机会，也是你的风险。有了孩子，就有了在府中说话的底气；可也意味着更多的端视和觊觎。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_report",
+        "text": "A. 立即禀报主母和少爷",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 5,
+          "favor": 3,
+          "status": 3
+        },
+        "resultText": "你规规矩矩地禀报了主母和少爷。主母派了专门的嬷嬷来照顾你，少爷也更加关心你。你的地位在府中明显提升了。",
+        "special": "pregnancy_start"
+      },
+      {
+        "id": "opt_careful",
+        "text": "B. 先小心观察，确认后再说",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2,
+          "health": -1
+        },
+        "resultText": "你决定再观察几日。谨慎虽好，但也让你错过了一些表忠心的机会。",
+        "special": "pregnancy_delay"
+      }
+    ]
+  },
+  {
+    "id": "s2_birth_success",
+    "title": "满月酒宴",
+    "type": "random",
+    "weight": 1.5,
+    "trigger": {
+      "turn_range": [
+        36,
+        48
+      ],
+      "item_child": ">= 1",
+      "event_s2_birth": true
+    },
+    "once": true,
+    "text": "孩子满月了，府中摆了三桌满月酒。小小的婴孩被裹在红绸被子里，核桃大的拳头放在嘴边喃着，毫不知道自己是这场対席的主角。\n\n少爷亲自主持，频频举杯，笑得眼角都是纹路。客人们森水纷纷道贺，什么'小郎君天庭饱满，日后必定大富大贵'，什么'虎父无犬子'——你坐在角落，听着这些话，心里像打翻了的五味瓶。孩子是你十月怀胎、九死一生生下的，可满场的人都在向少爷道喜，似乎他才是唤孩子来到人世的那个人。\n\n主母也出席了，脸上笑意得体，但你看得见她摊在膝上的手指紧紧掐着帕子角。赵嬷嬷厚着嘴脸惄声对你说：'好好的，往后你在这府里的日子就稳当了。'",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_grateful",
+        "text": "A. 恭敬道谢，表现得体",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 3,
+          "favor": 3,
+          "status": 3,
+          "cash": 2
+        },
+        "resultText": "你规规矩矩地向主母和少爷道谢，又向各位宾客行礼。你的谦逊得体赢得了众人的好感，主母也赏了你一批补品。"
+      },
+      {
+        "id": "opt_humble",
+        "text": "B. 低调行事，避免锋芒",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2,
+          "status": 1
+        },
+        "resultText": "你刻意低调，不抢主母的风头。这份谨慎让主母对你更加放心，府中也少了些闲话。"
+      }
+    ]
+  },
+  {
+    "id": "s2_matron_test",
+    "title": "主母的考验",
+    "type": "random",
+    "weight": 1.5,
+    "trigger": {
+      "turn_range": [
+        28,
+        42
+      ],
+      "npc_matron": ">= 40",
+      "chance": 0.4
+    },
+    "once": true,
+    "text": "主母突然召你去正厅，说是要考验你的针线活。去时只见绷架已经支好，上面绑着雪白的缫布，旁边整整齐齐摆着十几种颜色的丝线。主母坐在上首，手里慢慢捶着一串佛珠，目光淡淡地扫过你。\n\n你知道这不只是考验针线。院中其他丫鬟都远远地站着，用余光瞄你。她们在等着看你出丑，还是在等着看你成器——你不确定。你只知道，这次下针的每一针，都是在绣你自己的前途。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_perfect",
+        "text": "A. 全力以赴，展现最好的手艺",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 5,
+          "status": 3,
+          "health": -2
+        },
+        "resultText": "你用心绣了一幅精美的图案。主母看后满意地点头：\"你这孩子，倒是心灵手巧。\"院中丫鬟都对你刮目相看。",
+        "outcomeStat": "scheming",
+        "outcomes": [
+          {
+            "min": 60,
+            "reward": {
+              "npc_matron": 8,
+              "status": 5
+            },
+            "resultText": "你不仅针线好，还巧妙地选择了主母喜欢的图案和配色。主母大为赞赏，当场赏了你一匹上等绸缎。"
+          },
+          {
+            "min": 30
+          },
+          {
+            "min": 0,
+            "reward": {
+              "npc_matron": 3,
+              "status": 1
+            },
+            "resultText": "你虽然用心，但针线功夫还是差了些。主母虽然没有责备，但眉宇间有些失望。"
+          }
+        ]
+      },
+      {
+        "id": "opt_humble",
+        "text": "B. 谦虚应对，强调自己还需学习",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 2,
+          "scheming": 1
+        },
+        "resultText": "你表现出谦虚的态度，说自己还需多多学习。主母赞许你的谦逊，但也没有特别的表示。"
+      }
+    ]
+  }
+]

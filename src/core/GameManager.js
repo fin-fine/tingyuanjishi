@@ -4,6 +4,7 @@ import { Player } from "../model/Player.js";
 import { WorldState } from "../model/WorldState.js";
 import { MainScene } from "../ui/MainScene.js";
 import { loadAiSettings } from "./AiConfig.js";
+import { createRandomChild, getHighestStat, getPersonalityType, PERSONALITY_LABELS, STAT_LABELS } from "../model/Child.js";
 export class GameManager {
     constructor() {
         this.eventEngine = new EventEngine();
@@ -18,6 +19,7 @@ export class GameManager {
         this.logSeq = 0;
         this.logLimit = 200;
         this.lastQuarterStats = null;
+        this.interludes = [];
     }
     // 数字转中文
     numberToChinese(num) {
@@ -57,18 +59,21 @@ export class GameManager {
     async init() {
         await this.eventEngine.loadAll();
         this.shopItems = await this.loadShopItems();
+        await this.loadInterludes();
         this.restoreOrInit();
+        this.ensureNpcImpressions();
         this.scene = new MainScene(this.player, this.world, this.shopItems, () => this.resetGame());
         this.refreshSaves();
         this.scene.renderLog(this.logs);
         this.scene.renderTime();
         if (this.isNewGame) {
+            const legacy = this.saveSystem.loadLegacy();
             this.scene.showIntro((payload) => {
                 void this.onCharacterCreated(payload);
-            });
+            }, legacy);
             return;
         }
-        this.tick();
+        void this.tick();
     }
     restoreOrInit() {
         const saved = this.saveSystem.loadSlot("auto");
@@ -81,6 +86,7 @@ export class GameManager {
     }
     resetGame() {
         this.saveSystem.clearAll();
+        // 不清除遗产，让玩家可以重新开始时继承
         this.player.reset();
         this.world.reset();
         this.plan = null;
@@ -90,12 +96,33 @@ export class GameManager {
         this.scene?.renderLog(this.logs);
         this.scene?.renderTime();
         this.refreshSaves();
+        const legacy = this.saveSystem.loadLegacy();
         this.scene?.showIntro((payload) => {
             void this.onCharacterCreated(payload);
-        });
+        }, legacy);
     }
-    tick() {
-        if (this.checkStageEnding()) {
+    restartWithLegacy() {
+        // 保存当前周目数据作为遗产
+        this.saveSystem.saveLegacy(this.player, this.world);
+        // 清除存档
+        this.saveSystem.clearAll();
+        this.player.reset();
+        this.world.reset();
+        this.plan = null;
+        this.isNewGame = true;
+        this.logs = [];
+        this.lastQuarterStats = null;
+        this.scene?.renderLog(this.logs);
+        this.scene?.renderTime();
+        this.refreshSaves();
+        // 读取刚保存的遗产
+        const legacy = this.saveSystem.loadLegacy();
+        this.scene?.showIntro((payload) => {
+            void this.onCharacterCreated(payload);
+        }, legacy);
+    }
+    async tick() {
+        if (await this.checkStageEnding()) {
             this.persistAutoSave();
             return;
         }
@@ -104,7 +131,7 @@ export class GameManager {
             this.showQuarterSummary();
             return;
         }
-        const stagePrefix = this.world.stage <= 1 ? "s1_" : "s2_";
+        const stagePrefix = this.world.stage <= 1 ? "s1_" : (this.world.stage === 2 ? "s2_" : "s3_");
         const monthlyEventId = this.getMonthlyEventId();
         const specialEvent = this.eventEngine.pickEvent(this.player, this.world, (event) => event.id.startsWith(stagePrefix) &&
             event.id !== monthlyEventId &&
@@ -150,6 +177,12 @@ export class GameManager {
         this.player.setIdentity(payload.name, payload.backgroundId, payload.backgroundName);
         this.player.setStats(payload.stats);
         this.player.applyDelta(payload.backgroundBonus);
+        // 应用周目遗产
+        if (payload.legacyStat) {
+            const legacyBonus = {};
+            legacyBonus[payload.legacyStat] = 10;
+            this.player.applyDelta(legacyBonus);
+        }
         // 保存初始快照用于第一次季度总结
         this.lastQuarterStats = {
             turn: 1,
@@ -163,19 +196,19 @@ export class GameManager {
                 const backgroundStory = await this.generateBackgroundStory(payload);
                 this.scene?.showResult(backgroundStory, () => {
                     this.persistAutoSave();
-                    this.tick();
+                    void this.tick();
                 });
             }
             catch (error) {
                 // AI失败，直接开始游戏
                 this.persistAutoSave();
-                this.tick();
+                void this.tick();
             }
         }
         else {
             // AI未启用，直接开始游戏
             this.persistAutoSave();
-            this.tick();
+            void this.tick();
         }
     }
     /**
@@ -278,6 +311,7 @@ export class GameManager {
             favor: "宠爱",
             health: "健康",
             cash: "银钱",
+            business: "商业",
         };
         return labels[key];
     }
@@ -287,7 +321,7 @@ export class GameManager {
     async showFirstNightWithNameComment(event) {
         this.scene?.showLoading("命运推演中...");
         try {
-            const nameComment = await this.generateNameComment(this.player.name);
+            const nameComment = this.normalizeInlineText(await this.generateNameComment(this.player.name));
             // 将评价插入到事件文本中
             // 在"第一次抬眼见他"之后插入少爷的评价
             const originalText = event.text;
@@ -393,49 +427,681 @@ export class GameManager {
             if (!content) {
                 throw new Error("Empty model response");
             }
-            return content.trim();
+            return this.normalizeInlineText(content);
         }
         catch (error) {
             console.error("Failed to generate name comment:", error);
             return "";
         }
     }
-    checkStageEnding() {
+    normalizeInlineText(text) {
+        return text.replace(/[\r\n]+/g, " ").replace(/\s{2,}/g, " ").trim();
+    }
+    ensureNpcImpressions() {
+        if (!Object.keys(this.player.npcImpressions ?? {}).length) {
+            this.player.npcImpressions = this.buildDefaultNpcImpressions();
+            this.player.npcImpressionsTurn = this.world.turn;
+        }
+    }
+    getNpcImpressionEntries() {
+        const matronLabel = this.world.stage <= 1 ? "赵嬷嬷" : "大夫人/少夫人";
+        const rivalValue = this.player.npcRelations.rival ?? 0;
+        const showRival = this.world.stage >= 2 || Math.abs(rivalValue) > 0.001;
+        const servantsValue = (this.player.stats.status + this.player.stats.network) / 2;
+        return [
+            {
+                key: "young_master",
+                label: "少爷",
+                value: this.player.stats.favor,
+                visible: true,
+            },
+            {
+                key: "matron",
+                label: matronLabel,
+                value: this.player.npcRelations.matron ?? 0,
+                visible: true,
+            },
+            {
+                key: "rival",
+                label: "姨娘们",
+                value: rivalValue,
+                visible: showRival,
+            },
+            {
+                key: "children",
+                label: "子嗣",
+                value: this.computeChildrenImpressionScore(),
+                visible: true,
+            },
+            {
+                key: "servants",
+                label: "府中下人",
+                value: servantsValue,
+                visible: true,
+            },
+        ];
+    }
+    buildDefaultNpcImpressions() {
+        const impressions = {};
+        const entries = this.getNpcImpressionEntries();
+        for (const entry of entries) {
+            if (!entry.visible) {
+                continue;
+            }
+            if (entry.key === "children") {
+                impressions[entry.key] = this.buildChildrenImpression();
+                continue;
+            }
+            impressions[entry.key] = this.buildGenericImpression(entry.label, entry.value);
+        }
+        return impressions;
+    }
+    buildGenericImpression(label, value) {
+        const score = Math.max(0, Math.min(100, value));
+        if (score >= 80) {
+            return `${label}对你颇为倚重，言行间处处偏护。`;
+        }
+        if (score >= 60) {
+            return `${label}对你信任有加，交代之事也多了。`;
+        }
+        if (score >= 40) {
+            return `${label}对你态度尚可，往来中规中矩。`;
+        }
+        if (score >= 20) {
+            return `${label}对你略显冷淡，少有亲近。`;
+        }
+        return `${label}对你疏离防备，几乎不愿多言。`;
+    }
+    computeChildrenImpressionScore() {
+        const count = this.player.children.length;
+        if (!count) {
+            return 0;
+        }
+        const totalAptitude = this.player.children.reduce((sum, child) => sum + child.aptitude, 0);
+        const avgAptitude = totalAptitude / count;
+        return Math.min(100, 40 + count * 12 + avgAptitude * 0.4);
+    }
+    buildChildrenImpression() {
+        const count = this.player.children.length;
+        if (!count) {
+            return "膝下尚空，暂无子嗣。";
+        }
+        const totalAptitude = this.player.children.reduce((sum, child) => sum + child.aptitude, 0);
+        const avgAptitude = totalAptitude / count;
+        const countText = count >= 2 ? "子嗣渐多" : "子嗣已有";
+        if (avgAptitude >= 80) {
+            return `${countText}，资质出挑，你心中多了几分安稳。`;
+        }
+        if (avgAptitude >= 60) {
+            return `${countText}，尚算顺遂，你心里稍觉宽慰。`;
+        }
+        return `${countText}，底子偏弱，你仍需多费心照拂。`;
+    }
+    async refreshNpcImpressions(reason) {
+        const defaults = this.buildDefaultNpcImpressions();
+        this.player.npcImpressions = { ...this.player.npcImpressions, ...defaults };
+        if (!this.isCustomAllowedBySettings()) {
+            this.player.npcImpressionsTurn = this.world.turn;
+            return;
+        }
+        if (this.player.npcImpressionsTurn === this.world.turn && reason !== "quarter") {
+            return;
+        }
+        try {
+            const aiImpressions = await this.generateNpcImpressionsByAI(defaults);
+            if (aiImpressions) {
+                this.player.npcImpressions = { ...this.player.npcImpressions, ...aiImpressions };
+            }
+        }
+        catch (error) {
+            console.error("Failed to refresh NPC impressions:", error);
+        }
+        finally {
+            this.player.npcImpressionsTurn = this.world.turn;
+        }
+    }
+    async generateNpcImpressionsByAI(defaults) {
+        const settings = loadAiSettings();
+        if (!settings.enabled || !settings.apiUrl) {
+            return null;
+        }
+        const entries = this.getNpcImpressionEntries().filter((entry) => entry.visible);
+        const childCount = this.player.children.length;
+        const avgAptitude = childCount
+            ? this.player.children.reduce((sum, child) => sum + child.aptitude, 0) / childCount
+            : 0;
+        const npcList = entries
+            .map((entry) => `- ${entry.key}(${entry.label}): ${Math.round(entry.value)}`)
+            .join("\n");
+        const prompt = `# Role
+你是一个古风宅斗养成游戏《通房丫头模拟器》的NPC印象生成系统。\n\n# Context\n玩家身份：${this.player.position}\n回合：${this.world.turn}\n月份：${this.world.month}\n属性：${JSON.stringify(this.player.stats)}\nNPC关系：${JSON.stringify(this.player.npcRelations)}\n子嗣数量：${childCount}\n子嗣平均资质：${avgAptitude.toFixed(1)}\n\n# Task\n根据以下NPC数值，为每个NPC生成一句话印象，古风白话，15-30字，语气克制写实。\n数值越高，态度越亲近；数值越低，越冷淡或疏离。\n\nNPC列表:\n${npcList}\n\n# Output\n只输出JSON对象，key必须使用列表中的key，value为一句话文本。不要额外解释。`;
+        const headers = {
+            "Content-Type": "application/json",
+        };
+        if (settings.apiKey) {
+            headers.Authorization = `Bearer ${settings.apiKey}`;
+        }
+        const response = await fetch(settings.apiUrl, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+                model: "deepseek-chat",
+                messages: [{ role: "user", content: prompt }],
+                temperature: 0.5,
+            }),
+        });
+        if (!response.ok) {
+            throw new Error(`Bad response: ${response.status}`);
+        }
+        const raw = (await response.json());
+        const content = raw.choices?.[0]?.message?.content;
+        if (!content) {
+            return null;
+        }
+        const trimmed = content.trim();
+        const jsonText = trimmed.startsWith("{") && trimmed.endsWith("}")
+            ? trimmed
+            : trimmed.match(/\{[\s\S]*\}/)?.[0];
+        if (!jsonText) {
+            return null;
+        }
+        const parsed = JSON.parse(jsonText);
+        const cleaned = {};
+        for (const entry of this.getNpcImpressionEntries()) {
+            if (!entry.visible) {
+                continue;
+            }
+            const value = parsed[entry.key];
+            if (typeof value === "string" && value.trim()) {
+                cleaned[entry.key] = this.normalizeInlineText(value);
+            }
+            else if (defaults[entry.key]) {
+                cleaned[entry.key] = defaults[entry.key];
+            }
+        }
+        return Object.keys(cleaned).length ? cleaned : null;
+    }
+    /**
+     * 评估子嗣结局
+     * 返回结局信息，如果没有匹配的结局则返回null
+     */
+    async evaluateChildEnding(child) {
+        const highest = getHighestStat(child);
+        const personality = getPersonalityType(child.personality);
+        const sex = child.sex;
+        // 女性子嗣结局
+        if (sex === "girl") {
+            // 女官结局（文学+礼仪高，顺从）
+            if (child.stats.literary >= 80 && child.stats.etiquette >= 85 && personality === "obedient") {
+                return {
+                    title: "女官之母",
+                    text: `你的女儿才华横溢，琴棋书画样样精通，更懂得宫中规矩礼仪。她性格温顺恭谨，深得长辈喜爱。在你的精心培养下，她被选入宫中，成为了一名女官，为皇后娘娘所器重。\n\n虽然你依然是姨娘，但女儿的荣耀也照亮了你的人生。\n\n【女官之母结局】`,
+                };
+            }
+            // 才女结局（文学极高）
+            if (child.stats.literary >= 85) {
+                if (personality === "rebellious") {
+                    return {
+                        title: "才女之母",
+                        text: `你的女儿才华出众，精通诗词歌赋，但性格叛逆不羁，不愿受规矩束缚。她拒绝入宫为官，反而在文坛上闯出了名堂，成为京城有名的才女。\n\n虽然有人批评她行事乖张，但她的才华却无人能及。你看着女儿活得如此肆意，心中五味杂陈。\n\n【才女之母结局】`,
+                    };
+                }
+                else {
+                    return {
+                        title: "闺秀之母",
+                        text: `你的女儿文采斐然，举止优雅，成为京城有名的大家闺秀。许多世家豪门都来提亲，最终她嫁入了一户显赫之家，成为了正室夫人。\n\n虽然出身庶出，但她凭借自己的才华和教养，赢得了体面的人生。\n\n【闺秀之母结局】`,
+                    };
+                }
+            }
+            // 武艺高强（叛逆+武艺）
+            if (child.stats.martial >= 75 && personality === "rebellious") {
+                return {
+                    title: "女侠之母",
+                    text: `你的女儿自幼习武，身手矫健，性格更是刚烈不羁。她不愿受府中规矩束缚，有一天竟然离家出走，行走江湖。\n\n数年后传来消息，她已成为江湖上有名的女侠，行侠仗义，快意恩仇。你既担心又欣慰，只盼她平安。\n\n【女侠之母结局】`,
+                };
+            }
+            // 商业才女
+            if (child.stats.business && child.stats.business >= 70) {
+                return {
+                    title: "商贾之母",
+                    text: `你的女儿继承了你的商业天赋，在铺面中跟你学习多年。她精明能干，善于经营，将家业打理得井井有条。\n\n虽是女儿身，但她的商业头脑不输男子。在这个时代，她用自己的方式活出了精彩。\n\n【商贾之母结局】`,
+                };
+            }
+        }
+        // 男性子嗣结局
+        if (sex === "boy") {
+            // 状元结局（文学极高，顺从）
+            if (child.stats.literary >= 80 && personality === "obedient") {
+                return {
+                    title: "状元之母",
+                    text: `你的儿子天资聪颖，勤勉好学，在你的悉心栽培下，学识日渐精进。他参加科举，一路过关斩将，最终在殿试中脱颖而出，高中状元！\n\n虽是庶子，但他凭借才华赢得了皇上的赏识。你作为状元之母，地位水涨船高。\n\n【状元之母结局】`,
+                };
+            }
+            // 探花/榜眼
+            if (child.stats.literary >= 75 && child.stats.literary < 80) {
+                return {
+                    title: "进士之母",
+                    text: `你的儿子学识渊博，科举考试中表现出色，高中进士。虽未能夺得状元，但这份荣耀已经足够让你在府中扬眉吐气。\n\n庶子也能金榜题名，你为他骄傲。\n\n【进士之母结局】`,
+                };
+            }
+            // 武将结局（武艺高，叛逆）
+            if (child.stats.martial >= 80 && personality === "rebellious") {
+                return {
+                    title: "将军之母",
+                    text: `你的儿子自幼习武，身手不凡，性格刚烈果敢。他不愿读书科举，反而投身军营，征战沙场。\n\n凭借赫赫战功，他从一介小卒升到了将军之位。虽然这条路走得艰险，但他用自己的方式证明了价值。\n\n【将军之母结局】`,
+                };
+            }
+            // 武艺高但顺从
+            if (child.stats.martial >= 75 && personality === "obedient") {
+                return {
+                    title: "护卫之母",
+                    text: `你的儿子武艺高强，性格忠诚可靠。虽是庶子，但凭借出色的武艺成为了王府的护卫统领，深得主家信任。\n\n这份稳定虽不算显赫，但也是一份体面的差事。\n\n【护卫之母结局】`,
+                };
+            }
+            // 商业奇才
+            if (child.stats.business && child.stats.business >= 75) {
+                return {
+                    title: "巨贾之母",
+                    text: `你的儿子继承了你的商业天赋，年纪轻轻就在商场上展现出惊人的才能。他将家族产业发扬光大，成为京城有名的大商贾。\n\n虽然士农工商，商为末流，但他积累的财富却让许多世家都艳羡不已。\n\n【巨贾之母结局】`,
+                };
+            }
+            // 叛逆+文学高但不够
+            if (child.stats.literary >= 60 && child.stats.literary < 75 && personality === "rebellious") {
+                return {
+                    title: "浪子之母",
+                    text: `你的儿子颇有才华，却不愿用功读书。他性格叛逆，整日与文人墨客饮酒作诗，过着放荡不羁的生活。\n\n你多次规劝无果，只能眼睁睁看着他挥霍光阴。或许，这就是他想要的人生吧。\n\n【浪子之母结局】`,
+                };
+            }
+        }
+        // 如果以上都不匹配，尝试AI生成结局
+        if (this.isCustomAllowedBySettings()) {
+            return await this.generateChildEndingByAI(child);
+        }
+        return null;
+    }
+    /**
+     * 使用AI生成子嗣结局
+     */
+    async generateChildEndingByAI(child) {
+        try {
+            const aiSettings = loadAiSettings();
+            if (!aiSettings.enabled || !aiSettings.apiUrl) {
+                return null;
+            }
+            const highest = getHighestStat(child);
+            const personality = getPersonalityType(child.personality);
+            const sexLabel = child.sex === "boy" ? "男" : "女";
+            const prompt = `请为一个古代宅斗养成游戏生成子嗣结局。
+
+【子嗣信息】
+性别: ${sexLabel}
+资质: ${child.aptitude}
+性格: ${personality === "rebellious" ? "叛逆" : personality === "obedient" ? "顺从" : "温和"} (性格值: ${child.personality}/100)
+文学: ${child.stats.literary.toFixed(1)}
+武艺: ${child.stats.martial.toFixed(1)}
+礼仪: ${child.stats.etiquette.toFixed(1)}
+商业: ${child.stats.business?.toFixed(1) || 0}
+最高属性: ${STAT_LABELS[highest.stat]} (${highest.value.toFixed(1)})
+培养方向: ${child.training}
+
+【要求】
+1. 根据子嗣的属性、性格、性别生成一个合理的结局
+2. 结局要符合古代社会背景，但可以有一些突破性的元素
+3. 结局描述要细腻动人，体现母亲的心境
+4. 字数控制在150-250字之间
+5. 返回格式：
+   结局标题: xxx之母
+   结局内容: （具体描述）
+
+请直接返回结局，不要额外解释。`;
+            const headers = {
+                "Content-Type": "application/json",
+            };
+            if (aiSettings.apiKey) {
+                headers.Authorization = `Bearer ${aiSettings.apiKey}`;
+            }
+            const response = await fetch(aiSettings.apiUrl, {
+                method: "POST",
+                headers,
+                body: JSON.stringify({
+                    model: "deepseek-chat",
+                    messages: [{ role: "user", content: prompt }],
+                    temperature: 0.8,
+                    max_tokens: 500,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`AI API error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            const content = data.choices?.[0]?.message?.content?.trim() || "";
+            if (!content) {
+                return null;
+            }
+            // 解析AI返回的内容
+            const titleMatch = content.match(/结局标题[:：]\s*(.+)/);
+            const textMatch = content.match(/结局内容[:：]\s*([\s\S]+)/);
+            if (titleMatch && textMatch) {
+                return {
+                    title: titleMatch[1].trim(),
+                    text: textMatch[1].trim() + "\n\n【AI生成结局】",
+                };
+            }
+            // 如果无法解析，返回全部内容
+            return {
+                title: "独特命运",
+                text: content + "\n\n【AI生成结局】",
+            };
+        }
+        catch (error) {
+            console.error("Failed to generate AI ending:", error);
+            return null;
+        }
+    }
+    async checkStageEnding() {
         if (this.world.turn <= this.world.maxTurn) {
             return false;
         }
+        // ========== 第一阶段结束 ==========
         if (this.world.stage <= 1) {
-            const favorPass = this.player.stats.favor > 50;
+            // 第一阶段通过条件：同时需要宠爱55+且主母印象60+
+            const favorPass = this.player.stats.favor > 55;
             const matronPass = (this.player.npcRelations.matron ?? 0) > 60;
-            if (favorPass || matronPass) {
-                this.world.stage = 2;
-                this.world.maxTurn = 120;
-                // 过渡事件s1_final已在turn 22触发，此处直接进入第二阶段
-                this.tick();
+            if (favorPass && matronPass) {
+                // 显示幕间剧情
+                const interlude = this.findInterlude(1);
+                if (interlude) {
+                    const interludeText = this.generateInterludeText(interlude);
+                    this.scene?.showResult(interludeText, () => {
+                        // 幕间剧情结束后进入第二阶段
+                        this.world.advanceStage();
+                        this.persistAutoSave();
+                        void this.tick();
+                    });
+                    return true;
+                }
+                // 如果没有幕间剧情，直接进入第二阶段
+                this.world.advanceStage();
+                void this.tick();
                 return true;
             }
-            this.scene?.showEnding("结算", "你未能稳住眷顾与印象。数日后被发卖出府，故事止于此。");
+            // 命运更严酷：属性过低时可能直接死亡
+            const favorVeryLow = this.player.stats.favor < 20;
+            const matronVeryLow = (this.player.npcRelations.matron ?? 0) < 30;
+            const healthCritical = this.player.stats.health <= 15;
+            if ((favorVeryLow && matronVeryLow) || healthCritical) {
+                void this.triggerEnding("身故", `你已经撑到了极限。日复一日的煎熬消磨了你的身体，也磨灭了你最后的希望。\n\n那个深秋的黄昏，落叶铺满了庭院。你倒在了回廊的转角处，手里还攐着今早没来得及交差的针线。你的目光最后落在了天边那一抹残红，像极了你入府那天黄昏的颜色。\n\n赵孆孆闻讯赶来时，你已经没了气息。她叹了口气，吽咄人将你抬到后院，草草收殓。\n\n没有人为你掉一滴眼泪。在这座侯府里，一个通房丫头的生死，不过是茶余饭后的一句叹息。第二日，便有新的丫鬟补上了你的位置。\n\n仿佛你从未来过。`, "身故");
+                return true;
+            }
+            void this.triggerEnding("发卖出府", `你终究没能留下。在一个寻常的早晨，赵孆孆将你叫到面前，面无表情地递来一纸文书。\n\n“收拾东西吧。”她只说了这三个字。\n\n你跪在地上磕了个头，一声“孆孆”还未说出口，泪水已经流了满面。可赵孆孆已经转过了身去——府里还有一堆事等着她料理。\n\n午后，牙行的人领你出了侯府后门。你回头望了最后一眼那高墙深院——少爷书房里的灯影、院中那棵老槐树、还有每日清晨打水的井台——从此都与你再无干系。\n\n这半年的经历，不知是梦是真。你被推摁着上了马车，往不知名的方向驶去。命运的笔，又翻开了新的一页。`, "发卖出府");
             return true;
         }
-        this.scene?.showEnding("结算", "本阶段已至尽头，你的故事暂告一段落。");
+        // ========== 第二阶段结束 ==========
+        if (this.world.stage === 2) {
+            const hasChild = this.player.children.length > 0;
+            const favor = this.player.stats.favor;
+            const status = this.player.stats.status;
+            const matronTrust = this.player.npcRelations.matron ?? 0;
+            // 生子成功，直接升职为姨娘进入第三阶段
+            if (hasChild && matronTrust >= 70) {
+                this.player.position = "姨娘";
+                this.world.advanceStage(); // 进入第三阶段
+                this.scene?.showResult(`恭喜！你为谢家诞下子嗣，主母对你颇为信任。少爷向主母提请，将你抬为姨娘。\n\n你的身份从通房升为姨娘，有了自己的小院落，也有了更多的自主权。`, () => void this.tick());
+                return true;
+            }
+            // 未生子但三项属性都高，也可升职为姨娘
+            if (!hasChild && favor >= 80 && status >= 70 && matronTrust >= 75) {
+                this.player.position = "姨娘";
+                this.world.advanceStage(); // 进入第三阶段
+                this.scene?.showResult(`虽无子嗣，但你凭借高超的手腕赢得了少爷的宠爱、院中的名声和主母的信任。少爷向主母提请，将你抬为姨娘。\n\n你的身份从通房升为姨娘，有了自己的小院落，也有了更多的自主权。`, () => void this.tick());
+                return true;
+            }
+            // 未达标，出现结局事件
+            if (hasChild) {
+                // 有子但主母信任不够
+                this.scene?.showEnding("勉强维持", `你虽然为谢家生下了子嗣，但主母对你的信任不足（主母信任: ${matronTrust}）。你依然只是通房的身份，日子过得战战兢兢，不知何时会失宠。\n\n你的故事，就此止步。`, () => this.restartWithLegacy());
+                return true;
+            }
+            else {
+                // 无子需要三项都高
+                const missing = [];
+                if (favor < 80)
+                    missing.push(`宠爱${favor}/80`);
+                if (status < 70)
+                    missing.push(`名声${status}/70`);
+                if (matronTrust < 75)
+                    missing.push(`主母信任${matronTrust}/75`);
+                this.scene?.showEnding("香消玉殒", `你未能生子，也未能同时获得足够的宠爱、名声与主母信任。\n缺少：${missing.join("、")}\n\n数月后，你被主母寻了个由头，发卖出府。你的故事，就此结束。`, () => this.restartWithLegacy());
+                return true;
+            }
+        }
+        // ========== 第三阶段结局 ==========
+        if (this.world.stage >= 3) {
+            const business = this.player.stats.business;
+            const cash = this.player.stats.cash;
+            const children = this.player.children;
+            // 商业独立结局（商业能力高，现银充足）
+            if (business >= 80 && cash >= 50) {
+                void this.triggerEnding("商海女杰", `你凭借过人的商业才能，将主母委托经营的几处铺面打理得风生水起。从绸缎庄到药铺，从茶馆到当铺，你的商号遍布京城内外。\n\n旁人只道你是侯府的一个姨娘，殊不知京城商界暗中流传的"谢姨娘"之名，比许多世家老爷都要响亮。你手中握有的银两，已经超过了整座侯府一年的进项。\n\n主母看你的眼神从轻蔑变成了忌惮，最后化作了一种复杂的尊重。少爷更是对你刮目相看——他从未想过，一个通房丫头竟能做出这般事业。\n\n你再也不必依附于任何人。姨娘的身份于你而言，不过是一件随时可以脱下的外衣。你用商业的力量，为自己挣来了真正的自由。\n\n在这个男尊女卑的时代，你走出了一条前所未有的路。后人提起你时，无不感慨一声——\n\n"那位谢家姨娘，当真了得。"`, "商海女杰");
+                return true;
+            }
+            // 子嗣结局
+            if (children.length > 0) {
+                // 遍历所有子嗣，寻找最佳结局
+                for (const child of children) {
+                    const ending = await this.evaluateChildEnding(child);
+                    if (ending) {
+                        void this.triggerEnding(ending.title, ending.text, ending.title);
+                        return true;
+                    }
+                }
+                // 如果所有子嗣都没有特殊结局，使用默认结局
+                const child = children[0];
+                const highest = getHighestStat(child);
+                const personality = getPersonalityType(child.personality);
+                const sexLabel = child.sex === "boy" ? "儿子" : "女儿";
+                const pronoun = child.sex === "boy" ? "他" : "她";
+                const personalityLabel = personality === "rebellious" ? "叛逆" : personality === "obedient" ? "顺从" : "温和";
+                void this.triggerEnding("平淡一生", `你的${sexLabel}健康地长大了。虽未取得显赫功名，但也平安顺遂，没有辜负你的一番栽培。\n\n${pronoun}性格${personalityLabel}，最擅长${STAT_LABELS[highest.stat]}。作为姨娘，你的日子说不上好，也说不上坏。少爷偶尔会来你院中坐坐，主母待你也算客气。你在这座府邸里找到了自己的位置——不高不低，不远不近。\n\n你看着${pronoun}一天天长大，从蒙学到开蒙，从跌跌撞撞到稳步行走。或许${pronoun}不会成为什么了不起的人物，但${pronoun}是你在这世间最大的牵挂与慰藉。\n\n岁月在你脸上留下了痕迹，但你的眼神依旧清明。你学会了知足，学会了在平淡中寻找安宁。\n\n也许，这样的一生，便已足够。`, "平淡一生");
+                return true;
+            }
+            // 无子且商业能力不足
+            if (business < 80) {
+                void this.triggerEnding("孤独终老", `岁月如流，光阴荏苒。\n\n你没有子嗣，商业上也未有建树。虽然挂着姨娘的名号，但在府中的地位日渐边缘化。少爷有了新的宠妾，主母也渐渐不再记得你。\n\n你守着自己的小院，种了几盆花草，养了一只猫。日出日落，四季轮转。窗外的喧嚣与你再无关系，你已经习惯了一个人的清静。\n\n有时候，你会在黄昏时分坐在廊下，看天边的晚霞一点点暗下去。回想这一生，从入府到如今，像是做了一场漫长的梦。\n\n梦里有过挣扎，有过期盼，有过短暂的温暖。但终究，都归于平淡。\n\n你在这座院落里，慢慢地、安静地老去。`, "孤独终老");
+                return true;
+            }
+            // 默认结局
+            void this.triggerEnding("结算", "本阶段已至尽头，你的故事暂告一段落。往后的日子，便如流水般平淡地过下去了。", "结算");
+            return true;
+        }
+        void this.triggerEnding("结算", "本阶段已至尽头，你的故事暂告一段落。", "结算");
         return true;
     }
+    /**
+     * 触发结局：显示结局叙事、终局档案，并（如果AI启用）生成一生评传
+     */
+    async triggerEnding(title, narrative, endingTag) {
+        const statsHtml = this.buildEndingStatsHtml();
+        this.scene?.showEnding(title, narrative, () => this.restartWithLegacy(), statsHtml);
+        if (this.isCustomAllowedBySettings()) {
+            this.scene?.showEndingReviewLoading();
+            try {
+                const review = await this.generateLifetimeReview(title, endingTag, narrative);
+                this.scene?.appendEndingSection(review);
+            }
+            catch (error) {
+                console.error("Failed to generate lifetime review:", error);
+                this.scene?.removeEndingReviewLoading();
+            }
+        }
+    }
+    /**
+     * 构建终局档案HTML
+     */
+    buildEndingStatsHtml() {
+        const statEntries = [
+            { label: "容貌", value: this.player.stats.appearance },
+            { label: "心机", value: this.player.stats.scheming },
+            { label: "名声", value: this.player.stats.status },
+            { label: "人脉", value: this.player.stats.network },
+            { label: "宠爱", value: this.player.stats.favor },
+            { label: "健康", value: this.player.stats.health },
+            { label: "银钱", value: this.player.stats.cash },
+            { label: "商业", value: this.player.stats.business },
+        ];
+        const renderBar = (value) => {
+            const clamped = Math.max(0, Math.min(100, value));
+            const filled = Math.round(clamped / 10);
+            return "█".repeat(filled) + "░".repeat(10 - filled);
+        };
+        const childrenHtml = this.player.children.length > 0
+            ? this.player.children.map((child) => {
+                const sexLabel = child.sex === "boy" ? "子" : "女";
+                const personality = getPersonalityType(child.personality);
+                const highest = getHighestStat(child);
+                return `<div style="margin-left:12px;color:#c0a882;">${sexLabel} · 资质${child.aptitude} · ${PERSONALITY_LABELS[personality]} · 擅${STAT_LABELS[highest.stat]}(${highest.value.toFixed(0)})</div>`;
+            }).join("")
+            : "";
+        const statRows = statEntries.map(s => {
+            const bar = renderBar(s.value);
+            const val = Math.round(s.value);
+            return `<div style="display:flex;align-items:center;gap:8px;margin:2px 0;font-family:monospace;font-size:13px;"><span style="width:36px;text-align:right;color:#c0a882;">${s.label}</span><span style="color:#8b7355;letter-spacing:1px;">${bar}</span><span style="width:30px;text-align:right;color:#d4a574;">${val}</span></div>`;
+        }).join("");
+        const monthsPassed = this.world.turn;
+        const years = Math.floor(monthsPassed / 12);
+        const months = monthsPassed % 12;
+        const durationText = years > 0 ? `${years}年${months > 0 ? months + "个月" : ""}` : `${months}个月`;
+        return `<div style="margin:20px 0;padding:16px;border:1px solid #554433;background:rgba(30,25,18,0.7);border-radius:4px;">
+      <div style="text-align:center;color:#d4a574;letter-spacing:4px;margin-bottom:12px;">═══ 终局档案 ═══</div>
+      <div style="margin-bottom:10px;color:#c0a882;">
+        <div>姓名：${this.player.name}　　出身：${this.player.backgroundName}</div>
+        <div>身份：${this.player.position}　　历经：${durationText}</div>
+      </div>
+      <div style="margin-bottom:10px;">${statRows}</div>
+      ${this.player.children.length > 0 ? `<div style="color:#c0a882;"><div style="margin-bottom:4px;">子嗣：${this.player.children.length}人</div>${childrenHtml}</div>` : '<div style="color:#888;">子嗣：无</div>'}
+    </div>`;
+    }
+    /**
+     * 调用AI生成一生评传
+     */
+    async generateLifetimeReview(endingTitle, endingTag, endingNarrative) {
+        const settings = loadAiSettings();
+        if (!settings.enabled || !settings.apiUrl) {
+            throw new Error("AI not enabled");
+        }
+        const childrenInfo = this.player.children.map(child => {
+            const personality = getPersonalityType(child.personality);
+            const highest = getHighestStat(child);
+            return `${child.sex === "boy" ? "子" : "女"}, 资质${child.aptitude}, 性格${PERSONALITY_LABELS[personality]}, 最强${STAT_LABELS[highest.stat]}(${highest.value.toFixed(0)})`;
+        }).join("; ") || "无子嗣";
+        const keyEvents = this.logs
+            .filter(log => log.resultText && log.resultText.length > 10)
+            .slice(-15)
+            .map(log => `第${log.turn}回合: ${log.eventTitle}${log.optionText ? " - " + log.optionText : ""}`)
+            .join("\n");
+        const prompt = `# Role
+你是古风生存游戏《通房丫头模拟器》的一生评传撰写系统。你以史官的笔法，为一位女子的一生撰写最终评价。
+
+# Context
+游戏背景：大雍景和十二年，侯府。女主角从通房丫头开始，在深宅大院中挣扎求存。
+
+# Character
+- 姓名：${this.player.name}
+- 出身：${this.player.backgroundName}
+- 最终身份：${this.player.position}
+- 结局：${endingTag}
+
+# Final Stats
+容貌${Math.round(this.player.stats.appearance)} 心机${Math.round(this.player.stats.scheming)} 名声${Math.round(this.player.stats.status)} 人脉${Math.round(this.player.stats.network)} 宠爱${Math.round(this.player.stats.favor)} 健康${Math.round(this.player.stats.health)} 银钱${Math.round(this.player.stats.cash)} 商业${Math.round(this.player.stats.business)}
+
+# Relationships
+少爷宠爱：${Math.round(this.player.stats.favor)}　主母信任：${Math.round(this.player.npcRelations.matron ?? 0)}
+
+# Children
+${childrenInfo}
+
+# Key Events
+${keyEvents}
+
+# Ending
+${endingNarrative}
+
+# Task
+请为这位女子撰写一生评传，要求：
+一、三百至五百字，古风白话文，语调沉稳克制，似史官执笔
+二、以旁观者视角回顾她从入府到结局的一生
+三、评价她的生存策略与处世智慧
+四、根据属性分布分析她的性格特点
+五、若有子嗣，评价她作为母亲的得失
+六、指出一生中的关键抉择与转折
+七、末尾以一首七言绝句（四句二十八字）总结一生
+八、最后一行给出评级，格式为"【评级：X等】"：
+   传奇 / 上等 / 中上 / 中等 / 中下 / 下等 / 悲剧
+
+# Output
+只输出评传正文，不要标题，不要额外说明。`;
+        const headers = {
+            "Content-Type": "application/json",
+        };
+        if (settings.apiKey) {
+            headers.Authorization = `Bearer ${settings.apiKey}`;
+        }
+        const response = await fetch(settings.apiUrl, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+                model: "deepseek-chat",
+                messages: [
+                    { role: "system", content: prompt },
+                    { role: "user", content: "请撰写一生评传。" },
+                ],
+                temperature: 0.75,
+                max_tokens: 1000,
+            }),
+        });
+        if (!response.ok) {
+            throw new Error(`Bad response: ${response.status}`);
+        }
+        const raw = (await response.json());
+        const content = raw.choices?.[0]?.message?.content;
+        if (!content) {
+            throw new Error("Empty model response");
+        }
+        return content.trim();
+    }
     getMonthlyEventId() {
-        return this.world.stage <= 1 ? "s1_1000" : "s2_1000";
+        if (this.world.stage <= 1) {
+            return "s1_1000";
+        }
+        else if (this.world.stage === 2) {
+            return "s2_1000";
+        }
+        else {
+            return "s3_1000"; // 第三阶段的月度事件
+        }
     }
     applyOption(event, optionId, onContinue) {
         const snapshot = this.snapshotState();
         const result = this.eventEngine.applyOption(event, optionId, this.player, this.world);
-        this.recordLog(this.buildLogEntry(event, optionId, result.text, snapshot));
+        const turnAdvanced = this.world.turn > snapshot.world.turn;
+        const extraText = result.end ? "" : this.applyAfterActionEffects(snapshot, optionId);
+        const combinedText = extraText ? `${result.text}\n${extraText}` : result.text;
+        const sanitizedText = this.sanitizeResultText(combinedText);
+        this.recordLog(this.buildLogEntry(event, optionId, sanitizedText, snapshot));
         if (result.end) {
             this.plan = null;
             const titleText = result.end.type === "death" ? "身故" : "结算";
-            this.scene?.showEnding(titleText, result.end.text);
+            void this.triggerEnding(titleText, result.end.text, titleText);
             this.persistAutoSave();
             return;
         }
-        const next = onContinue ?? (() => this.tick());
-        this.scene?.showResult(result.text, next);
+        const deltaText = this.formatStatDelta(result.delta);
+        const combined = deltaText ? `${sanitizedText}\n${deltaText}` : sanitizedText;
+        const next = onContinue ?? (() => void this.tick());
+        this.scene?.showResult(combined, next);
+        if (turnAdvanced) {
+            void this.refreshNpcImpressions("turn");
+        }
         this.persistAutoSave();
     }
     applySpecialOption(event, optionId) {
@@ -443,44 +1109,123 @@ export class GameManager {
         const result = this.eventEngine.applyOption(event, optionId, this.player, this.world, {
             consumeAp: false,
         });
+        const turnAdvanced = this.world.turn > snapshot.world.turn;
         this.player.history.add(event.id);
-        this.recordLog(this.buildLogEntry(event, optionId, result.text, snapshot));
+        // 处理特殊事件
+        const option = event.options.find((opt) => opt.id === optionId);
+        if (option?.special) {
+            this.handleSpecialEvent(option.special);
+        }
+        const extraText = result.end ? "" : this.applyAfterActionEffects(snapshot, optionId);
+        const combinedText = extraText ? `${result.text}\n${extraText}` : result.text;
+        const sanitizedText = this.sanitizeResultText(combinedText);
+        this.recordLog(this.buildLogEntry(event, optionId, sanitizedText, snapshot));
         if (result.end) {
             this.plan = null;
             const titleText = result.end.type === "death" ? "身故" : "结算";
-            this.scene?.showEnding(titleText, result.end.text);
+            void this.triggerEnding(titleText, result.end.text, titleText);
             this.persistAutoSave();
             return;
         }
         const deltaText = this.formatStatDelta(result.delta);
-        const combined = deltaText ? `${result.text}\n${deltaText}` : result.text;
+        const combined = deltaText ? `${sanitizedText}\n${deltaText}` : sanitizedText;
         this.scene?.showResult(combined, () => this.showMonthlyPlan());
+        if (turnAdvanced) {
+            void this.refreshNpcImpressions("turn");
+        }
         this.persistAutoSave();
     }
-    formatStatDelta(delta) {
-        if (!delta) {
-            return "";
+    handleSpecialEvent(special) {
+        switch (special) {
+            case "pregnancy_start":
+                this.player.pregnancyStartTurn = this.world.turn;
+                break;
+            case "pregnancy_delay":
+                // 延迟怀孕通知，稍后再设置
+                setTimeout(() => {
+                    this.player.pregnancyStartTurn = this.world.turn;
+                    this.persistAutoSave();
+                }, 0);
+                break;
+            case "give_birth":
+                if (this.player.pregnancyStartTurn !== null) {
+                    const child = createRandomChild(this.world.turn);
+                    this.applyChildPersonalityInfluence(child, 0.7);
+                    this.player.children.push(child);
+                    this.player.pregnancyStartTurn = null;
+                    this.scene?.renderChildren();
+                }
+                break;
+            case "child_education_scholar":
+                // 文学教育：提升文学能力
+                if (this.player.children.length > 0) {
+                    const child = this.player.children[this.player.children.length - 1];
+                    child.stats.literary += 10 + Math.random() * 10;
+                    child.training = "literary";
+                    this.scene?.renderChildren();
+                }
+                break;
+            case "child_education_martial":
+                // 武艺教育：提升武艺能力
+                if (this.player.children.length > 0) {
+                    const child = this.player.children[this.player.children.length - 1];
+                    child.stats.martial += 10 + Math.random() * 10;
+                    child.training = "martial";
+                    this.scene?.renderChildren();
+                }
+                break;
+            case "child_education_business":
+                // 商业教育：提升商业能力
+                if (this.player.children.length > 0) {
+                    const child = this.player.children[this.player.children.length - 1];
+                    if (child.stats.business === undefined) {
+                        child.stats.business = 0;
+                    }
+                    child.stats.business += 10 + Math.random() * 10;
+                    child.training = "business";
+                    this.scene?.renderChildren();
+                }
+                break;
+            case "child_personality_strict":
+                // 严格管教：增加顺从度
+                if (this.player.children.length > 0) {
+                    const child = this.player.children[this.player.children.length - 1];
+                    child.personality = Math.min(100, child.personality + 10 + Math.random() * 10);
+                    this.scene?.renderChildren();
+                }
+                break;
+            case "child_personality_free":
+                // 自由成长：增加叛逆度
+                if (this.player.children.length > 0) {
+                    const child = this.player.children[this.player.children.length - 1];
+                    child.personality = Math.max(0, child.personality - 10 - Math.random() * 10);
+                    this.scene?.renderChildren();
+                }
+                break;
+            case "child_personality_encourage":
+                // 鼓励独立：略微增加叛逆
+                if (this.player.children.length > 0) {
+                    const child = this.player.children[this.player.children.length - 1];
+                    child.personality = Math.max(0, child.personality - 5 - Math.random() * 5);
+                    this.scene?.renderChildren();
+                }
+                break;
+            case "matron_escape_help":
+                this.setInventoryCount("matron_escape_help", 1);
+                break;
+            case "matron_escape_refuse":
+                this.setInventoryCount("matron_escape_refuse", 1);
+                break;
+            case "matron_escape_ignore":
+                this.setInventoryCount("matron_escape_ignore", 1);
+                break;
+            case "matron_escape_success":
+                this.setInventoryCount("matron_escaped", 1);
+                break;
+            case "matron_escape_failed":
+                this.setInventoryCount("matron_confined", 1);
+                break;
         }
-        const labels = {
-            appearance: "容貌",
-            scheming: "心机",
-            status: "名声",
-            network: "人脉",
-            favor: "宠爱",
-            health: "健康",
-            cash: "银钱",
-        };
-        const parts = [];
-        for (const [key, label] of Object.entries(labels)) {
-            const value = delta[key];
-            if (!value) {
-                continue;
-            }
-            const num = Number.isInteger(value) ? value.toString() : value.toFixed(1);
-            const sign = value > 0 ? "+" : "";
-            parts.push(`${label}${sign}${num}`);
-        }
-        return parts.length ? `（${parts.join("，")}）` : "";
     }
     applyPlan(event, optionIds) {
         this.plan = { event, startTurn: this.world.turn, queue: [...optionIds] };
@@ -488,7 +1233,7 @@ export class GameManager {
     }
     applyPlannedNext() {
         if (!this.plan) {
-            this.tick();
+            void this.tick();
             return;
         }
         // 允许计划在开始的turn及下一个turn内执行
@@ -497,13 +1242,13 @@ export class GameManager {
         if (turnDiff > 1) {
             // 如果跨越超过1个turn，清空计划
             this.plan = null;
-            this.tick();
+            void this.tick();
             return;
         }
         const nextId = this.plan.queue.shift();
         if (!nextId) {
             this.plan = null;
-            this.tick();
+            void this.tick();
             return;
         }
         this.applyOption(this.plan.event, nextId, () => this.applyPlannedNext());
@@ -521,18 +1266,18 @@ export class GameManager {
     async applyCustomAction(event, input, options) {
         const trimmed = input.trim();
         if (!trimmed) {
-            this.scene?.showResult("你一时语塞，不知如何是好。", () => this.tick());
+            this.scene?.showResult("你一时语塞，不知如何是好。", () => void this.tick());
             return;
         }
         const snapshot = this.snapshotState();
         const settings = loadAiSettings();
         if (!settings.enabled || !settings.apiUrl) {
-            this.scene?.showResult("自定义判定尚未开启，无法继续。", () => this.tick());
+            this.scene?.showResult("自定义判定尚未开启，无法继续。", () => void this.tick());
             return;
         }
         const consumeAp = options?.consumeAp !== false;
         if (consumeAp && this.world.ap <= 0) {
-            this.scene?.showResult("行动力不足，今日不宜强行。", () => this.tick());
+            this.scene?.showResult("行动力不足，今日不宜强行。", () => void this.tick());
             return;
         }
         this.scene?.showLoading("命运推演中...");
@@ -575,26 +1320,33 @@ export class GameManager {
             const endState = this.resolveCustomEnding(data.result_text, data.trigger_ending);
             if (endState) {
                 this.recordLog(this.buildCustomLogEntry(event, trimmed, data.result_text, snapshot));
-                this.scene?.showEnding(endState.type === "death" ? "身故" : "结算", endState.text);
+                const endTitle = endState.type === "death" ? "身故" : "结算";
+                void this.triggerEnding(endTitle, endState.text, endTitle);
                 this.persistAutoSave();
                 return;
             }
             this.applyCustomTurnEffects(data.stat_changes, consumeAp);
-            this.recordLog(this.buildCustomLogEntry(event, trimmed, data.result_text, snapshot));
+            const extraText = this.applyAfterActionEffects(snapshot);
+            const baseText = extraText ? `${data.result_text}\n${extraText}` : data.result_text;
+            const sanitizedText = this.sanitizeResultText(baseText);
+            this.recordLog(this.buildCustomLogEntry(event, trimmed, sanitizedText, snapshot));
             const deltaText = this.formatStatDelta(data.stat_changes ?? undefined);
-            const combined = deltaText ? `${data.result_text}\n${deltaText}` : data.result_text;
-            const next = options?.onComplete ?? (() => this.tick());
+            const combined = deltaText ? `${sanitizedText}\n${deltaText}` : sanitizedText;
+            if (this.world.turn > snapshot.world.turn) {
+                void this.refreshNpcImpressions("turn");
+            }
+            const next = options?.onComplete ?? (() => void this.tick());
             this.scene?.showResult(combined, next);
             this.persistAutoSave();
         }
         catch (error) {
-            const next = options?.onComplete ?? (() => this.tick());
+            const next = options?.onComplete ?? (() => void this.tick());
             this.scene?.showResult("一时语塞，你竟不知如何是好... (网络连接失败)", next);
         }
     }
     buildAdjudicatePrompt(event, input) {
         const options = event.options.map((opt) => `- ${opt.id}: ${opt.text}`).join("\n");
-        return `# Role\n你是一个高难度古风生存游戏《通房丫头模拟器》的后台判定系统（GM）。\n风格：写实、压抑、等级森严、逻辑严密，拒绝爽文。\n\n# Context\n当前事件：${event.title}\n事件内容：${event.text}\n可选项：\n${options || "(无)"}\n玩家属性：${JSON.stringify(this.player.stats)}\nNPC关系：${JSON.stringify(this.player.npcRelations)}\n背包：${JSON.stringify(this.player.inventory)}\n回合信息：${JSON.stringify({ turn: this.world.turn, month: this.world.month, ap: this.world.ap })}\n\n# User Input\n${input}\n\n# Rules\n1) 不可无中生有，不可机械降神。\n2) 反抗/欺骗/暴力要结合心机与地位判定。\n3) 行为越出格，惩罚越重；合理且巧妙可小幅奖励。\n4) 用第二人称叙事，30-50字，古风白话。\n\n# Output (Strict JSON)\n只输出 JSON：\n{\n  \"result_text\": \"...\",\n  \"stat_changes\": { \"health\": -10, \"scheming\": 1 },\n  \"trigger_ending\": null | \"be_dead_poison\" | \"be_sold\"\n}`;
+        return `# Role\n你是一个高难度古风生存游戏《通房丫头模拟器》的后台判定系统（GM）。\n风格：写实、压抑、等级森严、逻辑严密，拒绝爽文。\n\n# Context\n当前事件：${event.title}\n事件内容：${event.text}\n可选项：\n${options || "(无)"}\n玩家属性：${JSON.stringify(this.player.stats)}\nNPC关系：${JSON.stringify(this.player.npcRelations)}\n背包：${JSON.stringify(this.player.inventory)}\n回合信息：${JSON.stringify({ turn: this.world.turn, month: this.world.month, ap: this.world.ap })}\n\n# User Input\n${input}\n\n# Rules\n1) 不可无中生有，不可机械降神。\n2) 反抗/欺骗/暴力要结合心机与地位判定。\n3) 行为越出格，惩罚越重；合理且巧妙可给予更显著的属性提升（可酌情+2到+5）。\n4) 用第二人称叙事，30-50字，古风白话。\n\n# Output (Strict JSON)\n只输出 JSON：\n{\n  \"result_text\": \"...\",\n  \"stat_changes\": { \"health\": -10, \"scheming\": 1 },\n  \"trigger_ending\": null | \"be_dead_poison\" | \"be_sold\"\n}`;
     }
     parseAdjudicateResponse(content) {
         const trimmed = content.trim();
@@ -639,6 +1391,222 @@ export class GameManager {
             }
             this.player.stats.appearance -= 0.5;
         }
+    }
+    applyAfterActionEffects(snapshot, optionId) {
+        const extra = [];
+        this.syncPregnancyTracking(snapshot);
+        if (optionId === "opt_child_care") {
+            const careCount = this.player.inventory["child_care"] ?? 0;
+            this.setInventoryCount("child_care", careCount + 1);
+            this.applyChildCarePersonality();
+            const trainingText = this.applyChildTraining();
+            if (trainingText) {
+                extra.push(trainingText);
+            }
+        }
+        const advanceText = this.applyTurnAdvanceEffects(snapshot);
+        if (advanceText) {
+            extra.push(advanceText);
+        }
+        return extra.join("\n");
+    }
+    formatStatDelta(delta) {
+        if (!delta) {
+            return "";
+        }
+        const labels = {
+            appearance: "容貌",
+            scheming: "心机",
+            status: "名声",
+            network: "人脉",
+            favor: "宠爱",
+            health: "健康",
+            cash: "银钱",
+            business: "商业",
+        };
+        const parts = [];
+        for (const [key, label] of Object.entries(labels)) {
+            const value = delta[key];
+            if (!value) {
+                continue;
+            }
+            const num = Number.isInteger(value) ? value.toString() : value.toFixed(1);
+            const sign = value > 0 ? "+" : "";
+            parts.push(`${label}${sign}${num}`);
+        }
+        return parts.length ? `（${parts.join("，")}）` : "";
+    }
+    sanitizeResultText(text) {
+        return text.replace(/（[^）]*[+-]\d+(?:\.\d+)?[^）]*）/g, "").trim();
+    }
+    syncPregnancyTracking(snapshot) {
+        const prevConfirm = snapshot.inventory["preg_confirm"] ?? 0;
+        const nextConfirm = this.player.inventory["preg_confirm"] ?? 0;
+        if (prevConfirm <= 0 && nextConfirm > 0 && this.player.pregnancyStartTurn === null) {
+            this.player.pregnancyStartTurn = this.world.turn;
+        }
+        if (nextConfirm <= 0 && this.player.pregnancyStartTurn !== null) {
+            this.player.pregnancyStartTurn = null;
+        }
+        this.syncPregnancyStage();
+    }
+    syncPregnancyStage() {
+        const confirm = this.player.inventory["preg_confirm"] ?? 0;
+        if (confirm > 0 && this.player.pregnancyStartTurn !== null) {
+            const months = Math.max(0, this.world.turn - this.player.pregnancyStartTurn);
+            const stage = months >= 6 ? 3 : months >= 3 ? 2 : 1;
+            this.setInventoryCount("preg_stage", stage);
+            return;
+        }
+        if ((this.player.inventory["preg_stage"] ?? 0) > 0) {
+            this.setInventoryCount("preg_stage", 0);
+        }
+    }
+    applyTurnAdvanceEffects(snapshot) {
+        const turnDiff = this.world.turn - snapshot.world.turn;
+        if (turnDiff <= 0) {
+            this.syncPregnancyStage();
+            return "";
+        }
+        const messages = [];
+        // 发放月例银子
+        const monthlySalary = this.world.getMonthlySalary();
+        if (monthlySalary > 0) {
+            this.player.applyDelta({ cash: monthlySalary });
+            messages.push(`月例银子${monthlySalary}两已发放。`);
+        }
+        for (let step = 1; step <= turnDiff; step += 1) {
+            const currentTurn = snapshot.world.turn + step;
+            this.applyChildNaturalGrowth(currentTurn);
+        }
+        const birthText = this.checkChildBirth();
+        this.syncPregnancyStage();
+        if (birthText) {
+            messages.push(birthText);
+        }
+        return messages.join("\n");
+    }
+    applyChildNaturalGrowth(currentTurn) {
+        if (!this.player.children.length) {
+            return;
+        }
+        for (const child of this.player.children) {
+            const ageMonths = Math.max(0, currentTurn - child.birthTurn);
+            const ageYears = Math.floor(ageMonths / 12);
+            const growth = 0.2 + child.aptitude / 250 + Math.min(0.6, ageYears * 0.05);
+            this.applyChildStat(child, "literary", growth);
+            this.applyChildStat(child, "martial", growth);
+            this.applyChildStat(child, "etiquette", growth);
+        }
+    }
+    applyChildTraining() {
+        if (!this.player.children.length) {
+            return null;
+        }
+        for (const child of this.player.children) {
+            switch (child.training) {
+                case "literary":
+                    this.applyChildStat(child, "literary", 1.2);
+                    this.applyChildStat(child, "etiquette", 0.4);
+                    this.applyChildStat(child, "martial", 0.2);
+                    break;
+                case "martial":
+                    this.applyChildStat(child, "martial", 1.2);
+                    this.applyChildStat(child, "etiquette", 0.4);
+                    this.applyChildStat(child, "literary", 0.2);
+                    break;
+                case "etiquette":
+                    this.applyChildStat(child, "etiquette", 1.2);
+                    this.applyChildStat(child, "literary", 0.4);
+                    this.applyChildStat(child, "martial", 0.2);
+                    break;
+                case "balanced":
+                default:
+                    this.applyChildStat(child, "literary", 0.7);
+                    this.applyChildStat(child, "martial", 0.7);
+                    this.applyChildStat(child, "etiquette", 0.7);
+                    break;
+            }
+        }
+        return "你按既定方向教养子嗣，孩子各有长进。";
+    }
+    applyChildCarePersonality() {
+        if (!this.player.children.length) {
+            return;
+        }
+        const child = this.player.children[this.player.children.length - 1];
+        this.applyChildPersonalityInfluence(child, 0.25);
+        this.scene?.renderChildren();
+    }
+    applyChildPersonalityInfluence(child, intensity = 1) {
+        const shift = this.computeChildPersonalityShift() * intensity;
+        child.personality = this.clampPersonality(child.personality + shift);
+    }
+    computeChildPersonalityShift() {
+        const favor = this.player.stats.favor ?? 0;
+        const matronTrust = this.player.npcRelations.matron ?? 0;
+        const status = this.player.stats.status ?? 0;
+        const business = this.player.stats.business ?? 0;
+        const careCount = this.player.inventory["child_care"] ?? 0;
+        const parentBond = (favor - 50) * 0.25;
+        const nurture = Math.min(12, careCount * 1.5);
+        const independence = Math.min(14, business * 0.25);
+        const equalityBase = Math.min(matronTrust, status);
+        const equality = (equalityBase - 40) * 0.2;
+        return parentBond + nurture + equality - independence;
+    }
+    clampPersonality(value) {
+        return Math.max(0, Math.min(100, value));
+    }
+    applyChildStat(child, key, delta) {
+        const current = child.stats[key] ?? 0;
+        const next = Math.max(0, Math.min(100, current + delta));
+        child.stats[key] = next;
+    }
+    checkChildBirth() {
+        if (this.player.pregnancyStartTurn === null) {
+            return null;
+        }
+        const confirm = this.player.inventory["preg_confirm"] ?? 0;
+        if (confirm <= 0) {
+            return null;
+        }
+        if (this.world.turn - this.player.pregnancyStartTurn < 9) {
+            return null;
+        }
+        const child = createRandomChild(this.world.turn);
+        this.applyChildPersonalityInfluence(child, 0.7);
+        this.player.children.push(child);
+        const currentCount = this.player.inventory["child"] ?? 0;
+        this.setInventoryCount("child", currentCount + 1);
+        this.player.pregnancyStartTurn = null;
+        this.setInventoryCount("preg_confirm", 0);
+        this.setInventoryCount("preg_stage", 0);
+        const sexText = child.sex === "boy" ? "子" : "女";
+        return `九月已满，你产下一${sexText}。`;
+    }
+    setInventoryCount(key, value) {
+        this.player.inventory[key] = Math.max(0, value);
+    }
+    reconcileChildrenAfterLoad() {
+        const recorded = this.player.inventory["child"] ?? 0;
+        const existing = this.player.children.length;
+        if (existing < recorded) {
+            const missing = recorded - existing;
+            for (let i = 0; i < missing; i += 1) {
+                const child = createRandomChild(this.world.turn);
+                this.applyChildPersonalityInfluence(child, 0.4);
+                this.player.children.push(child);
+            }
+        }
+        if (existing > recorded) {
+            this.setInventoryCount("child", existing);
+        }
+        const confirm = this.player.inventory["preg_confirm"] ?? 0;
+        if (confirm <= 0) {
+            this.player.pregnancyStartTurn = null;
+        }
+        this.syncPregnancyStage();
     }
     snapshotState() {
         return {
@@ -737,6 +1705,128 @@ export class GameManager {
         const response = await fetch("./data/shop.json");
         return (await response.json());
     }
+    async loadInterludes() {
+        const response = await fetch("./data/interludes.json");
+        this.interludes = (await response.json());
+    }
+    findInterlude(stage) {
+        return this.interludes.find((interlude) => interlude.stage === stage) ?? null;
+    }
+    generateInterludeText(interlude) {
+        let fullText = `═══\n${interlude.title}\n═══\n\n`;
+        for (const section of interlude.sections) {
+            fullText += `【${section.title}】\n\n`;
+            let sectionText = section.text;
+            // 处理第一阶段总结
+            if (section.summaryTemplates && section.dynamicValues) {
+                const summaryParts = [];
+                // 宠爱值评价
+                const favor = this.player.stats.favor;
+                let favorKey;
+                if (favor >= 70) {
+                    favorKey = "favor_high";
+                }
+                else if (favor >= 50) {
+                    favorKey = "favor_mid";
+                }
+                else {
+                    favorKey = "favor_low";
+                }
+                const favorData = section.dynamicValues[favorKey];
+                if (favorData && section.summaryTemplates.favor_favor) {
+                    summaryParts.push(section.summaryTemplates.favor_favor
+                        .replace("{favor_level}", favorData.level)
+                        .replace("{favor_desc}", favorData.desc));
+                }
+                // 主母印象评价
+                const matron = this.player.npcRelations.matron ?? 0;
+                let matronKey;
+                if (matron >= 70) {
+                    matronKey = "matron_high";
+                }
+                else if (matron >= 50) {
+                    matronKey = "matron_mid";
+                }
+                else {
+                    matronKey = "matron_low";
+                }
+                const matronData = section.dynamicValues[matronKey];
+                if (matronData && section.summaryTemplates.matron_trust) {
+                    summaryParts.push(section.summaryTemplates.matron_trust
+                        .replace("{matron_level}", matronData.level)
+                        .replace("{matron_desc}", matronData.desc));
+                }
+                // 技能评价（取最高的一项）
+                const scheming = this.player.stats.scheming;
+                const status = this.player.stats.status;
+                const network = this.player.stats.network;
+                let skillKey;
+                if (scheming >= status && scheming >= network) {
+                    skillKey = "skill_scheming";
+                }
+                else if (status >= network) {
+                    skillKey = "skill_status";
+                }
+                else {
+                    skillKey = "skill_network";
+                }
+                const skillData = section.dynamicValues[skillKey];
+                if (skillData && section.summaryTemplates.skills) {
+                    summaryParts.push(section.summaryTemplates.skills
+                        .replace("{skill_area}", skillData.area)
+                        .replace("{skill_desc}", skillData.desc));
+                }
+                // 健康状态
+                const health = this.player.stats.health;
+                let healthDesc;
+                if (health >= 70) {
+                    healthDesc = section.dynamicValues.health_good;
+                }
+                else if (health >= 40) {
+                    healthDesc = section.dynamicValues.health_mid;
+                }
+                else {
+                    healthDesc = section.dynamicValues.health_poor;
+                }
+                if (healthDesc && section.summaryTemplates.health) {
+                    summaryParts.push(section.summaryTemplates.health.replace("{health_desc}", healthDesc));
+                }
+                // 银钱状况
+                const cash = this.player.stats.cash;
+                let silverDesc;
+                let silverStatus;
+                if (cash >= 50) {
+                    silverDesc = section.dynamicValues.silver_rich;
+                    silverStatus = section.dynamicValues.silver_status_good;
+                }
+                else if (cash >= 20) {
+                    silverDesc = section.dynamicValues.silver_mid;
+                    silverStatus = section.dynamicValues.silver_status_mid;
+                }
+                else {
+                    silverDesc = section.dynamicValues.silver_poor;
+                    silverStatus = section.dynamicValues.silver_status_poor;
+                }
+                if (silverDesc && silverStatus && section.summaryTemplates.silver) {
+                    summaryParts.push(section.summaryTemplates.silver
+                        .replace("{silver_desc}", silverDesc)
+                        .replace("{silver_status}", silverStatus));
+                }
+                sectionText = sectionText.replace("{stage1_summary}", summaryParts.join(""));
+            }
+            // 处理提示模板
+            if (interlude.hintTemplates) {
+                const favor = this.player.stats.favor;
+                const matron = this.player.npcRelations.matron ?? 0;
+                const favorHint = favor >= 55 ? interlude.hintTemplates.favor_sufficient : interlude.hintTemplates.favor_insufficient;
+                const matronHint = matron >= 60 ? interlude.hintTemplates.matron_good : interlude.hintTemplates.matron_poor;
+                sectionText = sectionText.replace("{favor_hint}", favorHint || "");
+                sectionText = sectionText.replace("{matron_hint}", matronHint || "");
+            }
+            fullText += sectionText + "\n\n";
+        }
+        return fullText.trim();
+    }
     persistAutoSave() {
         this.saveSystem.saveAuto(this.player, this.world, this.logs, { lastQuarterStats: this.lastQuarterStats });
         this.refreshSaves();
@@ -747,7 +1837,7 @@ export class GameManager {
     saveManual(slotId) {
         this.saveSystem.saveSlot(slotId, this.player, this.world, this.logs, { lastQuarterStats: this.lastQuarterStats });
         this.refreshSaves();
-        this.scene?.showResult("已写入存档。", () => this.tick());
+        this.scene?.showResult("已写入存档。", () => void this.tick());
     }
     loadManual(slotId) {
         const saved = this.saveSystem.loadSlot(slotId);
@@ -762,6 +1852,7 @@ export class GameManager {
     applyLoaded(saved) {
         this.player.load(saved.player);
         this.world.load(saved.world);
+        this.reconcileChildrenAfterLoad();
         this.plan = null;
         this.logs = (saved.logs ?? []).map((entry) => ({
             ...entry,
@@ -770,14 +1861,22 @@ export class GameManager {
         // 加载季度快照数据
         const savedWithExtra = saved;
         this.lastQuarterStats = savedWithExtra.lastQuarterStats ?? null;
+        this.ensureNpcImpressions();
         this.scene?.renderLog(this.logs);
         this.scene?.renderTime();
+        this.scene?.renderChildren();
     }
     shouldShowQuarterSummary() {
         // 每3个turn显示一次季度总结（跳过turn 1）
         return this.world.turn > 1 && this.world.turn % 3 === 1;
     }
-    showQuarterSummary() {
+    async showQuarterSummary() {
+        // 显示加载提示
+        this.scene?.showLoading("时间推演中……");
+        // 等待AI生成NPC印象
+        await this.refreshNpcImpressions("quarter");
+        // 刷新属性面板以显示新的印象
+        this.scene?.statsPanel.render();
         const summaryText = this.generateQuarterSummary();
         this.scene?.showResult(summaryText, () => {
             // 更新季度快照
@@ -787,7 +1886,7 @@ export class GameManager {
                 npcRelations: { ...this.player.npcRelations },
             };
             this.persistAutoSave();
-            // 直接显示月度事件，跳过tick()中的重复检查
+            // 直接显示月度事件,跳过tick()中的重复检查
             this.showMonthlyPlan();
         });
     }
@@ -797,11 +1896,11 @@ export class GameManager {
         const monthsPassed = (this.world.turn - 1) + 2; // turn 1是三月，所以+2
         const yearNum = 12 + Math.floor(monthsPassed / 12);
         const year = this.numberToChinese(yearNum);
-        const title = `═══\n景和${year}年${season}\n府中杂记\n═══\n\n`;
+        const title = `═══\n景和${year}年${season}\n府中杂记\n═══\n`;
         let content = "";
         // 府内动态
         content += this.generateMansionNews();
-        content += "\n\n";
+        content += "\n";
         // 个人变化（如果有上一季度的数据）
         if (this.lastQuarterStats) {
             content += this.generatePersonalChanges();
@@ -826,7 +1925,7 @@ export class GameManager {
         const turn = this.world.turn;
         const favor = this.player.stats.favor;
         const matronRelation = this.player.npcRelations.matron ?? 0;
-        let news = "府中近况：\n\n";
+        let news = "府中近况：\n";
         if (stage === 1) {
             // 第一阶段：赵嬷嬷掌权
             if (turn <= 6) {
@@ -842,7 +1941,7 @@ export class GameManager {
                 news += "府里上下都在为迎接新主母做准备。正院重新装修，添置了不少新物件。各房丫鬟都开始暗暗较劲，都想在新主母面前露个脸、得个好印象。院里的气氛紧张又期待，人人都知道，新的格局就要开始了。";
             }
         }
-        else {
+        else if (stage === 2) {
             // 第二阶段：主母入府后
             if (turn <= 30) {
                 news += "主母进门后雷厉风行地重立规矩，院中气氛比从前严肃许多。她定下了新的当差规矩、赏罚章程，还专门查了一遍账目。有几个手脚不干净的婆子被当场辞退，一时间人人自危，做事都格外小心。";
@@ -852,6 +1951,18 @@ export class GameManager {
             }
             else {
                 news += "府中格局已定，主母持家有方，赏罚分明。她不仅把内宅管得井井有条，还时常协助侯爷处理外务。如今府里上下，无不服她。就连赵嬷嬷提起主母，都是满口赞誉。";
+            }
+        }
+        else {
+            // 第三阶段：姨娘自立
+            if (turn <= 70) {
+                news += "你被抬为姨娘后，府里规矩仍旧森严，但你已不必事事听使。院中琐事有小丫鬟打点，你更多时候需要应对各房来往与人情周旋。府里人看你的眼神，比从前多了几分敬畏与算计。";
+            }
+            else if (turn <= 90) {
+                news += "府中内宅趋于平稳，明面上的争斗少了，暗里的筹码却更讲究。姨娘之间时常走动探听，谁家孩子得宠、谁家铺面见利，消息传得飞快。你明白，这一阶段比的不是谁更狠，而是谁更稳。";
+            }
+            else {
+                news += "岁月推移，府里人情世故愈发老成。主母把持大局不变，各房姬妾都在各自的小院里经营日子。若有子嗣便重在教养，若无子嗣便重在银钱与名声。你站在自己的位置上，已能左右一些风向。";
             }
         }
         // 根据玩家地位添加相关消息
@@ -883,7 +1994,7 @@ export class GameManager {
         if (!this.lastQuarterStats)
             return "";
         const changes = [];
-        changes.push("你的变化：\n\n");
+        changes.push("你的变化：\n");
         // 容貌变化（通过他人描述）
         const appearanceDiff = this.player.stats.appearance - this.lastQuarterStats.stats.appearance;
         const currentAppearance = this.player.stats.appearance;
@@ -983,7 +2094,7 @@ export class GameManager {
         if (Math.abs(statusDiff) >= 3) {
             if (statusDiff > 0) {
                 if (statusDiff >= 10) {
-                    changes.push("府里上下对你的态度发生了是觉的转变。走到哪儿都有人恒敬地闪开路，连老嬷嬷们见了你都要和颜悦色地寄上几句。二门上的婆子说，外面都传开了，说你是侯府的体面人。");
+                    changes.push("府里上下对你的态度发生了显著的转变。走到哪儿都有人恭敬地让路，连老嬷嬷们见了你都要和颜悦色地搭上几句。二门上的婆子说，外面都传开了，说你是侯府的体面人。");
                 }
                 else if (statusDiff >= 7) {
                     changes.push("你在府中的地位明显提升。下人们对你恭敬了许多，说话办事都带着几分小心。甚至有人开始主动向你示好，想要结个善缘。");
@@ -1003,7 +2114,7 @@ export class GameManager {
                     changes.push("最近总觉得府里人看你的眼神不太对，有人在背后指指点点。你心里清楚，这不是好兆头。");
                 }
                 else {
-                    changes.push("你在府里的声名似乎受了些影响，下人们对你也没从前那般恕意了。");
+                    changes.push("你在府里的声名似乎受了些影响，下人们对你也没从前那般随意了。");
                 }
             }
         }
@@ -1047,7 +2158,7 @@ export class GameManager {
                     changes.push("少爷待你温和了许多，常常会问你几句寒暖，偶尔还会赏你些小玩意。这份关照虽轻，却让你心中有底。");
                 }
                 else {
-                    changes.push("少爷对你的态度比从前缓和了些。虽然还谈不上亲近，但至少不再是那般疯生了。");
+                    changes.push("少爷对你的态度比从前缓和了些。虽然还谈不上亲近，但至少不再是那般陌生了。");
                 }
             }
             else {
@@ -1078,13 +2189,13 @@ export class GameManager {
             }
             else {
                 if (healthDiff <= -20) {
-                    changes.push("你的身体差到了极点。几乎每天都觉得头晕目眩，半夜咐嗽不止。有时连站着都觉得费力，必须扶着墙才能走路。赵嬷嬷看了都发急，说再不治怕是要出人命。");
+                    changes.push("你的身体差到了极点。几乎每天都觉得头晕目眩，半夜咳嗽不止。有时连站着都觉得费力，必须扶着墙才能走路。赵嬷嬷看了都发急，说再不治怕是要出人命。");
                 }
                 else if (healthDiff <= -15) {
-                    changes.push("你时常觉得乏累，半夜还会咐嗽。身子一日不如一日，有时干活干到一半就得停下来喘气。再这样下去怕是要病倒。");
+                    changes.push("你时常觉得乏累，半夜还会咳嗽。身子一日不如一日，有时干活干到一半就得停下来喘气。再这样下去怕是要病倒。");
                 }
                 else if (healthDiff <= -10) {
-                    changes.push("近来总觉得疲倦，身子不太利落。干点活就觉得累，晚上也睡不实际。得想法子好好调养调养。");
+                    changes.push("近来总觉得疲倦，身子不太利落。干点活就觉得累，晚上也睡不踏实。得想法子好好调养调养。");
                 }
                 else {
                     changes.push("身体似乎不如从前了，总是觉得没什么精神。");

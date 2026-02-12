@@ -6,6 +6,7 @@
     "network": 10,
     "favor": 10,
     "health": 10,
-    "cash": 5
+    "cash": 5,
+    "business": 0
   }
 }

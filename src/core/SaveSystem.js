@@ -1,6 +1,7 @@
 export class SaveSystem {
     constructor() {
         this.keyBase = "story_sim_save";
+        this.legacyKey = "story_sim_legacy";
         this.slotOrder = ["auto", "slot1", "slot2", "slot3"];
         this.slotLabels = {
             auto: "自动存档",
@@ -82,5 +83,29 @@ export class SaveSystem {
             health: player.stats.health,
             cash: player.stats.cash,
         };
+    }
+    saveLegacy(player, world) {
+        const legacy = {
+            stats: { ...player.stats },
+            turn: world.turn,
+            month: world.month,
+            savedAt: Date.now(),
+        };
+        localStorage.setItem(this.legacyKey, JSON.stringify(legacy));
+    }
+    loadLegacy() {
+        const raw = localStorage.getItem(this.legacyKey);
+        if (!raw) {
+            return null;
+        }
+        try {
+            return JSON.parse(raw);
+        }
+        catch {
+            return null;
+        }
+    }
+    clearLegacy() {
+        localStorage.removeItem(this.legacyKey);
     }
 }
