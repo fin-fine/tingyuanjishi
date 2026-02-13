@@ -13,6 +13,7 @@ export class GameManager {
         this.world = new WorldState();
         this.scene = null;
         this.shopItems = [];
+        this.promotionConfig = null;
         this.plan = null;
         this.isNewGame = false;
         this.logs = [];
@@ -59,6 +60,7 @@ export class GameManager {
     async init() {
         await this.eventEngine.loadAll();
         this.shopItems = await this.loadShopItems();
+        this.promotionConfig = await this.loadPromotions();
         await this.loadInterludes();
         this.restoreOrInit();
         this.ensureNpcImpressions();
@@ -126,15 +128,15 @@ export class GameManager {
             this.persistAutoSave();
             return;
         }
-        // 检查是否需要显示季度总结
+        // 检查是否需要显示季度/年度总结
         if (this.shouldShowQuarterSummary()) {
             this.showQuarterSummary();
             return;
         }
         const stagePrefix = this.world.stage <= 1 ? "s1_" : (this.world.stage === 2 ? "s2_" : "s3_");
-        const monthlyEventId = this.getMonthlyEventId();
+        const dailyEventIds = this.getDailyEventIds();
         const specialEvent = this.eventEngine.pickEvent(this.player, this.world, (event) => event.id.startsWith(stagePrefix) &&
-            event.id !== monthlyEventId &&
+            !dailyEventIds.includes(event.id) &&
             !this.player.history.has(event.id));
         if (specialEvent) {
             // 特殊处理：第一夜事件，如果AI启用，先生成少爷对姓名的评价
@@ -156,9 +158,9 @@ export class GameManager {
         this.showMonthlyPlan();
     }
     showMonthlyPlan() {
-        const monthlyEventId = this.getMonthlyEventId();
-        const event = this.eventEngine.findEventById(monthlyEventId);
-        if (!event || !this.eventEngine.pickEvent(this.player, this.world, (entry) => entry.id === event.id)) {
+        const dailyEventIds = this.getDailyEventIds();
+        const event = this.eventEngine.pickEvent(this.player, this.world, (entry) => dailyEventIds.includes(entry.id));
+        if (!event) {
             this.scene?.showEmpty("本回合暂无动静。");
             return;
         }
@@ -169,6 +171,30 @@ export class GameManager {
         const planHandler = (optionIds) => this.applyPlan(event, optionIds);
         this.scene?.showEvent(event, (opt) => this.applyOption(event, opt), customHandler, planHandler);
     }
+    showNameChildDialog(child) {
+        this.scene?.showNameChildDialog(child.id, child.sex, (name) => {
+            child.name = name;
+            this.scene?.renderChildren();
+            this.persistAutoSave();
+            const sexLabel = child.sex === "boy" ? "儿子" : "女儿";
+            const message = child.takenByMatron
+                ? `你为${sexLabel}取名"${name}"。虽然孩子被主母抱去抚养，但这个名字会一直伴随着他。`
+                : `你为${sexLabel}取名"${name}"。这是你给孩子的第一份礼物，也是最珍贵的祝福。`;
+            // 再次检查是否还有未命名子嗣
+            const nextUnnamed = this.getUnnamedChild();
+            if (nextUnnamed) {
+                this.scene?.showResult(message, () => {
+                    this.showNameChildDialog(nextUnnamed);
+                });
+            }
+            else {
+                this.scene?.showResult(message, () => this.showMonthlyPlan());
+            }
+        });
+    }
+    getUnnamedChild() {
+        return this.player.children.find(child => !child.name || child.name === "") ?? null;
+    }
     /**
      * 角色创建完成后的处理
      */
@@ -178,10 +204,8 @@ export class GameManager {
         this.player.setStats(payload.stats);
         this.player.applyDelta(payload.backgroundBonus);
         // 应用周目遗产
-        if (payload.legacyStat) {
-            const legacyBonus = {};
-            legacyBonus[payload.legacyStat] = 10;
-            this.player.applyDelta(legacyBonus);
+        if (payload.legacyBonus) {
+            this.player.applyDelta(payload.legacyBonus);
         }
         // 保存初始快照用于第一次季度总结
         this.lastQuarterStats = {
@@ -444,11 +468,9 @@ export class GameManager {
         }
     }
     getNpcImpressionEntries() {
-        const matronLabel = this.world.stage <= 1 ? "赵嬷嬷" : "大夫人/少夫人";
-        const rivalValue = this.player.npcRelations.rival ?? 0;
-        const showRival = this.world.stage >= 2 || Math.abs(rivalValue) > 0.001;
+        const matronLabel = this.world.stage <= 1 ? "赵嬷嬷" : "少夫人";
         const servantsValue = (this.player.stats.status + this.player.stats.network) / 2;
-        return [
+        const entries = [
             {
                 key: "young_master",
                 label: "少爷",
@@ -461,25 +483,51 @@ export class GameManager {
                 value: this.player.npcRelations.matron ?? 0,
                 visible: true,
             },
-            {
-                key: "rival",
-                label: "姨娘们",
-                value: rivalValue,
-                visible: showRival,
-            },
-            {
-                key: "children",
-                label: "子嗣",
-                value: this.computeChildrenImpressionScore(),
-                visible: true,
-            },
-            {
-                key: "servants",
-                label: "府中下人",
-                value: servantsValue,
-                visible: true,
-            },
         ];
+        // 动态添加姨娘印象
+        // 林姨娘 - 第二阶段进门
+        const hasLinConcubine = this.player.history.has("s2_lin_concubine_enter");
+        if (hasLinConcubine) {
+            entries.push({
+                key: "lin_concubine",
+                label: "林姨娘",
+                value: this.player.npcRelations.lin_concubine ?? 0,
+                visible: true,
+            });
+        }
+        // 王姨娘 - 第二阶段进门，但可能被驱逐
+        const hasWangConcubine = this.player.history.has("s2_wang_concubine_enter");
+        const wangExpelled = this.player.history.has("s2_wang_concubine_elope_exposed");
+        if (hasWangConcubine && !wangExpelled) {
+            entries.push({
+                key: "wang_concubine",
+                label: "王姨娘",
+                value: this.player.npcRelations.wang_concubine ?? 0,
+                visible: true,
+            });
+        }
+        // 苏姨娘 - 第二阶段后期进门
+        const hasSuConcubine = this.player.history.has("s2_su_concubine_enter");
+        if (hasSuConcubine) {
+            entries.push({
+                key: "su_concubine",
+                label: "苏姨娘",
+                value: this.player.npcRelations.su_concubine ?? 0,
+                visible: true,
+            });
+        }
+        entries.push({
+            key: "children",
+            label: "子嗣",
+            value: this.computeChildrenImpressionScore(),
+            visible: true,
+        }, {
+            key: "servants",
+            label: "府中下人",
+            value: servantsValue,
+            visible: true,
+        });
+        return entries;
     }
     buildDefaultNpcImpressions() {
         const impressions = {};
@@ -538,13 +586,19 @@ export class GameManager {
         return `${countText}，底子偏弱，你仍需多费心照拂。`;
     }
     async refreshNpcImpressions(reason) {
+        // 在更新之前保存原有的NPC列表，用于检测变化
+        const existingNpcKeys = Object.keys(this.player.npcImpressions ?? {}).sort().join(",");
         const defaults = this.buildDefaultNpcImpressions();
         this.player.npcImpressions = { ...this.player.npcImpressions, ...defaults };
         if (!this.isCustomAllowedBySettings()) {
             this.player.npcImpressionsTurn = this.world.turn;
             return;
         }
-        if (this.player.npcImpressionsTurn === this.world.turn && reason !== "quarter") {
+        // 检查NPC列表是否发生变化（例如新姨娘加入）
+        const currentNpcKeys = Object.keys(defaults).sort().join(",");
+        const npcListChanged = currentNpcKeys !== existingNpcKeys;
+        // 如果是同一回合且不是季度刷新，且NPC列表没有变化，则跳过
+        if (this.player.npcImpressionsTurn === this.world.turn && reason !== "quarter" && !npcListChanged) {
             return;
         }
         try {
@@ -560,6 +614,148 @@ export class GameManager {
             this.player.npcImpressionsTurn = this.world.turn;
         }
     }
+    /**
+     * 收集重要事件和特殊情况
+     */
+    collectSignificantEvents() {
+        const events = [];
+        // 怀孕状态
+        if (this.player.pregnancyStartTurn !== null) {
+            const pregnancyMonths = Math.floor((this.world.turn - this.player.pregnancyStartTurn) / 3);
+            if (pregnancyMonths < 9) {
+                events.push(`正在怀孕中（已${pregnancyMonths}个月）`);
+            }
+        }
+        // 子嗣情况
+        if (this.player.children.length > 0) {
+            const boys = this.player.children.filter(c => c.sex === "boy").length;
+            const girls = this.player.children.filter(c => c.sex === "girl").length;
+            if (boys > 0 && girls > 0) {
+                events.push(`已育有${boys}子${girls}女`);
+            }
+            else if (boys > 0) {
+                events.push(`已育有${boys}个儿子`);
+            }
+            else if (girls > 0) {
+                events.push(`已育有${girls}个女儿`);
+            }
+            // 子嗣相关特殊情况
+            const hasHighTalentChild = this.player.children.some(child => {
+                const talents = [child.stats.literary, child.stats.martial, child.stats.etiquette, child.stats.business ?? 0];
+                return Math.max(...talents) >= 80;
+            });
+            if (hasHighTalentChild) {
+                events.push("有子嗣才华出众");
+            }
+        }
+        // 重要历史事件（从history中筛选）
+        const significantHistoryEvents = {
+            // 第一阶段事件
+            "s1_matron_secret_discovered": "发现了嬷嬷的隐秘",
+            "s1_young_master_nightmare": "听到了少爷的梦话",
+            "s1_save_young_master": "救下少爷",
+            // 第二阶段事件 - 姨娘相关
+            "s2_lin_concubine_enter": "林姨娘入府",
+            "s2_wang_concubine_enter": "王姨娘入府",
+            "s2_su_concubine_enter": "苏姨娘入府",
+            "s2_wang_concubine_elope_exposed": "王姨娘私奔事败被逐",
+            "s2_lin_concubine_pregnant_threat": "林姨娘怀孕引发威胁",
+            "s2_su_concubine_pregnant": "苏姨娘怀孕",
+            "s2_three_concubines_conflict": "三姨娘矛盾激化",
+            // 第二阶段事件 - 主母与少爷
+            "s2_matron_escape_success": "帮助主母逃脱困境",
+            "s2_jinshu_memory": "与少爷回忆往事",
+            "s2_help_matron_miscarriage": "协助主母处理小产",
+            "s2_matron_test": "通过主母考验",
+            // 经营与政治
+            "s2_business_success": "经商大获成功",
+            "s2_manor_rise": "庄子生意兴隆",
+            "s2_political_risk": "卷入政治风波",
+            "s2_official_visit": "接待朝廷命官",
+            // 第三阶段事件
+            "s3_business_success": "商业帝国初成",
+            "s3_court_turmoil": "朝廷动荡",
+            "s3_emperor_ascends": "新帝登基",
+            "s3_honored_guest": "受邀成为座上宾",
+        };
+        for (const [key, label] of Object.entries(significantHistoryEvents)) {
+            if (this.player.history.has(key)) {
+                events.push(label);
+            }
+        }
+        // 特殊物品或成就
+        if ((this.player.inventory.rare_treasure ?? 0) > 0) {
+            events.push("拥有贵重珍宝");
+        }
+        if ((this.player.inventory.secret_letter ?? 0) > 0) {
+            events.push("掌握机密信件");
+        }
+        if ((this.player.inventory.imperial_merit ?? 0) > 0) {
+            events.push("获得皇室功勋");
+        }
+        if ((this.player.inventory.business_contract ?? 0) > 0) {
+            events.push("手握重要商约");
+        }
+        // 子嗣情况
+        if (this.player.children.length > 0) {
+            const ownChildren = this.player.children.filter(c => !c.takenByMatron);
+            const takenChildren = this.player.children.filter(c => c.takenByMatron);
+            if (takenChildren.length > 0) {
+                const boys = takenChildren.filter(c => c.sex === "boy").length;
+                const girls = takenChildren.filter(c => c.sex === "girl").length;
+                let desc = "生育了";
+                if (boys > 0)
+                    desc += `${boys}个儿子`;
+                if (boys > 0 && girls > 0)
+                    desc += "和";
+                if (girls > 0)
+                    desc += `${girls}个女儿`;
+                desc += "，但被主母抱去亲自抚养";
+                events.push(desc);
+            }
+            if (ownChildren.length > 0) {
+                const boys = ownChildren.filter(c => c.sex === "boy").length;
+                const girls = ownChildren.filter(c => c.sex === "girl").length;
+                let desc = "正在抚养";
+                if (boys > 0)
+                    desc += `${boys}个儿子`;
+                if (boys > 0 && girls > 0)
+                    desc += "和";
+                if (girls > 0)
+                    desc += `${girls}个女儿`;
+                events.push(desc);
+            }
+        }
+        // 特殊状态
+        if (this.player.stats.business >= 70) {
+            events.push("经商能力出众，在府中经营生意");
+        }
+        if (this.player.stats.scheming >= 80) {
+            events.push("心机深沉，善于谋划");
+        }
+        if (this.player.stats.network >= 75) {
+            events.push("人脉广博，府内外关系深厚");
+        }
+        if (this.player.stats.favor >= 90) {
+            events.push("深受少爷宠爱");
+        }
+        if ((this.player.npcRelations.matron ?? 0) >= 85) {
+            events.push("深得主母信任");
+        }
+        // 阶段特殊情况
+        if (this.world.stage === 2) {
+            events.push("主母（少夫人）已入府掌家");
+        }
+        else if (this.world.stage === 3) {
+            if (this.player.position === "姨娘") {
+                events.push("已晋升为姨娘，拥有独立院落");
+            }
+            else if (this.player.position === "侧室") {
+                events.push("已晋升为侧室，地位仅次于正室");
+            }
+        }
+        return events;
+    }
     async generateNpcImpressionsByAI(defaults) {
         const settings = loadAiSettings();
         if (!settings.enabled || !settings.apiUrl) {
@@ -573,8 +769,51 @@ export class GameManager {
         const npcList = entries
             .map((entry) => `- ${entry.key}(${entry.label}): ${Math.round(entry.value)}`)
             .join("\n");
+        // 收集特殊事件
+        const significantEvents = this.collectSignificantEvents();
+        const eventsContext = significantEvents.length > 0
+            ? `\n重要事件：\n${significantEvents.map(e => `- ${e}`).join("\n")}`
+            : "";
         const prompt = `# Role
-你是一个古风宅斗养成游戏《通房丫头模拟器》的NPC印象生成系统。\n\n# Context\n玩家身份：${this.player.position}\n回合：${this.world.turn}\n月份：${this.world.month}\n属性：${JSON.stringify(this.player.stats)}\nNPC关系：${JSON.stringify(this.player.npcRelations)}\n子嗣数量：${childCount}\n子嗣平均资质：${avgAptitude.toFixed(1)}\n\n# Task\n根据以下NPC数值，为每个NPC生成一句话印象，古风白话，15-30字，语气克制写实。\n数值越高，态度越亲近；数值越低，越冷淡或疏离。\n\nNPC列表:\n${npcList}\n\n# Output\n只输出JSON对象，key必须使用列表中的key，value为一句话文本。不要额外解释。`;
+你是一个古风宅斗养成游戏《通房丫头模拟器》的NPC采访系统。
+
+# Context
+玩家身份：${this.player.position}
+回合：${this.world.turn}
+月份：${this.world.month}
+属性：${JSON.stringify(this.player.stats)}
+NPC关系：${JSON.stringify(this.player.npcRelations)}
+子嗣数量：${childCount}
+子嗣平均资质：${avgAptitude.toFixed(1)}${eventsContext}
+
+# Task
+为每个NPC生成一段采访式的印象评价（80-180字），以该NPC的口吻叙述对主角的看法。
+内容需要涵盖：
+1. 对主角身份地位的认知
+2. 对主角外貌、性情、能力等属性的评价
+3. 与主角的关系亲疏程度
+4. 对主角未来前景的看法或期许
+5. **重要**：如果有相关的重要事件，应当在印象中有所体现（如怀孕、子嗣、发现秘密等）
+
+语气风格：
+- 古风白话，符合角色身份
+- 真实细腻，能体现关系数值的差异
+- 数值越高，态度越亲近支持；数值越低，越冷淡疏离
+- 对重要事件的态度应当符合人物性格和与主角的关系
+- 保持人物性格特征：
+  * 少爷：年轻多情，风流但重情义，对怀孕和子嗣尤其看重
+  * 赵嬷嬷：资深管事，严厉但公正
+  * 少夫人：少爷的妻子、正室夫人，掌管家务，对姨娘有防备和管束，对主角生子会有微妙心态
+  * 林姨娘：官宦家女，知书达理，温柔但有心机，主母所纳，会暗中较劲
+  * 王姨娘：大夫人陪房之女，出身低微，不得宠，性格倔强苦闷
+  * 苏姨娘：富商之女，年轻娇俏，深得少爷宠爱，天真中带着小心机
+  * 府中下人：势利眼，看人下菜碟，对主角地位升降反应明显
+
+NPC列表:
+${npcList}
+
+# Output
+只输出JSON对象，key必须使用列表中的key，value为该NPC的采访式评价文本（80-180字）。不要额外解释。`;
         const headers = {
             "Content-Type": "application/json",
         };
@@ -672,23 +911,26 @@ export class GameManager {
         if (sex === "boy") {
             // 状元结局（文学极高，顺从）
             if (child.stats.literary >= 80 && personality === "obedient") {
+                const politicalBonus = this.getChildPoliticalBonus();
                 return {
                     title: "状元之母",
-                    text: `你的儿子天资聪颖，勤勉好学，在你的悉心栽培下，学识日渐精进。他参加科举，一路过关斩将，最终在殿试中脱颖而出，高中状元！\n\n虽是庶子，但他凭借才华赢得了皇上的赏识。你作为状元之母，地位水涨船高。\n\n【状元之母结局】`,
+                    text: `你的儿子天资聪颖，勤勉好学，在你的悉心栽培下，学识日渐精进。他参加科举，一路过关斩将，最终在殿试中脱颖而出，高中状元！\n\n虽是庶子，但他凭借才华赢得了皇上的赏识。${politicalBonus}你作为状元之母，地位水涨船高。\n\n【状元之母结局】`,
                 };
             }
             // 探花/榜眼
             if (child.stats.literary >= 75 && child.stats.literary < 80) {
+                const politicalBonus = this.getChildPoliticalBonus();
                 return {
                     title: "进士之母",
-                    text: `你的儿子学识渊博，科举考试中表现出色，高中进士。虽未能夺得状元，但这份荣耀已经足够让你在府中扬眉吐气。\n\n庶子也能金榜题名，你为他骄傲。\n\n【进士之母结局】`,
+                    text: `你的儿子学识渊博，科举考试中表现出色，高中进士。虽未能夺得状元，但这份荣耀已经足够让你在府中扬眉吐气。${politicalBonus}\n\n庶子也能金榜题名，你为他骄傲。\n\n【进士之母结局】`,
                 };
             }
             // 武将结局（武艺高，叛逆）
             if (child.stats.martial >= 80 && personality === "rebellious") {
+                const politicalBonus = this.getChildPoliticalBonus();
                 return {
                     title: "将军之母",
-                    text: `你的儿子自幼习武，身手不凡，性格刚烈果敢。他不愿读书科举，反而投身军营，征战沙场。\n\n凭借赫赫战功，他从一介小卒升到了将军之位。虽然这条路走得艰险，但他用自己的方式证明了价值。\n\n【将军之母结局】`,
+                    text: `你的儿子自幼习武，身手不凡，性格刚烈果敢。他不愿读书科举，反而投身军营，征战沙场。\n\n凭借赫赫战功，他从一介小卒升到了将军之位。${politicalBonus}虽然这条路走得艰险，但他用自己的方式证明了价值。\n\n【将军之母结局】`,
                 };
             }
             // 武艺高但顺从
@@ -798,6 +1040,83 @@ export class GameManager {
             return null;
         }
     }
+    /**
+     * 根据政治抉择生成结局文本片段
+     */
+    generatePoliticalEndingText(endingType) {
+        const hasSecondPrince = (this.player.inventory.court_faction_second ?? 0) > 0;
+        const hasThirdPrince = (this.player.inventory.court_faction_third ?? 0) > 0;
+        const hasImperialBusiness = (this.player.inventory.imperial_business_privilege ?? 0) > 0 ||
+            (this.player.inventory.imperial_business_third ?? 0) > 0;
+        const hasChildOfficial = (this.player.inventory.child_official_position ?? 0) > 0 ||
+            (this.player.inventory.child_official_third ?? 0) > 0;
+        const hasImperialStatus = (this.player.inventory.imperial_favor_status ?? 0) > 0;
+        if (!hasSecondPrince && !hasThirdPrince) {
+            return ""; // 没有参与政治斗争，不添加额外文本
+        }
+        if (endingType === "business") {
+            // 商业结局的政治文本
+            if (hasImperialBusiness) {
+                if (hasSecondPrince) {
+                    return "\n\n当年新帝登基后，侯府因从龙之功得了不少商业资源。你接手打理这些产业，凭借朝中关系将生意做到了极致。那些矿山、盐场、茶路，都成了你的摇钱树。京城商界都知道，你背后有侯府，而侯府背后有天子。这份政治庇护，让你的商业帝国固若金汤。";
+                }
+                else {
+                    return "\n\n当年三皇子登基后，侯府虽费了些周折，但最终还是站稳了脚跟。新帝赐下的商业资源，你打理得井井有条。虽然政治上有过波折，但你用商业上的成功证明了自己。在这个风云变幻的时代，钱财才是最可靠的依靠。";
+                }
+            }
+            else if (hasSecondPrince || hasThirdPrince) {
+                return "\n\n侯府经历了那场惊心动魄的夺嫡之争，最终赌对了方向。虽然你没有直接分到政治红利，但侯府地位的稳固让你的生意有了更坚实的后盾。朝中有人，做什么都方便三分。";
+            }
+        }
+        else if (endingType === "child") {
+            // 子嗣结局的政治文本
+            if (hasChildOfficial) {
+                if (hasSecondPrince) {
+                    return "\n\n新帝登基后，侯府地位水涨船高。当年你建议少爷为孩子铺路，如今孩子在朝中也有了自己的位置。虽是庶出，但凭借侯府的关系和新朝的恩典，前程已经不可限量。每每想到这些，你都觉得当年的谋划没有白费。";
+                }
+                else {
+                    return "\n\n三皇子登基那年，整个朝堂都变了天。好在侯府站对了队，孩子也借着这股东风在军中立稳了脚跟。虽然道路曲折，但最终还是为孩子谋得了一个前程。你看着孩子穿着官服的样子，心里的石头总算落了地。";
+                }
+            }
+            else if (hasSecondPrince) {
+                return "\n\n侯府因从龙之功，在新朝地位尊崇。孩子虽未得到直接封赏，但在这样的家世庇护下，日子过得也算顺遂。你时常想，幸好当年侯府赌对了，否则这个庶出的孩子，又该如何在世上立足？";
+            }
+            else if (hasThirdPrince) {
+                return "\n\n那场夺嫡之争的惊心动魄，至今想起还让你心有余悸。侯府最终还是保住了地位，孩子在新朝的庇护下平安长大。虽然没有大富大贵，但至少有个安稳日子过。你已经知足了。";
+            }
+        }
+        else if (endingType === "lonely") {
+            // 孤独终老的政治文本
+            if (hasSecondPrince) {
+                return "新帝登基后，侯府一跃成为朝中重臣。府中上下都在欢庆荣耀，而你却渐渐被遗忘在角落里。那些权势、荣华，终究与你无关。你曾为侯府的决策出过力，但作为一个无子的姨娘，你终究分不到什么好处。";
+            }
+            else if (hasThirdPrince) {
+                return "三皇子登基那年，朝堂风云突变。侯府虽然保住了位置，但那段惊心动魄的日子让你看透了权势的无常。作为一个无依无靠的姨娘，你在这场政治风暴中如浮萍般飘摇。最终侯府站稳了，而你只是更加明白——在这深宅大院里，你永远只是个可有可无的存在。";
+            }
+        }
+        return "";
+    }
+    /**
+     * 获取子嗣结局中的政治奖励文本
+     */
+    getChildPoliticalBonus() {
+        const hasSecondPrince = (this.player.inventory.court_faction_second ?? 0) > 0;
+        const hasThirdPrince = (this.player.inventory.court_faction_third ?? 0) > 0;
+        const hasChildOfficial = (this.player.inventory.child_official_position ?? 0) > 0 ||
+            (this.player.inventory.child_official_third ?? 0) > 0;
+        if (hasChildOfficial) {
+            if (hasSecondPrince) {
+                return "更难得的是，新帝登基后，侯府从龙有功，你的孩子也沾了光，在朝中得了照应。庶出的身份不再是绝对的障碍。";
+            }
+            else if (hasThirdPrince) {
+                return "侯府在那场夺嫡之争中站对了队，孩子也因此得了些照应。虽然过程波折，但结果总算不错。";
+            }
+        }
+        else if (hasSecondPrince || hasThirdPrince) {
+            return "侯府在新朝地位稳固，这也为孩子的前程铺平了道路。";
+        }
+        return "";
+    }
     async checkStageEnding() {
         if (this.world.turn <= this.world.maxTurn) {
             return false;
@@ -841,48 +1160,112 @@ export class GameManager {
             const hasChild = this.player.children.length > 0;
             const favor = this.player.stats.favor;
             const status = this.player.stats.status;
+            const health = this.player.stats.health;
+            const network = this.player.stats.network;
             const matronTrust = this.player.npcRelations.matron ?? 0;
-            // 生子成功，直接升职为姨娘进入第三阶段
-            if (hasChild && matronTrust >= 70) {
-                this.player.position = "姨娘";
+            // 尝试升职：通房 -> 姨娘
+            const promotionResult = this.checkPromotion("通房", "姨娘");
+            if (promotionResult.success && promotionResult.conditionId && promotionResult.newPosition) {
+                this.player.promote(promotionResult.newPosition);
                 this.world.advanceStage(); // 进入第三阶段
-                this.scene?.showResult(`恭喜！你为谢家诞下子嗣，主母对你颇为信任。少爷向主母提请，将你抬为姨娘。\n\n你的身份从通房升为姨娘，有了自己的小院落，也有了更多的自主权。`, () => void this.tick());
+                const narrative = this.getPromotionNarrative("通房", "姨娘", promotionResult.conditionId);
+                this.scene?.showResult(narrative, () => void this.tick());
                 return true;
             }
-            // 未生子但三项属性都高，也可升职为姨娘
-            if (!hasChild && favor >= 80 && status >= 70 && matronTrust >= 75) {
-                this.player.position = "姨娘";
-                this.world.advanceStage(); // 进入第三阶段
-                this.scene?.showResult(`虽无子嗣，但你凭借高超的手腕赢得了少爷的宠爱、院中的名声和主母的信任。少爷向主母提请，将你抬为姨娘。\n\n你的身份从通房升为姨娘，有了自己的小院落，也有了更多的自主权。`, () => void this.tick());
+            // ========== 以下是各种失败结局 ==========
+            // 健康太低导致病逝（提高阈值）
+            if (health < 30) {
+                this.scene?.showEnding("香消玉殒", `长期的劳累与忧虑摧垮了你的身体。这个冬天格外寒冷，你的身子却越来越虚弱。\n\n大夫来看过几次，只是摇头叹息。少爷偶尔来看你，眼中也有几分不忍，但他日理万机，终究无法常伴左右。\n\n一个风雪交加的夜晚，你在昏暗的房中闭上了眼睛。外面传来丫鬟们的哭声，但很快就被主母喝止——府里不兴这些。\n\n第二天清晨，侯府的生活一切如常，仿佛你从未存在过。你只是众多凋零在深宅大院中的花朵之一。\n\n【健康: ${health}，未能熬过主母入府的考验】`, () => this.restartWithLegacy());
                 return true;
             }
-            // 未达标，出现结局事件
+            // 失宠被冷落（提高阈值）
+            if (favor < 50) {
+                this.scene?.showEnding("失宠弃妇", `自从主母入府，少爷来你房中的次数越来越少。起初你还强作欢颜，心想总会好起来的。可是一个月、两个月、三个月过去，他几乎不再踏进你的院子。\n\n你听说少爷对新来的丫鬟颇为上心，又听说主母为他纳了一房妾室，容貌姣好，知书达礼。你坐在房中，看着窗外的月光，忽然明白了什么叫"人走茶凉"。\n\n没有宠爱的通房，比丫鬟的处境还要尴尬。主母暗示你可以去管管库房的杂务，那些老嬷嬷对你指指点点，丝毫不给你面子。\n\n半年后，你被"好心"地发配到庄子上，名义上是去休养，实际上是被扫地出门。马车驶出侯府，你连回头看一眼的勇气都没有。\n\n【宠爱: ${favor}，失去了少爷的青睐】`, () => this.restartWithLegacy());
+                return true;
+            }
+            // 名声太差（提高阈值）
+            if (status < 45) {
+                this.scene?.showEnding("名声扫地", `你在府中的名声实在太差了。有人说你不守规矩，有人说你勾引小厮，还有人说你偷拿了主母的首饰。\n\n这些流言像瘟疫一样在府中蔓延，你越是解释，别人越是不信。丫鬟们见了你避之唯恐不及，嬷嬷们在背后指指点点。\n\n主母终于忍无可忍，把你叫到面前。她没有大声呵斥，只是冷冷地看着你："我侯府的脸面，都被你丢尽了。"\n\n第二天，牙婆就来了。你被低价卖到了一个外地商人家里做妾，从此再无音讯。临走时，你看见有几个小丫鬟在窗后偷笑。\n\n你终于明白，在这深宅大院里，名声比命还重要。\n\n【名声: ${status}，无法在府中立足】`, () => this.restartWithLegacy());
+                return true;
+            }
+            // 主母严重不信任（提高阈值）
+            if (matronTrust < 40) {
+                this.scene?.showEnding("主母不容", `主母从一开始就看你不顺眼。也许是你曾经的某个举动冒犯了她，也许是她天性多疑，也许只是单纯地不喜欢你。\n\n她开始找你的茬。你负责的事情总是"做得不够好"，你说的话总是"不合规矩"，你穿的衣服总是"不够体面"或"过于招摇"。\n\n少爷起初还会为你说话，但主母一哭二闹，说你是来拆散她和少爷关系的狐狸精。日子久了，少爷也倦了，不再管这些后宅琐事。\n\n终于，主母以"通房不守妇道"的罪名，要把你发卖出府。少爷默许了。\n\n你跪在地上磕破了头，哭到声嘶力竭，但没有人理会。牙婆拖着你出了侯府的角门，你看着那高墙深院，知道此生再也回不去了。\n\n【主母信任: ${matronTrust}，得罪了最不该得罪的人】`, () => this.restartWithLegacy());
+                return true;
+            }
+            // 现银不足导致困境
+            const cash = this.player.stats.cash;
+            if (cash < 15 && !hasChild) {
+                this.scene?.showEnding("囊中羞涩", `你手里几乎没有什么积蓄。主母入府后开始整顿后宅，那些有钱的姨娘和丫鬟都能给主母送些礼物、打点关系，唯独你拿不出像样的东西。\n\n你看着别人送的珠钗、绸缎、补品，心里发苦。少爷给的月钱本就不多，你又不善经营，日子过得捉襟见肘。\n\n主母身边的嬷嬷冷眼看着你空手而来，脸上露出不屑的笑容："原来是个穷酸的。"从那以后，她对你更加刻薄。\n\n没有钱，在这深宅大院里寸步难行。你连给自己买药的钱都没有，更别提打点人情。\n\n终于，在一次府中聚会上，你因为穿着寒酸被众人嘲笑。主母觉得你丢了府上的脸面，不久就将你发卖了出去。\n\n【现银: ${cash}，在金钱至上的府中无法生存】`, () => this.restartWithLegacy());
+                return true;
+            }
+            // 谋略不足被人陷害
+            const scheming = this.player.stats.scheming;
+            if (scheming < 35 && !hasChild) {
+                this.scene?.showEnding("被人陷害", `你太过单纯，完全不懂府中的尔虞我诈。主母身边有几个老嬷嬷，她们看你不顺眼，觉得你抢了她们的风头。\n\n她们开始设计陷害你。先是"不小心"把主母的茶打翻在你身上，然后说是你冲撞了主母。又在你房中偷偷放了一些禁忌物品，然后举报你"存心不良"。\n\n你百口莫辩，越解释越说不清。少爷不在府中，主母又对你起了疑心。那些嬷嬷们添油加醋，说你"心术不正"、"想要害人"。\n\n主母勃然大怒，当场就要杖责你。你跪在地上哭诉冤枉，但没有人相信。\n\n最后，你被以"通房不轨"的罪名赶出了侯府。临走时，你看见那几个嬷嬷在角落里冷笑。\n\n你终于明白，在这深宅大院里，不懂算计的人，只能是任人宰割的羔羊。\n\n【谋略: ${scheming}，太过单纯被人陷害】`, () => this.restartWithLegacy());
+                return true;
+            }
+            // 容貌衰退失宠
+            const appearance = this.player.stats.appearance;
+            if (appearance < 40 && favor < 65 && !hasChild) {
+                this.scene?.showEnding("美人迟暮", `岁月和操劳在你脸上留下了痕迹。镜中的你，已不复当初的光彩。\n\n少爷来得越来越少。有一次，你听见他在园中对朋友说："她如今憔悴了许多，不似从前那般动人了。"那一刻，你的心如刀割。\n\n主母入府后，带来了几个年轻貌美的丫鬟。你看着她们青春洋溢的脸庞，忽然明白了什么叫"色衰而爱弛"。\n\n你试图挽回少爷的心，但他的眼神越来越冷淡。主母对你也不再客气，安排你去做一些粗重的活计。\n\n一年后，你被"好心"地安排到庄子上养老。马车驶出侯府时，你看见少爷正在后花园与新来的丫鬟说笑，他连头都没回。\n\n你终于明白，在这个地方，美貌就是资本。失去了美貌，也就失去了一切。\n\n【容貌: ${appearance}，宠爱: ${favor}，色衰爱弛】`, () => this.restartWithLegacy());
+                return true;
+            }
+            // 有子但综合条件不足（提高要求）
             if (hasChild) {
-                // 有子但主母信任不够
-                this.scene?.showEnding("勉强维持", `你虽然为谢家生下了子嗣，但主母对你的信任不足（主母信任: ${matronTrust}）。你依然只是通房的身份，日子过得战战兢兢，不知何时会失宠。\n\n你的故事，就此止步。`, () => this.restartWithLegacy());
+                const issues = [];
+                if (matronTrust < 85)
+                    issues.push(`主母信任不足(${matronTrust}/85)`);
+                if (favor < 70)
+                    issues.push(`宠爱不足(${favor}/70)`);
+                if (health < 50)
+                    issues.push(`健康堪忧(${health}/50)`);
+                if (status < 60)
+                    issues.push(`名声不佳(${status}/60)`);
+                this.scene?.showEnding("母子无依", `你为谢家生下了子嗣，这本该是你最大的资本。可是现实远比想象的残酷。\n\n${issues.join("，")}。\n\n主母对你的孩子并不上心，只是偶尔冷淡地看一眼。少爷忙于应酬，很少来看孩子。你依然只是通房的身份，带着孩子住在偏僻的小院里。\n\n孩子一天天长大，你却看不到希望。府里的下人们背后议论，说你的孩子"身份尴尬"，将来怕是难有出头之日。你抱着孩子，眼泪一滴滴落在他的襁褓上。\n\n你拼尽全力，却只能给孩子一个暗淡的未来。这样的母子，在侯府中如同浮萍，随时可能被风吹走。\n\n【有子但条件不足，无法为孩子争取更好的未来】`, () => this.restartWithLegacy());
                 return true;
             }
-            else {
-                // 无子需要三项都高
-                const missing = [];
-                if (favor < 80)
-                    missing.push(`宠爱${favor}/80`);
-                if (status < 70)
-                    missing.push(`名声${status}/70`);
-                if (matronTrust < 75)
-                    missing.push(`主母信任${matronTrust}/75`);
-                this.scene?.showEnding("香消玉殒", `你未能生子，也未能同时获得足够的宠爱、名声与主母信任。\n缺少：${missing.join("、")}\n\n数月后，你被主母寻了个由头，发卖出府。你的故事，就此结束。`, () => this.restartWithLegacy());
+            // 无子且属性不足（优先级最低的保底结局）
+            const missing = [];
+            if (favor < 90)
+                missing.push(`宠爱(${favor}/90)`);
+            if (status < 85)
+                missing.push(`名声(${status}/85)`);
+            if (matronTrust < 88)
+                missing.push(`主母信任(${matronTrust}/88)`);
+            if (health < 60)
+                missing.push(`健康(${health}/60)`);
+            if (network < 70)
+                missing.push(`人脉(${network}/70)`);
+            // 根据最欠缺的属性给出不同的结局文本
+            if (network < 50) {
+                this.scene?.showEnding("无依无靠", `你在府中没有子嗣，也没有建立起足够的人脉网络。当主母入府后开始重新整顿人手，你发现自己竟然没有一个能说上话的人。\n\n需要改善：${missing.join("、")}\n\n那些你曾经打过交道的丫鬟嬷嬷，如今都对你冷眼相看。你想找人帮忙传个话给少爷，却没人愿意理你。\n\n主母轻而易举地就把你调去了最偏僻的柴房做粗活。你从通房变成了粗使丫鬟，从早忙到晚，手上磨出了血泡。\n\n一年后的一个早晨，你在井边打水时失足落了下去。有人说是意外，也有人说你是自己跳下去的。\n\n无论如何，你的故事就此结束。在这座侯府的历史上，你连一个脚注都算不上。\n\n【缺乏人脉支持，在府中举步维艰】`, () => this.restartWithLegacy());
                 return true;
             }
+            // 通用的无子失败结局
+            this.scene?.showEnding("终究无缘", `你未能生下子嗣，也未能同时达到各项极高要求。主母入府后，你的处境日益艰难。\n\n无子女路线需要达到近乎完美的属性：${missing.join("、")}\n\n${favor < 90 ? "少爷的宠爱还不够深厚。" : ""}${status < 85 ? "府中对你的评价还不够高。" : ""}${matronTrust < 88 ? "主母对你的信任还不够。" : ""}${health < 60 ? "你的身体状况不够好。" : ""}${network < 70 ? "你的人脉关系不够广。" : ""}\n\n又过了几个月，主母借着整顿府务的名义，将你发卖了出去。少爷那天不在府中，等他回来时，你已经不知去向。\n\n也许他会记得你一阵子，也许很快就会忘记。对于侯府少爷来说，通房丫头如过眼云烟，来了又去，去了又来。\n\n而你，只是其中最普通的一个。\n\n【没有子嗣的通房，几乎不可能被抬为姨娘】`, () => this.restartWithLegacy());
+            return true;
         }
         // ========== 第三阶段结局 ==========
         if (this.world.stage >= 3) {
             const business = this.player.stats.business;
             const cash = this.player.stats.cash;
             const children = this.player.children;
+            // 尝试升职：姨娘 -> 侧室
+            if (this.player.position === "姨娘") {
+                const promotionResult = this.checkPromotion("姨娘", "侧室");
+                if (promotionResult.success && promotionResult.conditionId && promotionResult.newPosition) {
+                    this.player.promote(promotionResult.newPosition);
+                    const narrative = this.getPromotionNarrative("姨娘", "侧室", promotionResult.conditionId);
+                    // 升为侧室后继续游戏或显示特殊结局
+                    this.scene?.showResult(narrative, () => void this.tick());
+                    return true;
+                }
+            }
             // 商业独立结局（商业能力高，现银充足）
             if (business >= 80 && cash >= 50) {
-                void this.triggerEnding("商海女杰", `你凭借过人的商业才能，将主母委托经营的几处铺面打理得风生水起。从绸缎庄到药铺，从茶馆到当铺，你的商号遍布京城内外。\n\n旁人只道你是侯府的一个姨娘，殊不知京城商界暗中流传的"谢姨娘"之名，比许多世家老爷都要响亮。你手中握有的银两，已经超过了整座侯府一年的进项。\n\n主母看你的眼神从轻蔑变成了忌惮，最后化作了一种复杂的尊重。少爷更是对你刮目相看——他从未想过，一个通房丫头竟能做出这般事业。\n\n你再也不必依附于任何人。姨娘的身份于你而言，不过是一件随时可以脱下的外衣。你用商业的力量，为自己挣来了真正的自由。\n\n在这个男尊女卑的时代，你走出了一条前所未有的路。后人提起你时，无不感慨一声——\n\n"那位谢家姨娘，当真了得。"`, "商海女杰");
+                const politicalText = this.generatePoliticalEndingText("business");
+                void this.triggerEnding("商海女杰", `你凭借过人的商业才能，将主母委托经营的几处铺面打理得风生水起。从绸缎庄到药铺，从茶馆到当铺，你的商号遍布京城内外。\n\n旁人只道你是侯府的一个姨娘，殊不知京城商界暗中流传的"谢姨娘"之名，比许多世家老爷都要响亮。你手中握有的银两，已经超过了整座侯府一年的进项。${politicalText}\n\n主母看你的眼神从轻蔑变成了忌惮，最后化作了一种复杂的尊重。少爷更是对你刮目相看——他从未想过，一个通房丫头竟能做出这般事业。\n\n你再也不必依附于任何人。姨娘的身份于你而言，不过是一件随时可以脱下的外衣。你用商业的力量，为自己挣来了真正的自由。\n\n在这个男尊女卑的时代，你走出了一条前所未有的路。后人提起你时，无不感慨一声——\n\n"那位谢家姨娘，当真了得。"`, "商海女杰");
                 return true;
             }
             // 子嗣结局
@@ -902,19 +1285,17 @@ export class GameManager {
                 const sexLabel = child.sex === "boy" ? "儿子" : "女儿";
                 const pronoun = child.sex === "boy" ? "他" : "她";
                 const personalityLabel = personality === "rebellious" ? "叛逆" : personality === "obedient" ? "顺从" : "温和";
-                void this.triggerEnding("平淡一生", `你的${sexLabel}健康地长大了。虽未取得显赫功名，但也平安顺遂，没有辜负你的一番栽培。\n\n${pronoun}性格${personalityLabel}，最擅长${STAT_LABELS[highest.stat]}。作为姨娘，你的日子说不上好，也说不上坏。少爷偶尔会来你院中坐坐，主母待你也算客气。你在这座府邸里找到了自己的位置——不高不低，不远不近。\n\n你看着${pronoun}一天天长大，从蒙学到开蒙，从跌跌撞撞到稳步行走。或许${pronoun}不会成为什么了不起的人物，但${pronoun}是你在这世间最大的牵挂与慰藉。\n\n岁月在你脸上留下了痕迹，但你的眼神依旧清明。你学会了知足，学会了在平淡中寻找安宁。\n\n也许，这样的一生，便已足够。`, "平淡一生");
+                const politicalText = this.generatePoliticalEndingText("child");
+                void this.triggerEnding("平淡一生", `你的${sexLabel}健康地长大了。虽未取得显赫功名，但也平安顺遂，没有辜负你的一番栽培。\n\n${pronoun}性格${personalityLabel}，最擅长${STAT_LABELS[highest.stat]}。${politicalText}作为姨娘，你的日子说不上好，也说不上坏。少爷偶尔会来你院中坐坐，主母待你也算客气。你在这座府邸里找到了自己的位置——不高不低，不远不近。\n\n你看着${pronoun}一天天长大，从蒙学到开蒙，从跌跌撞撞到稳步行走。或许${pronoun}不会成为什么了不起的人物，但${pronoun}是你在这世间最大的牵挂与慰藉。\n\n岁月在你脸上留下了痕迹，但你的眼神依旧清明。你学会了知足，学会了在平淡中寻找安宁。\n\n也许，这样的一生，便已足够。`, "平淡一生");
                 return true;
             }
             // 无子且商业能力不足
-            if (business < 80) {
-                void this.triggerEnding("孤独终老", `岁月如流，光阴荏苒。\n\n你没有子嗣，商业上也未有建树。虽然挂着姨娘的名号，但在府中的地位日渐边缘化。少爷有了新的宠妾，主母也渐渐不再记得你。\n\n你守着自己的小院，种了几盆花草，养了一只猫。日出日落，四季轮转。窗外的喧嚣与你再无关系，你已经习惯了一个人的清静。\n\n有时候，你会在黄昏时分坐在廊下，看天边的晚霞一点点暗下去。回想这一生，从入府到如今，像是做了一场漫长的梦。\n\n梦里有过挣扎，有过期盼，有过短暂的温暖。但终究，都归于平淡。\n\n你在这座院落里，慢慢地、安静地老去。`, "孤独终老");
-                return true;
-            }
-            // 默认结局
-            void this.triggerEnding("结算", "本阶段已至尽头，你的故事暂告一段落。往后的日子，便如流水般平淡地过下去了。", "结算");
+            const politicalText = this.generatePoliticalEndingText("lonely");
+            void this.triggerEnding("孤独终老", `岁月如流，光阴荏苒。\n\n你没有子嗣，商业上也未有建树。虽然挂着姨娘的名号，但在府中的地位日渐边缘化。少爷有了新的宠妾，主母也渐渐不再记得你。\n\n你守着自己的小院，种了几盆花草，养了一只猫。日出日落，四季轮转。窗外的喧嚣与你再无关系，你已经习惯了一个人的清静。\n\n有时候，你会在黄昏时分坐在廊下，看天边的晚霞一点点暗下去。回想这一生，从入府到如今，像是做了一场漫长的梦。\n\n梦里有过挣扎，有过期盼，有过短暂的温暖。但终究，都归于平淡。\n\n你在这座院落里，慢慢地、安静地老去。${politicalText}`, "孤独终老");
             return true;
         }
-        void this.triggerEnding("结算", "本阶段已至尽头，你的故事暂告一段落。", "结算");
+        // 默认结局
+        void this.triggerEnding("结算", "本阶段已至尽头，你的故事暂告一段落。往后的日子，便如流水般平淡地过下去了。", "结算");
         return true;
     }
     /**
@@ -1069,16 +1450,22 @@ ${endingNarrative}
         }
         return content.trim();
     }
-    getMonthlyEventId() {
+    getDailyEventIds() {
         if (this.world.stage <= 1) {
-            return "s1_1000";
+            return ["s1_1000"];
         }
-        else if (this.world.stage === 2) {
-            return "s2_1000";
+        if (this.world.stage === 2) {
+            return ["s2_1000"];
         }
-        else {
-            return "s3_1000"; // 第三阶段的月度事件
-        }
+        return [
+            "s3_daily_child",
+            "s3_daily_business_cosmetics",
+            "s3_daily_business_restaurant",
+            "s3_daily_business_clothing",
+            "s3_daily_business_medicine",
+            "s3_daily_inner",
+            "s3_daily_plan",
+        ];
     }
     applyOption(event, optionId, onContinue) {
         const snapshot = this.snapshotState();
@@ -1098,10 +1485,18 @@ ${endingNarrative}
         const deltaText = this.formatStatDelta(result.delta);
         const combined = deltaText ? `${sanitizedText}\n${deltaText}` : sanitizedText;
         const next = onContinue ?? (() => void this.tick());
-        this.scene?.showResult(combined, next);
-        if (turnAdvanced) {
-            void this.refreshNpcImpressions("turn");
+        // 检查是否有未命名子嗣
+        const unnamedChild = this.getUnnamedChild();
+        if (unnamedChild) {
+            this.scene?.showResult(combined, () => {
+                this.showNameChildDialog(unnamedChild);
+            });
         }
+        else {
+            this.scene?.showResult(combined, next);
+        }
+        // 刷新NPC印象（函数内部会检查是否需要重新生成）
+        void this.refreshNpcImpressions("turn");
         this.persistAutoSave();
     }
     applySpecialOption(event, optionId) {
@@ -1111,13 +1506,23 @@ ${endingNarrative}
         });
         const turnAdvanced = this.world.turn > snapshot.world.turn;
         this.player.history.add(event.id);
-        // 处理特殊事件
+        // 处理特殊事件，获取动态文案
+        let specialText = "";
         const option = event.options.find((opt) => opt.id === optionId);
         if (option?.special) {
-            this.handleSpecialEvent(option.special);
+            const returnedText = this.handleSpecialEvent(option.special);
+            if (returnedText) {
+                specialText = returnedText;
+            }
         }
         const extraText = result.end ? "" : this.applyAfterActionEffects(snapshot, optionId);
-        const combinedText = extraText ? `${result.text}\n${extraText}` : result.text;
+        let combinedText = result.text;
+        if (specialText) {
+            combinedText = `${combinedText}\n\n${specialText}`;
+        }
+        if (extraText) {
+            combinedText = `${combinedText}\n${extraText}`;
+        }
         const sanitizedText = this.sanitizeResultText(combinedText);
         this.recordLog(this.buildLogEntry(event, optionId, sanitizedText, snapshot));
         if (result.end) {
@@ -1129,10 +1534,18 @@ ${endingNarrative}
         }
         const deltaText = this.formatStatDelta(result.delta);
         const combined = deltaText ? `${sanitizedText}\n${deltaText}` : sanitizedText;
-        this.scene?.showResult(combined, () => this.showMonthlyPlan());
-        if (turnAdvanced) {
-            void this.refreshNpcImpressions("turn");
+        // 检查是否有未命名子嗣
+        const unnamedChild = this.getUnnamedChild();
+        if (unnamedChild) {
+            this.scene?.showResult(combined, () => {
+                this.showNameChildDialog(unnamedChild);
+            });
         }
+        else {
+            this.scene?.showResult(combined, () => this.showMonthlyPlan());
+        }
+        // 刷新NPC印象（函数内部会检查是否需要重新生成）
+        void this.refreshNpcImpressions("turn");
         this.persistAutoSave();
     }
     handleSpecialEvent(special) {
@@ -1151,9 +1564,45 @@ ${endingNarrative}
                 if (this.player.pregnancyStartTurn !== null) {
                     const child = createRandomChild(this.world.turn);
                     this.applyChildPersonalityInfluence(child, 0.7);
+                    // 根据主母好感度决定子嗣去留
+                    const matronRelation = this.player.npcRelations["matron"] ?? 0;
+                    const matronTrustThreshold = 100;
+                    if (matronRelation < matronTrustThreshold) {
+                        child.takenByMatron = true;
+                        this.setInventoryCount("child_taken_by_matron", 1);
+                    }
                     this.player.children.push(child);
+                    const currentCount = this.player.inventory["child"] ?? 0;
+                    this.setInventoryCount("child", currentCount + 1);
                     this.player.pregnancyStartTurn = null;
                     this.scene?.renderChildren();
+                    // 生成动态文案
+                    const sexText = child.sex === "boy" ? "子" : "女";
+                    const sexTitle = child.sex === "boy" ? "小郎君" : "小娘子";
+                    const sexAnnounce = child.sex === "boy" ? "是个小郎君！" : "是个女儿！";
+                    let birthText = `一阵急促的脚步声，稳婆在房外喊："${sexAnnounce}"\n\n`;
+                    if (child.sex === "boy") {
+                        birthText += "外头的鞭炮声响起来，府里上下都沸腾了。";
+                    }
+                    else {
+                        birthText += "外头的声音有些失落，但还是传来了祝贺声。";
+                    }
+                    birthText += `你躺在床上，听着外头的声音，眼泪却流了满脸。一个新的生命从你身体里来到这个世界，你在生死边缘走了一遭。\n\n`;
+                    birthText += `少爷在门外听到消息，`;
+                    if (child.sex === "boy") {
+                        birthText += "大喜过望，亲自赶来探望。";
+                    }
+                    else {
+                        birthText += "脸上闪过一丝失望，但还是进来看了看你。";
+                    }
+                    birthText += `主母也来了产房，`;
+                    if (child.takenByMatron) {
+                        birthText += `看了一眼${sexTitle}，转头对你说："孩子我抱去亲自抚养，你就好好养身子。"\n\n你眼看着${sexTitle}被奶娘抱走，心中百味杂陈……这是你的骨肉，但却不能留在身边。`;
+                    }
+                    else {
+                        birthText += `语气难得温和："辛苦你了。我看你这些日子也算识大体，孩子就留在你身边自己养吧。"\n\n你惊讶地抬头，看着${sexTitle}被放在你身边，心中涌起一股暖意。主母信任你，允许你亲自抚养孩子，这是莫大的恩典。`;
+                    }
+                    return birthText;
                 }
                 break;
             case "child_education_scholar":
@@ -1226,6 +1675,7 @@ ${endingNarrative}
                 this.setInventoryCount("matron_confined", 1);
                 break;
         }
+        return null;
     }
     applyPlan(event, optionIds) {
         this.plan = { event, startTurn: this.world.turn, queue: [...optionIds] };
@@ -1576,6 +2026,13 @@ ${endingNarrative}
         }
         const child = createRandomChild(this.world.turn);
         this.applyChildPersonalityInfluence(child, 0.7);
+        // 根据主母好感度决定子嗣去留
+        const matronRelation = this.player.npcRelations["matron"] ?? 0;
+        const matronTrustThreshold = 100;
+        if (matronRelation < matronTrustThreshold) {
+            child.takenByMatron = true;
+            this.setInventoryCount("child_taken_by_matron", 1);
+        }
         this.player.children.push(child);
         const currentCount = this.player.inventory["child"] ?? 0;
         this.setInventoryCount("child", currentCount + 1);
@@ -1583,7 +2040,16 @@ ${endingNarrative}
         this.setInventoryCount("preg_confirm", 0);
         this.setInventoryCount("preg_stage", 0);
         const sexText = child.sex === "boy" ? "子" : "女";
-        return `九月已满，你产下一${sexText}。`;
+        const sexTitle = child.sex === "boy" ? "小郎君" : "小娘子";
+        let message = `九月已满，你产下一${sexText}。`;
+        if (child.takenByMatron) {
+            message += `\n\n主母听闻后立刻来到产房，亲自将${sexTitle}抱走，说是要亲自抚养。你眼看着孩子被抱离自己身边，心中百味杂陈……`;
+        }
+        else {
+            message += `\n\n主母对你多有信任，允许你亲自抚养${sexTitle}。这是你的骨肉，也是你在这府中的筹码。`;
+        }
+        this.scene?.renderChildren();
+        return message;
     }
     setInventoryCount(key, value) {
         this.player.inventory[key] = Math.max(0, value);
@@ -1704,6 +2170,69 @@ ${endingNarrative}
     async loadShopItems() {
         const response = await fetch("./data/shop.json");
         return (await response.json());
+    }
+    async loadPromotions() {
+        const response = await fetch("./data/promotions.json");
+        return (await response.json());
+    }
+    /**
+     * 检查是否可以升职
+     */
+    checkPromotion(fromPosition, toPosition) {
+        if (!this.promotionConfig) {
+            return { success: false };
+        }
+        const path = this.promotionConfig.promotionPaths.find((p) => p.from === fromPosition && p.to === toPosition && p.stage === this.world.stage);
+        if (!path) {
+            return { success: false };
+        }
+        const result = this.player.tryPromotion(path.conditions);
+        if (result.success) {
+            return {
+                success: true,
+                conditionId: result.conditionId,
+                newPosition: toPosition,
+            };
+        }
+        return {
+            success: false,
+            missingRequirements: result.missingRequirements,
+        };
+    }
+    /**
+     * 获取升职叙事文本
+     */
+    getPromotionNarrative(fromPosition, toPosition, conditionId) {
+        if (!this.promotionConfig) {
+            return `你从${fromPosition}升为${toPosition}。`;
+        }
+        const path = this.promotionConfig.promotionPaths.find((p) => p.from === fromPosition && p.to === toPosition);
+        if (!path || !path.narratives[conditionId]) {
+            return `你从${fromPosition}升为${toPosition}。`;
+        }
+        return path.narratives[conditionId];
+    }
+    /**
+     * 获取升职提示信息（用于UI显示）
+     */
+    getPromotionHint() {
+        if (!this.promotionConfig) {
+            return null;
+        }
+        const currentPosition = this.player.position;
+        const path = this.promotionConfig.promotionPaths.find((p) => p.from === currentPosition && p.stage === this.world.stage);
+        if (!path) {
+            return null;
+        }
+        const result = this.player.tryPromotion(path.conditions);
+        if (result.success) {
+            return `✨ 已满足升为【${path.to}】的条件！`;
+        }
+        if (result.missingRequirements && result.missingRequirements.length > 0) {
+            const missing = result.missingRequirements.slice(0, 3).join("、");
+            return `📋 升职提示：${missing}`;
+        }
+        return null;
     }
     async loadInterludes() {
         const response = await fetch("./data/interludes.json");
@@ -1867,12 +2396,14 @@ ${endingNarrative}
         this.scene?.renderChildren();
     }
     shouldShowQuarterSummary() {
-        // 每3个turn显示一次季度总结（跳过turn 1）
-        return this.world.turn > 1 && this.world.turn % 3 === 1;
+        // 第一、二阶段：每3个turn显示一次季度总结；第三阶段：每4个turn显示一次年度总结
+        const interval = this.world.stage >= 3 ? 4 : 3;
+        return this.world.turn > 1 && this.world.turn % interval === 1;
     }
     async showQuarterSummary() {
         // 显示加载提示
-        this.scene?.showLoading("时间推演中……");
+        const loadingText = this.world.stage >= 3 ? "年度推演中……" : "时间推演中……";
+        this.scene?.showLoading(loadingText);
         // 等待AI生成NPC印象
         await this.refreshNpcImpressions("quarter");
         // 刷新属性面板以显示新的印象
@@ -1891,12 +2422,14 @@ ${endingNarrative}
         });
     }
     generateQuarterSummary() {
-        const season = this.getSeasonName();
         // 计算年份：从景和十二年三月（turn 1）开始
         const monthsPassed = (this.world.turn - 1) + 2; // turn 1是三月，所以+2
         const yearNum = 12 + Math.floor(monthsPassed / 12);
         const year = this.numberToChinese(yearNum);
-        const title = `═══\n景和${year}年${season}\n府中杂记\n═══\n`;
+        const isStageThree = this.world.stage >= 3;
+        const title = isStageThree
+            ? `═══\n景和${year}年\n府中年记\n═══\n`
+            : `═══\n景和${year}年${this.getSeasonName()}\n府中杂记\n═══\n`;
         let content = "";
         // 府内动态
         content += this.generateMansionNews();

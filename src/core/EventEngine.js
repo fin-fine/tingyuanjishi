@@ -18,6 +18,8 @@ export class EventEngine {
             "./data/events_stage1.json",
             "./data/events_stage2.json",
             "./data/events_stage3.json",
+            "./data/events_business.json",
+            "./data/events_children.json",
         ];
         const responses = await Promise.all(sources.map((path) => fetch(path)));
         const payloads = await Promise.all(responses.map((response) => response.json()));

@@ -59,6 +59,7 @@ export const createRandomChild = (birthTurn) => {
     const personality = clamp(personalityBase + personalityVariance * 60);
     return {
         id: `${Date.now()}_${randomInt(1000, 99999)}`,
+        name: "", // 初始无名字，等待取名
         sex: Math.random() < 0.5 ? "boy" : "girl",
         birthTurn,
         aptitude,
@@ -70,5 +71,6 @@ export const createRandomChild = (birthTurn) => {
         },
         training: "balanced",
         personality,
+        takenByMatron: false,
     };
 };

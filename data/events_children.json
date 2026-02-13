@@ -1,0 +1,1140 @@
+[
+  {
+    "id": "s3_child_age6_enlighten",
+    "title": "六岁开蒙",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [50, 120],
+      "has_children": true,
+      "item_child_age_6": "<= 0"
+    },
+    "once": true,
+    "text": "孩子已到六岁，按理该开蒙认字了。府里嫡子早有先生教着，你的小院子却安静得只有风声。\n\n赵嬷嬷提醒你：'六岁不启蒙，八岁学不深。'你心里明白，这一步选什么路，往后就往哪个方向走。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_scholar",
+        "text": "A. 延请私塾先生，先走文路",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 3"
+        },
+        "cost": {
+          "cash": -3
+        },
+        "reward": {
+          "item_child_age_6": 1,
+          "item_child_education_scholar": 1
+        },
+        "resultText": "你托人请来一位老秀才，先从识字、背诗教起。孩子第一天回来，背着小书箱兴奋地说：'娘，先生夸我聪明。'你心里一暖——文路虽慢，但走稳了，日后出息大。",
+        "special": "child_education_scholar"
+      },
+      {
+        "id": "opt_martial",
+        "text": "B. 先练筋骨，打好体魄根基",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 2"
+        },
+        "cost": {
+          "cash": -2
+        },
+        "reward": {
+          "item_child_age_6": 1,
+          "item_child_education_martial": 1
+        },
+        "resultText": "你请来一位退役武师，从站桩、踢腿开始教。孩子练得满头大汗，却咬着牙不喊累。你看着他身子一点点挺拔，心想：在这府里，拳脚有时比嘴更管用。",
+        "special": "child_education_martial"
+      },
+      {
+        "id": "opt_business",
+        "text": "C. 先见世面，学一点商路",
+        "apCost": 1,
+        "require": {
+          "stat_business": ">= 20"
+        },
+        "reward": {
+          "item_child_age_6": 1,
+          "item_child_education_business": 1
+        },
+        "resultText": "你带着孩子去铺子里认人认账，让他先学规矩和见识。孩子拿着算盘珠子玩得不亦乐乎，嘴里嘀咕：'一进一出，都是道理。'你想：经商不体面，但能让他吃饱穿暖。",
+        "special": "child_education_business"
+      },
+      {
+        "id": "opt_delay",
+        "text": "D. 暂缓一年，再观其性情",
+        "apCost": 0,
+        "reward": {
+          "item_child_age_6": 1
+        },
+        "resultText": "你决定再等等。孩子还小，性情未定，贸然定路未必合适。你让赵嬷嬷多留意，自己也暗中观察孩子真正擅长什么。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_age8_training",
+    "title": "八岁练功",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [58, 120],
+      "has_children": true,
+      "item_child_age_6": ">= 1",
+      "item_child_age_8": "<= 0"
+    },
+    "once": true,
+    "text": "孩子渐渐懂事了，八岁的年纪正是打基础的时候。你发现他越来越像你的样子——不服输、心里有主意。\n\n这几年走哪条路，此刻该加把力了。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_train_martial",
+        "text": "A. 加练武艺，磨出筋骨",
+        "apCost": 1,
+        "require": {
+          "item_child_education_martial": ">= 1"
+        },
+        "reward": {
+          "item_child_age_8": 1
+        },
+        "resultText": "你让武师加了训练强度。孩子手上起了茧子，但眼神越来越沉稳。武师说：'这孩子若再练几年，拳脚不会弱。'",
+        "special": "child_education_martial"
+      },
+      {
+        "id": "opt_train_scholar",
+        "text": "B. 加深文课，夯实根基",
+        "apCost": 1,
+        "require": {
+          "item_child_education_scholar": ">= 1"
+        },
+        "reward": {
+          "item_child_age_8": 1
+        },
+        "resultText": "你让先生加了每日的背诵和习字量。孩子虽苦，但字迹越写越稳，背书也越来越快。老秀才摸着胡子说：'此子心性稳，未来可期。'",
+        "special": "child_education_scholar"
+      },
+      {
+        "id": "opt_train_business",
+        "text": "C. 带他跑一趟商路，见识世道",
+        "apCost": 1,
+        "require": {
+          "item_child_education_business": ">= 1"
+        },
+        "reward": {
+          "item_child_age_8": 1
+        },
+        "resultText": "你带孩子去了趟码头，让他亲眼看货、算运费、听掌柜谈价。回来后他抱着账本睡着了，嘴里还在念'进一出三'。你知道，他在长大。",
+        "special": "child_education_business"
+      },
+      {
+        "id": "opt_balance",
+        "text": "D. 稳一稳，不偏不倚",
+        "apCost": 0,
+        "reward": {
+          "item_child_age_8": 1,
+          "scheming": 1
+        },
+        "resultText": "你没有让孩子走极端，文武与规矩都略学一点。或许没那么耀眼，但在侯府里，稳才是长久之道。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_age10_exam",
+    "title": "十岁小考",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [62, 120],
+      "has_children": true,
+      "item_child_age_8": ">= 1",
+      "item_child_age_10": "<= 0"
+    },
+    "once": true,
+    "text": "孩子十岁了，族学安排了一次小考。名次不算正式，却能看出天资和心性。嫡子在前排落座，你的孩子坐在角落里，握着笔的手有点抖。\n\n你要如何帮他？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_extra_tutor",
+        "text": "A. 请先生加课，冲一冲名次",
+        "apCost": 1,
+        "require": {
+          "stat_cash": ">= 3"
+        },
+        "cost": {
+          "cash": -3
+        },
+        "reward": {
+          "item_child_age_10": 1,
+          "status": 2,
+          "scheming": 1
+        },
+        "resultText": "你让先生加了三日小灶。孩子考得比预想好，虽然不及嫡子，却在族中露了脸。你心里暗喜：这一步，总算稳住了。"
+      },
+      {
+        "id": "opt_encourage",
+        "text": "B. 只做鼓励，让他自己发挥",
+        "apCost": 0,
+        "reward": {
+          "item_child_age_10": 1,
+          "health": 1
+        },
+        "resultText": "你摸摸孩子的头：'尽力就好。'孩子点头，走进考场。考后他告诉你：'娘，我没怕。'你知道，这份胆气比名次更难得。"
+      },
+      {
+        "id": "opt_help_business",
+        "text": "C. 考完就带他去铺子做事",
+        "apCost": 0,
+        "require": {
+          "item_child_education_business": ">= 1"
+        },
+        "reward": {
+          "item_child_age_10": 1,
+          "business": 2
+        },
+        "resultText": "你没有把心思全放在考试上，而是把孩子带去铺子里算账。考试只是门槛，生计才是根本。孩子对算盘越来越熟，你心里踏实了许多。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_age12_direction",
+    "title": "十二岁定向",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [70, 120],
+      "has_children": true,
+      "item_child_age_10": ">= 1",
+      "item_child_age_12": "<= 0"
+    },
+    "once": true,
+    "text": "孩子十二岁了，心性渐定。无论是读书、习武，还是经商，都该定下一条主路。\n\n你清楚，走得早未必好，但走得晚一定吃亏。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_lock_scholar",
+        "text": "A. 专注文路，走科举之途",
+        "apCost": 1,
+        "require": {
+          "item_child_education_scholar": ">= 1"
+        },
+        "reward": {
+          "item_child_age_12": 1,
+          "status": 2
+        },
+        "resultText": "你让孩子把更多时间用在读书与策论上。老秀才说：'这孩子心气稳，走科举有望。'",
+        "special": "child_education_scholar"
+      },
+      {
+        "id": "opt_lock_martial",
+        "text": "B. 走武路，将来投军",
+        "apCost": 1,
+        "require": {
+          "item_child_education_martial": ">= 1"
+        },
+        "reward": {
+          "item_child_age_12": 1,
+          "status": 1
+        },
+        "resultText": "你让武师加练弓马。孩子手上磨出厚茧，身子也拔高了。你知道，武路虽险，却也能一鸣惊人。",
+        "special": "child_education_martial"
+      },
+      {
+        "id": "opt_lock_business",
+        "text": "C. 跟着你学商，稳当过日子",
+        "apCost": 1,
+        "require": {
+          "item_child_education_business": ">= 1"
+        },
+        "reward": {
+          "item_child_age_12": 1,
+          "business": 2
+        },
+        "resultText": "你把孩子放在铺子里历练，让他学着跟掌柜谈价、看货、应对刁钻的客户。你知道，这条路不风光，但能保命。",
+        "special": "child_education_business"
+      },
+      {
+        "id": "opt_make_up",
+        "text": "D. 重新补启蒙，先把底子打牢",
+        "apCost": 1,
+        "reward": {
+          "item_child_age_12": 1,
+          "scheming": 1
+        },
+        "resultText": "你决定先把基础补上来——不急着定路，先把读写和礼法学扎实。路可以晚一点选，但底子不能虚。",
+        "special": "child_education_scholar"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_age15_maturity",
+    "title": "十五岁立身",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [78, 120],
+      "has_children": true,
+      "item_child_age_12": ">= 1",
+      "item_child_age_15": "<= 0"
+    },
+    "once": true,
+    "text": "孩子十五岁了，个头快追上你。赵嬷嬷说：'这年纪，该学会立身了。'\n\n你知道，十五岁之后，孩子的路就不再只是'学'，而是要开始'做'。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_apprentice",
+        "text": "A. 送去名师门下，学门路",
+        "apCost": 1,
+        "require": {
+          "stat_network": ">= 20"
+        },
+        "reward": {
+          "item_child_age_15": 1,
+          "network": 2,
+          "status": 1
+        },
+        "resultText": "你托人把孩子引荐给名师门下。对方虽不情愿，但看在侯府的面子上点了头。孩子终于走出小院，开始真正见世面。"
+      },
+      {
+        "id": "opt_study_closed",
+        "text": "B. 让他闭门苦读，冲功名",
+        "apCost": 1,
+        "reward": {
+          "item_child_age_15": 1,
+          "status": 2,
+          "health": -1
+        },
+        "resultText": "你让孩子闭门读书，每日只留一个时辰活动。孩子虽苦，却越来越沉稳。你知道，这是最难的路，但也最正。"
+      },
+      {
+        "id": "opt_work_shop",
+        "text": "C. 让他正式入铺当差",
+        "apCost": 1,
+        "reward": {
+          "item_child_age_15": 1,
+          "business": 3
+        },
+        "resultText": "你把孩子安排进铺子，给他一个正式名目。伙计们一开始不服，但他做事沉稳，慢慢赢得了人心。你心里踏实了些。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_age16_prestige",
+    "title": "十六岁露面",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [82, 120],
+      "has_children": true,
+      "item_child_age_15": ">= 1",
+      "item_child_age_16": "<= 0"
+    },
+    "once": true,
+    "text": "孩子十六了，该在族中露一露面。你知道，名分、口碑、关系，都要一点点挣。\n\n这一步做得好，孩子在府里的位置会稳许多。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_public_show",
+        "text": "A. 让他在族中场合露面",
+        "apCost": 1,
+        "reward": {
+          "item_child_age_16": 1,
+          "status": 2,
+          "network": 1
+        },
+        "resultText": "你安排孩子在族中宴席上露面，与长辈一一请安。虽然只是个小场面，但该走的礼数一分不差。族中几个长辈点了点头，算是认可了。"
+      },
+      {
+        "id": "opt_low_key",
+        "text": "B. 低调处理，不抢风头",
+        "apCost": 0,
+        "reward": {
+          "item_child_age_16": 1,
+          "scheming": 2
+        },
+        "resultText": "你让孩子避开热闹场面，先把功夫练实。你知道，过早露面容易招人眼红，稳一点更安全。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_daily_care",
+    "title": "日常育儿",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [50, 120],
+      "has_children": true,
+      "item_child_age_6": ">= 1"
+    },
+    "once": false,
+    "weight": 2,
+    "text": "孩子最近长得飞快，衣裳又短了一截。你每天除了打理铺子和伺候侯府里的规矩，最牵挂的就是孩子的一切。今天有些闲暇，你想好好陪一陪孩子。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_teach_read",
+        "text": "A. 教孩子认字读书",
+        "apCost": 1,
+        "reward": {
+          "health": -1
+        },
+        "resultText": "你在灯下一笔一画地教孩子写字。孩子学得认真，写完一张纸后小心翼翼地吹干墨迹，递到你面前：'娘你看，这个写得好不好？'你看着那歪歪扭扭但认真极了的字迹，忍不住笑了。窗外的月光照进来，小院里安安静静的——这是你一天中最幸福的时刻。"
+      },
+      {
+        "id": "opt_teach_manners",
+        "text": "B. 教孩子府中礼仪规矩",
+        "apCost": 1,
+        "reward": {
+          "scheming": 1,
+          "health": -1
+        },
+        "resultText": "你板着脸教孩子行礼——如何见了少爷请安、见了主母要怎么磕头、路上碰到嫡子又该如何回避。孩子有些不解：'娘，为什么我要给哥哥让路？我们不是一家人吗？'你心里一酸，但还是耐着性子解释了嫡庶之别。这些道理越早明白越好——你可不想孩子在大庭广众下出差错。"
+      },
+      {
+        "id": "opt_play",
+        "text": "C. 放下事务，陪孩子玩耍",
+        "apCost": 1,
+        "reward": {
+          "health": 2,
+          "favor": -1
+        },
+        "resultText": "你难得地放下了一切，带着孩子在后花园里捉蝴蝶、摘花。孩子骑在你背上叫嚷着'驾！驾！'，笑声传出了院墙。赵嬷嬷在旁边摇头笑：'姨娘也有这样孩子气的时候。'你想，在这府里活得够累了——至少在孩子面前，你可以卸下所有面具。"
+      },
+      {
+        "id": "opt_health_care",
+        "text": "D. 给孩子调理身体、进补",
+        "apCost": 1,
+        "cost": {
+          "cash": -1
+        },
+        "reward": {
+          "health": -1
+        },
+        "resultText": "你让小厨房熬了一碗鸡汤，又从市集上买了些枸杞和山药。孩子喝完汤后脸上红扑扑的，在院子里跑了好几圈都不喊累。赵嬷嬷说：'这孩子底子好，跟姨娘一样能吃苦。'你心想——能吃苦是好事，但你更希望他以后不用吃苦。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_sick",
+    "title": "孩子突发高烧",
+    "type": "random",
+    "weight": 3,
+    "trigger": {
+      "turn_range": [50, 120],
+      "has_children": true,
+      "item_child_age_6": ">= 1",
+      "chance": 0.3
+    },
+    "once": true,
+    "text": "半夜里，孩子突然烧了起来。\n\n你摸着孩子滚烫的额头，心急如焚。奶娘搓着手说：'怕是白天在花园里淋了雨。'你连忙让人去请大夫，但府里的规矩是——庶出子女请大夫，要先经过主母身边的管事嬷嬷批准。\n\n已经三更天了。孩子在你怀里烧得小脸通红，嘴里含糊地喊着'娘...疼...'你心如刀绞。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_beg_matron",
+        "text": "A. 连夜去求主母派大夫来",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": -2,
+          "status": -1
+        },
+        "resultText": "你顾不得规矩，披了件衣裳就冲到正房。管事嬷嬷睡眼惺忪地开了门，一脸不耐烦。但你跪下磕了个头——'求嬷嬷行个方便，孩子烧得厉害。'嬷嬷看你可怜，终于松口派人去请大夫。大夫来了之后诊断是风寒，开了方子。你守了孩子一整夜，天亮时烧终于退了。但主母第二天冷冷说了一句：'庶子生病也大惊小怪，你的规矩倒是越来越差了。'"
+      },
+      {
+        "id": "opt_self_treat",
+        "text": "B. 自己用土方子先退烧",
+        "apCost": 0,
+        "chance": 0.5,
+        "reward": {
+          "scheming": 2,
+          "health": -3
+        },
+        "failReward": {
+          "health": -5
+        },
+        "resultText": "你想起赵嬷嬷说过的退烧法子——用温水擦身、额头敷凉帕子、熬姜汤。你一宿没睡，反复给孩子擦身换帕子。天蒙蒙亮的时候，孩子的烧终于退了，沉沉睡去。你累得靠在床头迷迷糊糊——但至少，没有欠下任何人的人情。",
+        "failResultText": "你用土方子折腾了大半夜，但孩子的烧不退反升。你紧急出门找了个走方郎中，连夜开了药。孩子总算熬了过来，但你自己在寒风里跑了一夜，也跟着病倒了。"
+      },
+      {
+        "id": "opt_spend_money",
+        "text": "C. 花银子悄悄请城里的名大夫",
+        "apCost": 0,
+        "require": {
+          "stat_cash": ">= 3"
+        },
+        "cost": {
+          "cash": -3
+        },
+        "reward": {
+          "scheming": 1
+        },
+        "resultText": "你让赵嬷嬷从后门悄悄出去，花了三两银子请来了城里最好的儿科大夫。大夫仔细诊了脉，开了一副'小柴胡汤'，喂下去不到两个时辰烧就退了。孩子睡得安稳，你也松了一口气。银子虽然心疼，但你想——有些银子，花得值。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_bully",
+    "title": "庶子被嫡子欺负",
+    "type": "random",
+    "weight": 3,
+    "trigger": {
+      "turn_range": [55, 120],
+      "has_children": true,
+      "item_child_age_8": ">= 1",
+      "event_s3_0001": true,
+      "chance": 0.35
+    },
+    "once": true,
+    "text": "孩子哭着跑回你的小院，膝盖磕破了皮，手臂上还有一道红印子。\n\n'嫡...嫡少爷推我的。'孩子抽噎着说，'他说我是庶出的，不配和他一起玩蹴鞠。我说我也是爹的孩子，他就打了我。'\n\n你蹲下来帮孩子擦药的时候，手在发抖——不是怕，是气。你自己受过的委屈可以忍，但看到孩子被这样对待，心里那把火怎么也压不下去。\n\n可你也清楚——嫡子是主母生的，是侯府的正统继承人。你的孩子在他面前低一截，这是改不了的事。\n\n怎么办？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_teach_endure",
+        "text": "A. 忍气吞声，教孩子学会忍耐",
+        "apCost": 0,
+        "reward": {
+          "scheming": 3,
+          "npc_matron": 2,
+          "status": 1
+        },
+        "resultText": "你深吸一口气，把眼泪逼回去，蹲下来平静地对孩子说：'你要记住——受了委屈不可怕，可怕的是你因为这点委屈就认命了。娘教你：能忍的时候忍，但每一次忍，都要记在心里。等你有了出息，回头看这些——不过是小事。'\n\n孩子虽然不完全懂，但看到你的眼神，用力点了点头。"
+      },
+      {
+        "id": "opt_confront",
+        "text": "B. 带着孩子去正房找主母说理",
+        "apCost": 0,
+        "chance": 0.3,
+        "chanceStat": "status",
+        "reward": {
+          "status": 3,
+          "npc_matron": -5,
+          "favor": 2
+        },
+        "failReward": {
+          "status": -3,
+          "npc_matron": -8,
+          "health": -2
+        },
+        "resultText": "你带着孩子去了正房。主母起初一脸不悦，但你不卑不亢地把伤痕指给她看：'庶子虽是庶出，也是侯府的骨血。嫡少爷如此行事，传出去恐怕对侯府名声不好。'主母沉默了片刻，叫来嫡子训了几句。虽然只是做做样子，但你给孩子立了一个标杆——娘不会让你白白挨打。",
+        "failResultText": "主母冷冷地看着你：'嫡子教庶子规矩，天经地义。你若连这个都想反，是嫌你的日子过得太安稳了。'你被堵得哑口无言，孩子在旁边吓得不敢出声。这一趟，不仅没效果，反而让主母更加不喜欢你。"
+      },
+      {
+        "id": "opt_teach_fight",
+        "text": "C. 暗中教孩子如何保护自己",
+        "apCost": 0,
+        "reward": {
+          "scheming": 4
+        },
+        "resultText": "你帮孩子上了药，然后郑重地对他说：'娘不教你打回去——但娘教你一件事：绝不能让别离看到你怕他。他推你，你站稳了不倒；他骂你，你看着他的眼睛。他欺负你是因为觉得你好欺负——你让他觉得你不好欺负就行了。'\n\n你又私下请赵嬷嬷的侄子教孩子一些简单的拳脚——不是为了打架，是为了不再跑回来哭着找你。"
+      },
+      {
+        "id": "opt_ask_father",
+        "text": "D. 找少爷倾诉，请他管管",
+        "apCost": 0,
+        "reward": {
+          "favor": 3,
+          "npc_matron": -3
+        },
+        "resultText": "你在少爷书房外等了一个时辰，见他出来后才柔声提起此事。少爷听了皱起眉头：'都是我的种，怎么能这么欺负人。'他当天就把嫡子叫去书房训了一顿。但主母知道后，着着实实恨上了你——在她看来，你这是借题发挥，用孩子来争宠。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_talent_show",
+    "title": "子嗣露才——族学考试",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [60, 120],
+      "has_children": true,
+      "item_child_age_10": ">= 1",
+      "chance": 0.3
+    },
+    "once": true,
+    "text": "侯府每年在中秋前后有一次族学考试，所有适龄的子弟——不论嫡庶——都要参加。这是你的孩子第一次参考。\n\n族长坐在正堂上，面前摆着笔墨纸砚。嫡子从容自若地坐在前排，身边围着几个陪读的书童。你的孩子坐在最后面的角落里，握毛笔的手有些发颤。\n\n你站在院子外面，隔着窗纱使劲往里看。赵嬷嬷拉着你说：'姨娘，别看了，该怎样就怎样。'但你怎么忍得住？这场考试的结果，可能决定了孩子以后能不能进好的书院。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_encourage",
+        "text": "A. 考前鼓励，临场由他自己发挥",
+        "apCost": 0,
+        "chance": 0.5,
+        "reward": {
+          "status": 4,
+          "network": 2,
+          "scheming": 1
+        },
+        "failReward": {
+          "scheming": 2,
+          "status": -1
+        },
+        "resultText": "考试结果出来了——你的孩子竟然考了第三名，仅次于嫡子和一个堂兄。族长当着全族人的面夸了一句：'此子可教。'少爷也露出了满意的神色。你站在院子里，眼泪差点掉下来——所有的辛苦，都值了。",
+        "failResultText": "孩子太紧张了，写到一半手就抖得厉害。最后的卷子字迹潦草，错了好几个地方。族长摇了摇头，什么也没说。你看到孩子红着眼睛走出来，心里疼极了。但你知道——一次考砸不代表什么，路还长。"
+      },
+      {
+        "id": "opt_cheat_help",
+        "text": "B. 想办法提前弄到考题",
+        "apCost": 0,
+        "require": {
+          "stat_scheming": ">= 40"
+        },
+        "chance": 0.3,
+        "chanceStat": "scheming",
+        "reward": {
+          "status": 5,
+          "scheming": 3
+        },
+        "failReward": {
+          "status": -5,
+          "npc_matron": -5,
+          "scheming": 1
+        },
+        "resultText": "你通过族学里一个相熟的教习，提前知道了考试的范围。你连夜让孩子重点复习那几篇文章。考试之后，孩子名列前茅，你却一点也高兴不起来——你知道这成绩有多少水分。但你想：在这个世道，公平从来就不是给庶子准备的。",
+        "failResultText": "你打听考题的事被族学的教习告到了族长那里。虽然没有点名是你，但你被旁敲侧击地警告了一番。孩子也被特别'关照'——考试时被安排到了最前排，跟族长对面坐着。最终什么小动作都使不出来，压力之下反而考得更差了。"
+      },
+      {
+        "id": "opt_accept_result",
+        "text": "C. 不在意名次，看孩子是否努力",
+        "apCost": 0,
+        "reward": {
+          "health": 2,
+          "scheming": 1
+        },
+        "resultText": "考试结果中等，不算突出也不算差。你没有责备孩子，而是问他：'你今天尽力了吗？'孩子想了想说：'有一题不太会，但我把会的都写了。'你摸了摸他的头：'那就够了。娘不要你考第一，只要你每天比昨天好一点。'孩子笑了，跑去吃你给他准备的小点心。你想：好的教育不是逼出来的。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_matron_interest",
+    "title": "主母要抱走你的孩子",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [55, 120],
+      "has_children": true,
+      "item_child_age_10": ">= 1",
+      "chance": 0.25,
+      "npc_matron": ">= 10"
+    },
+    "once": true,
+    "text": "主母把你叫到了正房。她坐在太师椅上，抿了一口茶后说：\n\n'你那孩子，我看着倒是机灵。嫡子身边缺个伴读——不如让他搬到正房来，跟嫡子一起念书。吃穿用度从公中出，你也省心。'\n\n你听出了弦外之音——这不是商量，是通知。庶子给嫡子做伴读，表面是抬举，实际上就是附属。孩子搬走后，你连每天见一面都不容易。\n\n但从另一个角度看，能跟嫡子一起读书，意味着最好的先生、最好的资源。这是你的小院永远给不了的。\n\n你该怎么回答？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_agree",
+        "text": "A. 感恩应下，把孩子交出去",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 10,
+          "status": 5,
+          "favor": -3,
+          "health": -5
+        },
+        "resultText": "你低下头：'多谢主母抬爱。'当天下午就帮孩子收拾了包袱。孩子走的时候回头看了你好几眼，你拼命笑着挥手，等他的身影消失在垂花门后，你才蹲在地上捂着嘴哭了出来。\n\n赵嬷嬷扶着你说：'有时候放手，是为了孩子好。'你知道她说得对——但心还是疼。此后每个月只能见孩子两次，每次见面你都带最好的点心，却发现孩子越来越像个小大人了。"
+      },
+      {
+        "id": "opt_refuse",
+        "text": "B. 婉拒主母，坚持自己带",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": -8,
+          "favor": 2,
+          "health": 2
+        },
+        "resultText": "你鼓起勇气说：'孩子年纪还小，离了娘怕是不习惯。等过两年大些了，再送去不迟。'主母的笑意淡了：'你的意思是我带不好他？'你连忙赔笑：'不敢。只是做娘的心思，主母您也能理解。'\n\n主母没有再坚持，但之后对你明显冷了几分。你紧紧抱着孩子，想——我可以失去银子、失去宠爱，但不能失去你。"
+      },
+      {
+        "id": "opt_negotiate",
+        "text": "C. 谈条件——白天读书，晚上回来",
+        "apCost": 0,
+        "require": {
+          "stat_scheming": ">= 35"
+        },
+        "reward": {
+          "npc_matron": 3,
+          "scheming": 4,
+          "status": 3
+        },
+        "resultText": "你不卑不亢地提议：'不如这样——孩子白天跟着嫡少爷读书，晚上回我的小院住。这样既能做伴读，也不至于让孩子太想家。'主母想了想：'你倒是想得周全。'最终同意了这个折中方案。\n\n你松了一口气。这不是最好的结果，但你保住了每天晚上搂着孩子说故事的权利——在这个府里，这已经是了不起的胜利了。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_personality_rebellious",
+    "title": "孩子叛逆期——顶撞长辈",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [65, 120],
+      "has_children": true,
+      "item_child_age_12": ">= 1",
+      "chance": 0.3
+    },
+    "once": true,
+    "text": "最近孩子的脾气越来越大了。\n\n今天在饭桌上，赵嬷嬷说了一句'庶子要安分守己'，孩子猛地拍了一下桌子：'凭什么？我读书比嫡少爷好，骑马比他强，为什么事事都要让着他？'\n\n满桌人都愣住了。赵嬷嬷一脸铁青。你心里又气又慌——这种话如果传到主母耳中，轻则罚跪，重则...你不敢往下想。\n\n但你也看到了孩子眼中的不甘和倔强——那明明就是你自己年轻时的样子。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_scold",
+        "text": "A. 当场严厉训斥，把话圆回来",
+        "apCost": 0,
+        "reward": {
+          "scheming": 3,
+          "npc_matron": 2,
+          "status": 1
+        },
+        "resultText": "你沉下脸，厉声说：'你这是什么规矩！还不向嬷嬷赔罪！'孩子被你吓了一跳，红着眼赔了不是。事后你把他拉到角落里低声说：'你的心气娘明白——但你现在说这种话，只会害了自己和娘。等你真的有出息了，不用你说，所有人都会看到。'孩子含泪点了点头。"
+      },
+      {
+        "id": "opt_understand",
+        "text": "B. 安抚孩子，私下开导",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2,
+          "health": -1
+        },
+        "resultText": "你在赵嬷嬷面前打了个圆场：'小孩子不懂事，我回去好好教他。'回了院子，你没有骂孩子，而是和他坐在台阶上看月亮。'你觉得不公平？'你问。孩子使劲点头。'娘也觉得不公平。但娘告诉你一个秘密——娘从丫鬟做到了姨娘，不是因为反抗，而是因为忍得住。你以后会比娘更厉害的。'孩子靠在你肩上——他明白了一些，也没有完全明白。但至少不再那么愤怒了。"
+      },
+      {
+        "id": "opt_channel",
+        "text": "C. 把孩子的精力引导到正事上",
+        "apCost": 0,
+        "reward": {
+          "business": 2,
+          "scheming": 2
+        },
+        "resultText": "你没有纠结'对错'，而是趁热打铁：'你说你什么都比嫡少爷好？好，科举能考过他吗？生意能做过他吗？你先把一件事做到真的比他好——不是嘴巴上说，是让所有人都看得见的那种好。到那时候，你不用说什么，全府的人都会闭嘴。'\n\n孩子被你激了一下，咬着嘴唇半天不说话，然后突然说：'那我要学经商。娘你教我。'"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_girl_marriage",
+    "title": "女儿的婚事提了上来",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [70, 120],
+      "has_children": true,
+      "item_child_age_15": ">= 1",
+      "chance": 0.25
+    },
+    "once": true,
+    "text": "少爷在饭桌上随口提了一句：'城东赵家的公子不错，赵老爷子问过咱们家丫头的事。'\n\n你的心一下子提了起来。虽然不知道说的是不是你的女儿，但赵家...你让人打听了一下——赵家虽然有些家底，但那个公子是出了名的花花公子，被退了好几次婚。\n\n你清楚，庶女的婚事在侯府里不算什么大事——也许一句话就定了。如果你不做些什么，你的女儿可能就这样被'许'出去了。\n\n（此事件在没有女儿时自动变为 '某个相熟的姨娘的女儿' 的剧情）",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_investigate_groom",
+        "text": "A. 暗中调查赵家公子的底细",
+        "apCost": 1,
+        "reward": {
+          "scheming": 4,
+          "network": 2
+        },
+        "resultText": "你托赵嬷嬷的侄子去打听。消息回来让你倒吸一口凉气——赵家公子不仅花心，还欠了一屁股赌债。赵老爷子提亲是想借着侯府的关系翻身。你把打听到的消息整理好，准备找个合适的时机向少爷禀报。"
+      },
+      {
+        "id": "opt_tell_lord",
+        "text": "B. 直接找少爷表达担忧",
+        "apCost": 1,
+        "reward": {
+          "favor": 3,
+          "status": 2
+        },
+        "resultText": "你趁着少爷心情好的时候，委婉地说：'赵家公子...妾身听说了一些不太好的传言。妾身哪怕是为了侯府的体面着想，也不敢隐瞒。'少爷沉吟了片刻：'你有心了。这事我再看看。'有了少爷这句话，至少不会草率行事了。"
+      },
+      {
+        "id": "opt_alternative",
+        "text": "C. 自己物色更好的人选",
+        "apCost": 1,
+        "require": {
+          "stat_network": ">= 25"
+        },
+        "reward": {
+          "network": 5,
+          "scheming": 3,
+          "status": 2,
+          "cash": -2
+        },
+        "resultText": "你发动自己的人脉，仔细筛选了几家门当户对的人家。最后看中了一个读书人——家境虽清贫，但品行端正、学问出众，去年中了秀才。你把人选推荐给少爷，少爷看了看笑了：'你这做娘的倒是比我还上心。这人...确实不错。'"
+      },
+      {
+        "id": "opt_accept_fate",
+        "text": "D. 不作声，听凭少爷安排",
+        "apCost": 0,
+        "reward": {
+          "favor": 1,
+          "scheming": 1,
+          "health": -3
+        },
+        "resultText": "你低着头没有说话。赵嬷嬷看着你的脸色，叹了口气：'姨娘，有些事不争一争，将来后悔的是你。'你知道她说得对——但你也知道，在侯府里，庶妾对子女婚事能说上的话，实在有限。你只能在心里默默祈祷。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_study_abroad",
+    "title": "送子游学的机会",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [70, 120],
+      "has_children": true,
+      "item_child_age_12": ">= 1",
+      "stat_cash": ">= 5",
+      "stat_business": ">= 15",
+      "chance": 0.2
+    },
+    "once": true,
+    "text": "城里有位名儒在白鹿书院讲学，慕名而来的读书人络绎不绝。有消息说他今年破例收十个新弟子，不论出身——只看天资。\n\n赵嬷嬷说：'白鹿书院出来的人，近十年里中了六个进士。你家那孩子要是能进去，前程就不愁了。'但推荐信要有人写，束脩（学费）也不便宜。更重要的是——如果孩子去了书院，你就很长时间见不到他了。\n\n你看着孩子在院子里认真背书的样子，知道他有这个资质。但你舍得吗？",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_send",
+        "text": "A. 不惜代价送孩子去",
+        "apCost": 1,
+        "cost": {
+          "cash": -5
+        },
+        "chance": 0.5,
+        "reward": {
+          "status": 5,
+          "network": 3,
+          "health": -3
+        },
+        "failReward": {
+          "cash": -2,
+          "status": 1,
+          "scheming": 2
+        },
+        "resultText": "你变卖了一副银镯子凑够了束脩，又托人写了推荐信。孩子出发那天，你把他送到了城门口。你从袖中取出一双亲手缝的布鞋塞给他：'路远迢迢，好好照顾自己。'孩子拜了一拜，转身大步走了，只回头看了你一眼——那一眼里，有不舍、有坚定、有你教给他的所有东西。\n\n三个月后传来消息——孩子被名儒收为了弟子。你关上门哭了一场，但这次是喜极而泣。",
+        "failResultText": "你费尽心思凑够了银子和推荐信，但书院的考试太难了——孩子落选了。他失魂落魄地回来，你搂着他说：'别灰心，路不止一条。'你知道，明年还有机会——现在要做的，是让孩子更加用功。"
+      },
+      {
+        "id": "opt_wait",
+        "text": "B. 再等一年，打好基础再去",
+        "apCost": 0,
+        "reward": {
+          "scheming": 2,
+          "health": 2
+        },
+        "resultText": "你理智地想了想——孩子的基础还不够扎实，仓促去考试十有八九落选。不如再花一年巩固。你请了一位老秀才每天加课，自己也在旁边旁听——顺便补补自己。一年后再去，把握就大多了。"
+      },
+      {
+        "id": "opt_business_path",
+        "text": "C. 不走科举，带孩子学经商",
+        "apCost": 0,
+        "require": {
+          "stat_business": ">= 25"
+        },
+        "reward": {
+          "business": 3,
+          "scheming": 2,
+          "cash": 2
+        },
+        "resultText": "你想了想，对孩子说：'读书固然重要，但做生意也是一门大学问。娘给你在铺子里安排个位子——从跑腿的伙计做起，学会算账、待人、看行市。'孩子瞪大了眼睛：'娘，这跟书上说的不一样……'你笑了：'书上没写的，才是真本事。'"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_sibling_bond",
+    "title": "嫡庶兄弟的微妙友情",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [60, 120],
+      "has_children": true,
+      "item_child_age_8": ">= 1",
+      "event_s3_0001": true,
+      "chance": 0.25
+    },
+    "once": true,
+    "text": "一件出乎意料的事——你的孩子和嫡子居然偷偷玩到了一起。\n\n下人来报：'两位少爷在后花园的假山后面搭了个'秘密基地'，还约好每天半下午偷偷碰头。'你赶去一看——嫡子和你的孩子正蹲在一起摆弄蛐蛐罐子，两个人笑成一团，哪里看得出什么嫡庶之分。\n\n嫡子看见你来了，腾地站起来，有些紧张地叫了一声'姨娘'。你的孩子则满脸通红，做了个'别告诉娘'的表情。\n\n这一幕，如果让主母看到....",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_allow",
+        "text": "A. 默许他们的友情，但提醒分寸",
+        "apCost": 0,
+        "reward": {
+          "scheming": 3,
+          "network": 2,
+          "status": 1
+        },
+        "resultText": "你笑着蹲下来：'两位少爷玩得开心？'然后悄悄对你的孩子说：'和嫡少爷做朋友是好事——但要记住，在人前不能太随便。你们可以在这里玩，但别让太多人看到。'你又送了两罐上好的蛐蛐给他们，算是'入伙费'。两个孩子高兴极了。\n\n后来的日子里，这份兄弟情成了你在侯府里一个意想不到的助力。"
+      },
+      {
+        "id": "opt_stop",
+        "text": "B. 阻止这种交往，避免麻烦",
+        "apCost": 0,
+        "reward": {
+          "npc_matron": 2,
+          "scheming": 2
+        },
+        "resultText": "你严肃地把孩子拉回了院子：'不是不让你交朋友——是这个朋友，不适合。你现在跟嫡少爷走得近，外面看着觉得你在攀附；将来如果闹翻了，更会被人说你不知分寸。'孩子不理解，赌气不跟你说话。你叹了口气——但你知道，你是对的。在这个府里，嫡庶之间的每一寸距离，都有讲究。"
+      },
+      {
+        "id": "opt_use",
+        "text": "C. 借此机会改善与主母的关系",
+        "apCost": 0,
+        "require": {
+          "stat_scheming": ">= 35"
+        },
+        "reward": {
+          "npc_matron": 5,
+          "scheming": 3,
+          "status": 2
+        },
+        "resultText": "你灵机一动——带着你的孩子去正房向主母请安，当着她的面说：'我们家的小的不懂事，总是缠着嫡少爷。我来请主母训诫一二。'主母看着两个孩子，有些惊讶——她以为你会藏着掖着。你的坦诚反而赢得了她的几分好感。主母说：'孩子嘛，在一起玩也无妨。只是别影响嫡少爷的功课。'你点头——这就是你要的。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_second_pregnancy",
+    "title": "再次有孕的困境",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [55, 120],
+      "has_children": true,
+      "stat_favor": ">= 30",
+      "chance": 0.2
+    },
+    "once": true,
+    "text": "你的月事推迟了半个月。赵嬷嬷悄悄请了大夫把脉——喜脉。\n\n你又怀上了。\n\n第一次生子的记忆还历历在目——主母的试探、府中的风言风语、产房里的九死一生。但这一次情况不同了：你已经是姨娘了，有了地位和银子。按理说应该高兴才对。\n\n可主母已经有了嫡子。你再生——不论男女——都会让局面更加复杂。主母会怎么想？少爷又会怎么反应？\n\n更现实的问题是：你正在忙着铺子的事，怀孕后势必要放慢生意节奏。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_announce",
+        "text": "A. 大大方方地报喜",
+        "apCost": 0,
+        "reward": {
+          "favor": 5,
+          "status": 3,
+          "npc_matron": -5,
+          "health": -3
+        },
+        "resultText": "你选择了正面宣布。少爷听到消息后很高兴，当晚就来坐了半个时辰。但主母的脸色像结了冰——她刚生完嫡子没多久，你就又怀上了？在她看来，你这是在挑衅。但生米已成熟饭，她也只能笑着说'恭喜'。\n\n接下来的日子，你要一边养胎、一边提防主母的小动作了。"
+      },
+      {
+        "id": "opt_hide",
+        "text": "B. 先不声张，悄悄保胎",
+        "apCost": 0,
+        "reward": {
+          "scheming": 4,
+          "health": -2
+        },
+        "resultText": "你和赵嬷嬷商量后决定——先瞒着，等过了三个月稳当了再说。你借口身体不适减少了出行频率，饮食上也更加小心。赵嬷嬷每天熬安胎汤，你喝完就把碗藏起来。三个月后，你的小腹已经藏不住了，才'不经意'地让少爷知道。他虽然有些惊讶，但总归是高兴的。"
+      },
+      {
+        "id": "opt_focus_biz",
+        "text": "C. 加紧安排铺子的事，为产后做准备",
+        "apCost": 0,
+        "reward": {
+          "business": 3,
+          "scheming": 2,
+          "health": -4
+        },
+        "resultText": "你想得很远——产后至少要养半年身体，铺子不能群龙无首。你加紧培训了掌柜和伙计，把所有规矩立好、把关的标准写成了条陈。赵嬷嬷心疼地说：'你就不能歇歇？'你笑着说：'等孩子生下来，再歇也不迟。'你害怕的不是生产，而是失去对铺子的控制。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_inheritance_dispute",
+    "title": "遗产之争——庶子也有份？",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [75, 120],
+      "has_children": true,
+      "item_child_age_16": ">= 1",
+      "stat_status": ">= 40",
+      "stat_business": ">= 20",
+      "chance": 0.2
+    },
+    "once": true,
+    "text": "老太君——侯府的太老夫人——年事已高，最近身体越发不好。府里私下已经在传：'老太君怕是不行了，家产要早做打算了。'\n\n按规矩，侯府的家产以嫡子为主继承。但老太君当年分过一句话：'不论嫡庶，能出息的都该有份。'这句话一直被人记着。\n\n现在族中有人提出——你的孩子既然在族学考试中名列前茅，也该分到一份'庶子产业金'——虽然只是象征性的一小份，但意义重大。这等于承认了你这一脉的地位。\n\n主母自然是反对的。少爷则夹在中间，左右为难。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_fight",
+        "text": "A. 积极争取，联合支持的族人",
+        "apCost": 1,
+        "require": {
+          "stat_network": ">= 30"
+        },
+        "chance": 0.4,
+        "chanceStat": "scheming",
+        "reward": {
+          "status": 8,
+          "cash": 10,
+          "scheming": 5,
+          "npc_matron": -10,
+          "network": 3
+        },
+        "failReward": {
+          "status": -5,
+          "npc_matron": -15,
+          "network": -3
+        },
+        "resultText": "你暗中联合了几个支持'庶子也有份'的长辈，在族议上据理力争。最终族长拍板——庶子分得家产的一成，虽然不多，但从此有了名分。主母恨你恨得牙痒痒，但木已成舟。你知道，这一仗赢了——但代价也很大。",
+        "failResultText": "你低估了主母的手腕。她提前联络了族中更多的长辈，在族议上把你的提议否决了。不仅如此，她还暗示族人：你这是'以庶犯嫡、不知天高地厚'。你的名声受了不小的影响，少爷也对你冷淡了许多。"
+      },
+      {
+        "id": "opt_let_go",
+        "text": "B. 不争这一份，靠自己的铺子",
+        "apCost": 0,
+        "reward": {
+          "business": 3,
+          "scheming": 3,
+          "npc_matron": 3
+        },
+        "resultText": "你主动退了一步：'家产之事，自有少爷做主，妾身不敢多嘴。'主母对你的态度明显缓和了几分。你回到自己的院子想——侯府的家产再多，都是别人的。只有自己铺子赚的银子，才是真正属于你的。你的孩子，也不需要靠分家产来证明自己。"
+      },
+      {
+        "id": "opt_trade",
+        "text": "C. 以退为进——放弃家产，换取别的好处",
+        "apCost": 0,
+        "require": {
+          "stat_scheming": ">= 45"
+        },
+        "reward": {
+          "scheming": 5,
+          "npc_matron": 5,
+          "status": 3,
+          "network": 3
+        },
+        "resultText": "你在族议上主动表态：'庶子不敢与嫡子争家产。但若老太君金安，妾身只有一个小小的请求——将来孩子若能考取功名，望族中给他一封推荐信。'你用一个不值多少银子的'家产份额'换来了一个无价的承诺——族中的推荐信在官场上的分量，比那点银子重得多。主母都愣了一下——她没想到你的格局竟然这么大。"
+      }
+    ]
+  },
+
+  {
+    "id": "s3_child_first_achievement",
+    "title": "孩子的第一个成就",
+    "type": "random",
+    "weight": 2,
+    "trigger": {
+      "turn_range": [65, 120],
+      "has_children": true,
+      "item_child_age_10": ">= 1",
+      "stat_status": ">= 25",
+      "chance": 0.25
+    },
+    "once": true,
+    "text": "族学先生送来了一封信——你的孩子在府城的文会上，写了一篇文章被老先生们评为上佳！\n\n信上说：'此子文思敏捷，见解独到。虽年幼，已有士子之风。'信末还附了一首孩子写的诗，笔法稚嫩但灵气逼人。\n\n你捧着这封信，手都在颤——这些年的心血，终于看到了回报。府里的人听说这件事后，看你的眼神都不一样了。少爷也在饭桌上难得提起：'你那孩子，倒是争气。'\n\n但嫡子在一旁沉着脸——同场文会，他只得了个中评。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_humble",
+        "text": "A. 低调处理，不声张",
+        "apCost": 0,
+        "reward": {
+          "scheming": 4,
+          "npc_matron": 3,
+          "status": 2
+        },
+        "resultText": "你把信收好，只对孩子说了句'好好努力'，没有在府里大肆宣扬。主母虽然听到了消息，但见你没有炫耀的意思，态度没有恶化。你在心里暗暗欢喜——孩子的出息，不需要靠炫耀来证明。沉稳才是保护他的最好方式。"
+      },
+      {
+        "id": "opt_celebrate",
+        "text": "B. 适度庆祝，让府里知道",
+        "apCost": 0,
+        "reward": {
+          "status": 5,
+          "favor": 2,
+          "npc_matron": -4
+        },
+        "resultText": "你在院子里办了一桌小酒宴，请了几个交好的管事和嬷嬷来坐坐。消息传出去后，府里上下都知道了——你的庶子在文会上拿了好名次。少爷高兴之余还赏了孩子一方砚台。但主母冷冷地扫了你一眼——你赢了面子，但也添了一个敌人。"
+      },
+      {
+        "id": "opt_invest",
+        "text": "C. 趁此机会加大教育投入",
+        "apCost": 0,
+        "cost": {
+          "cash": -3
+        },
+        "reward": {
+          "status": 3,
+          "network": 2,
+          "business": -1
+        },
+        "resultText": "你立刻决定——趁着势头好，给孩子请更好的先生。你花了三两银子，从城外请来了一位有功名的老举人做家教，每天专门辅导一个时辰。虽然铺子那边暂时少了些精力，但你想：铺子做得再大，不如一个有出息的孩子。"
+      }
+    ]
+  },
+  {
+    "id": "s3_child_future",
+    "title": "子嗣前程",
+    "type": "fixed",
+    "trigger": {
+      "turn_range": [94, 120],
+      "has_children": true,
+      "item_child_age_16": ">= 1",
+      "item_child_age_18": "<= 0"
+    },
+    "once": true,
+    "text": "孩子已接近成年。一天晚上，少爷把你叫到书房，郑重地说：'孩子虽是庶出，但也是我的亲骨肉。如今侯府在朝中有些分量，我想为孩子谋一个前程。'\n\n他展开一张纸，上面列着几个选项：入太学读书、去军营历练、或是跟着你学商业。每条路都有利弊，也都与侯府在朝中的地位息息相关。\n\n'你是孩子的母亲，你怎么看？'少爷问道。\n\n你看着窗外的月色，想起孩子这些年的成长。这个决定，将影响孩子的一生。",
+    "allowCustom": true,
+    "options": [
+      {
+        "id": "opt_scholar",
+        "text": "A. 送入太学，走科举之路",
+        "apCost": 0,
+        "require": {
+          "item_child_education_scholar": ">= 1"
+        },
+        "reward": {
+          "status": 5,
+          "cash": -5,
+          "item_child_age_18": 1
+        },
+        "resultText": "凭借侯府的关系，孩子顺利进入了太学。这是许多寒门子弟梦寐以求的机会。孩子虽然庶出，但有了太学的资历，将来科举也能占些优势。少爷对你说：'你教得好，孩子的功底扎实，我很放心。'",
+        "special": "child_future_scholar",
+        "failText": "孩子的学识基础不够扎实，进太学恐怕跟不上。"
+      },
+      {
+        "id": "opt_military",
+        "text": "B. 送入军营，立军功",
+        "apCost": 0,
+        "require": {
+          "item_child_education_martial": ">= 1"
+        },
+        "reward": {
+          "status": 4,
+          "favor": 3,
+          "item_child_age_18": 1
+        },
+        "resultText": "少爷托关系将孩子送入了边境军营，跟随侯爷旧部历练。孩子临行前，你为他收拾行装，一针一线都缝进了母亲的牵挂。少爷拍着孩子的肩膀：'去吧，立了功回来，就是堂堂正正的侯府子嗣。'",
+        "special": "child_future_military",
+        "failText": "孩子的体格和武艺还不足以进入军营。"
+      },
+      {
+        "id": "opt_business",
+        "text": "C. 跟你学商，经商致富",
+        "apCost": 0,
+        "require": {
+          "item_child_education_business": ">= 1"
+        },
+        "reward": {
+          "business": 5,
+          "cash": 3,
+          "item_child_age_18": 1
+        },
+        "resultText": "你让孩子跟着你学商，从铺子里的跑腿做起，学习看账、算账、看人。孩子虽不情愿，但也逐渐上了手。你想：经商虽不体面，但至少能安身立命。",
+        "special": "child_future_business",
+        "failText": "孩子尚未接受系统的商业教育。"
+      },
+      {
+        "id": "opt_stay",
+        "text": "D. 暂留府中，先稳住脚跟",
+        "apCost": 0,
+        "reward": {
+          "item_child_age_18": 1,
+          "scheming": 2,
+          "status": 1
+        },
+        "resultText": "你决定先让孩子留在府中做事，稳住局面，再图长远。你知道，不是每一步都要立刻决定终身，有时候，稳住比出头更重要。"
+      }
+    ]
+  }
+]

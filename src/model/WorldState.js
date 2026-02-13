@@ -14,7 +14,7 @@ export class WorldState {
         this.stageMaxTurns = {
             1: 22, // 第一阶段：22回合（约6-7个月）
             2: 45, // 第二阶段：23回合（约7-8个月）
-            3: 100, // 第三阶段：55回合（更长的养成期）
+            3: 120, // 第三阶段：75回合（按季度推进，支持子嗣成长）
         };
     }
     reset() {
@@ -42,7 +42,8 @@ export class WorldState {
     }
     advanceTurn() {
         this.turn += 1;
-        this.month = (this.month % 12) + 1;
+        const monthStep = this.stage >= 3 ? 3 : 1;
+        this.month = ((this.month - 1 + monthStep) % 12) + 1;
         this.ap = this.maxAp;
     }
     // 获取月例银子

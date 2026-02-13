@@ -10,11 +10,16 @@ export class ChildPanel {
         this.container = el;
     }
     render() {
-        const children = this.player.children;
+        const children = this.player.children.filter(child => !child.takenByMatron);
         if (!children.length) {
+            const takenCount = this.player.children.filter(c => c.takenByMatron).length;
+            const takenText = takenCount > 0
+                ? `<div class="muted">你有${takenCount}个子嗣被主母抱去抚养。</div>`
+                : '';
             this.container.innerHTML = `
         <h3 class="panel-title">子嗣</h3>
-        <div class="muted">暂无子嗣。</div>
+        <div class="muted">暂无在身边抚养的子嗣。</div>
+        ${takenText}
       `;
             return;
         }
@@ -27,10 +32,14 @@ export class ChildPanel {
             const businessDisplay = child.stats.business
                 ? `<div class="child-stat">商业 ${child.stats.business.toFixed(1)}</div>`
                 : '';
+            // 显示名字或默认标题
+            const childTitle = child.name
+                ? `${child.name} · ${sexLabel}`
+                : `子嗣${index + 1} · ${sexLabel}`;
             return `
           <div class="child-card" data-id="${child.id}">
             <div class="child-header">
-              <div class="child-name">子嗣${index + 1} · ${sexLabel}</div>
+              <div class="child-name">${childTitle}</div>
               <div class="child-meta">${ageText}</div>
             </div>
             <div class="child-meta">资质：${child.aptitude} · 性格：${personalityLabel}（${child.personality.toFixed(0)}）</div>

@@ -1,0 +1,165 @@
+{
+  "positions": [
+    {
+      "id": "通房",
+      "name": "通房",
+      "description": "府中低阶侍妾，负责服侍少爷起居",
+      "level": 1
+    },
+    {
+      "id": "姨娘",
+      "name": "姨娘",
+      "description": "正式妾室，有独立院落和月例",
+      "level": 2
+    },
+    {
+      "id": "侧室",
+      "name": "侧室",
+      "description": "地位仅次于正妻，可受封诰命",
+      "level": 3
+    }
+  ],
+  "promotionPaths": [
+    {
+      "from": "通房",
+      "to": "姨娘",
+      "conditions": [
+        {
+          "id": "child_path",
+          "name": "生子晋升",
+          "description": "诞下子嗣，获得主母信任",
+          "requirements": {
+            "hasChild": true,
+            "favor": 70,
+            "status": 60,
+            "health": 50,
+            "npc_matron": 85
+          },
+          "priority": 1
+        },
+        {
+          "id": "merit_path",
+          "name": "才德晋升",
+          "description": "虽无子嗣，但凭借超凡才德获得认可",
+          "requirements": {
+            "hasChild": false,
+            "favor": 90,
+            "status": 85,
+            "health": 60,
+            "network": 70,
+            "npc_matron": 88
+          },
+          "priority": 2
+        }
+      ],
+      "stage": 2,
+      "narratives": {
+        "child_path": "恭喜！你为谢家诞下子嗣，主母对你颇为信任，少爷也对你宠爱有加。少爷向主母提请，将你抬为姨娘。\n\n你的身份从通房升为姨娘，有了自己的小院落，也有了更多的自主权。",
+        "merit_path": "虽无子嗣，但你凭借超凡的手腕赢得了所有人的认可。这在侯府历史上几乎是不可能的奇迹。少爷向主母提请，将你抬为姨娘。\n\n你的身份从通房升为姨娘，有了自己的小院落，也有了更多的自主权。"
+      }
+    },
+    {
+      "from": "姨娘",
+      "to": "侧室",
+      "conditions": [
+        {
+          "id": "heir_path",
+          "name": "嫡子晋升",
+          "description": "子嗣出众，获封爵位或官职",
+          "requirements": {
+            "hasSon": true,
+            "childTalent": 85,
+            "favor": 85,
+            "status": 80,
+            "network": 75,
+            "npc_matron": 80,
+            "npc_jinshu": 90
+          },
+          "priority": 1
+        },
+        {
+          "id": "influence_path",
+          "name": "权势晋升",
+          "description": "掌握府中大权，势力足以匹敌正室",
+          "requirements": {
+            "favor": 95,
+            "status": 90,
+            "network": 90,
+            "scheming": 85,
+            "business": 70,
+            "npc_jinshu": 95
+          },
+          "priority": 2
+        },
+        {
+          "id": "imperial_path",
+          "name": "诰命晋升",
+          "description": "因家族功勋获朝廷封赏",
+          "requirements": {
+            "favor": 80,
+            "status": 85,
+            "network": 80,
+            "hasImperialMerit": true,
+            "npc_matron": 75
+          },
+          "priority": 3
+        }
+      ],
+      "stage": 3,
+      "narratives": {
+        "heir_path": "你的儿子才华出众，年纪轻轻便考中进士，入了翰林院。少爷欣喜若狂，主母也对你刮目相看。\n\n按照祖制，生育功臣之母当有封赏。经少爷上表，主母同意，将你由姨娘抬为侧室，地位仅次于正室。你终于在侯府中有了真正的地位。",
+        "influence_path": "凭借多年经营，你在府中已经树立了无可撼动的地位。无论是外事人脉还是内府管理，处处都有你的影响。\n\n主母虽然表面上仍是一家之主，但实际上很多事情都要听取你的意见。少爷更是对你言听计从。\n\n在这样的情况下，你被抬为侧室已是众望所归。府中上下，再无人敢小觑于你。",
+        "imperial_path": "皇恩浩荡，因侯府协助平叛有功，朝廷降旨封赏。你作为少爷最宠爱的妾室，也获得了诰命夫人的封号。\n\n虽然品级不高，但这是朝廷的认可。少爷趁此机会向主母提请，将你抬为侧室。\n\n从此，你不仅是府中的侧室，更是受朝廷册封的命妇。你的人生，终于翻开了新的一页。"
+      }
+    }
+  ],
+  "failureThresholds": {
+    "stage2": {
+      "health": {
+        "value": 30,
+        "ending": "香消玉殒",
+        "description": "健康过低导致病逝"
+      },
+      "favor": {
+        "value": 50,
+        "ending": "失宠弃妇",
+        "description": "失去宠爱被冷落"
+      },
+      "status": {
+        "value": 45,
+        "ending": "名声扫地",
+        "description": "名声太差无法立足"
+      }
+    },
+    "stage3": {
+      "health": {
+        "value": 40,
+        "ending": "积劳成疾",
+        "description": "长期劳累健康崩溃"
+      },
+      "favor": {
+        "value": 60,
+        "ending": "宠爱不再",
+        "description": "年老色衰失去宠爱"
+      }
+    }
+  },
+  "statDisplayNames": {
+    "appearance": "容貌",
+    "scheming": "心机",
+    "status": "名声",
+    "network": "人脉",
+    "favor": "宠爱",
+    "health": "健康",
+    "cash": "现银",
+    "business": "商业",
+    "npc_matron": "主母信任",
+    "npc_jinshu": "少爷宠爱"
+  },
+  "promotionMessages": {
+    "checking": "正在检查是否满足升职条件...",
+    "qualified": "恭喜！你已满足{position}的晋升条件",
+    "notQualified": "尚未满足升职条件，继续努力吧",
+    "requirementsHint": "升职需要：{requirements}"
+  }
+}

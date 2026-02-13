@@ -19,7 +19,16 @@ export class IntroPanel {
         this.maxStat = 90;
         this.currentBackgroundId = "maid";
         this.legacyStats = null;
-        this.selectedLegacyStat = null;
+        this.legacyPoints = {
+            appearance: 0,
+            scheming: 0,
+            status: 0,
+            network: 0,
+            favor: 0,
+            health: 0,
+            cash: 0,
+            business: 0,
+        };
         // 所有身份的基础属性总和都是280点，但分配不同
         this.backgrounds = [
             {
@@ -161,7 +170,16 @@ export class IntroPanel {
     }
     render(onConfirm, legacy) {
         this.legacyStats = legacy ?? null;
-        this.selectedLegacyStat = null;
+        this.legacyPoints = {
+            appearance: 0,
+            scheming: 0,
+            status: 0,
+            network: 0,
+            favor: 0,
+            health: 0,
+            cash: 0,
+            business: 0,
+        };
         this.baseStats = { ...this.player.stats };
         this.applyBackground(this.currentBackgroundId);
         this.container.innerHTML = "";
@@ -178,34 +196,61 @@ export class IntroPanel {
     `;
         // 周目遗产选择
         let legacyWrap = null;
+        let legacyRemainingEl = null;
+        let legacyRemaining = 0;
         if (this.legacyStats) {
+            const playCount = this.legacyStats.playCount ?? 1;
+            legacyRemaining = playCount;
             legacyWrap = document.createElement("div");
             legacyWrap.className = "intro-section legacy-section";
-            legacyWrap.innerHTML = `<h3 class=\"panel-title\">前尘遗泽</h3>
-        <p class=\"muted\">你曾在此府中挣扎求存，虽已离去，却留下一点经验。选择一项属性继承前世余荫（+10点）：</p>`;
+            legacyWrap.innerHTML = `<h3 class="panel-title">前尘遗泽</h3>
+        <p class="muted">你已历经 ${playCount} 世轮回，可分配 ${playCount} 点技能点到任意属性：</p>`;
+            legacyRemainingEl = document.createElement("div");
+            legacyRemainingEl.className = "intro-remaining";
+            legacyRemainingEl.textContent = `剩余技能点：${legacyRemaining}`;
+            legacyWrap.appendChild(legacyRemainingEl);
             const legacyList = document.createElement("div");
-            legacyList.className = "intro-backgrounds";
+            legacyList.className = "intro-stats";
             const statKeys = Object.keys(STAT_LABELS);
             statKeys.forEach((key) => {
-                const label = document.createElement("label");
-                label.className = "intro-background";
-                const input = document.createElement("input");
-                input.type = "radio";
-                input.name = "intro-legacy";
-                input.value = key;
-                input.addEventListener("change", () => {
-                    this.selectedLegacyStat = key;
+                const row = document.createElement("div");
+                row.className = "intro-stat";
+                const labelEl = document.createElement("span");
+                labelEl.className = "intro-stat-label";
+                labelEl.textContent = STAT_LABELS[key];
+                const valueEl = document.createElement("span");
+                valueEl.className = "intro-stat-value";
+                valueEl.textContent = `+${this.legacyPoints[key]}`;
+                const controls = document.createElement("div");
+                controls.className = "intro-stat-controls";
+                const minusBtn = document.createElement("button");
+                minusBtn.type = "button";
+                minusBtn.textContent = "-";
+                minusBtn.addEventListener("click", () => {
+                    if (this.legacyPoints[key] > 0) {
+                        this.legacyPoints[key]--;
+                        legacyRemaining++;
+                        valueEl.textContent = `+${this.legacyPoints[key]}`;
+                        legacyRemainingEl.textContent = `剩余技能点：${legacyRemaining}`;
+                    }
                 });
-                const prevValue = Math.floor(this.legacyStats.stats[key] || 0);
-                const text = document.createElement("div");
-                text.className = "intro-background-text";
-                text.innerHTML = `
-          <div class=\"intro-background-name\">${STAT_LABELS[key]} +10</div>
-          <div class=\"muted\">上世达到 ${prevValue}</div>
-        `;
-                label.appendChild(input);
-                label.appendChild(text);
-                legacyList.appendChild(label);
+                const plusBtn = document.createElement("button");
+                plusBtn.type = "button";
+                plusBtn.textContent = "+";
+                plusBtn.addEventListener("click", () => {
+                    if (legacyRemaining > 0) {
+                        this.legacyPoints[key]++;
+                        legacyRemaining--;
+                        valueEl.textContent = `+${this.legacyPoints[key]}`;
+                        legacyRemainingEl.textContent = `剩余技能点：${legacyRemaining}`;
+                    }
+                });
+                controls.appendChild(minusBtn);
+                controls.appendChild(plusBtn);
+                row.appendChild(labelEl);
+                row.appendChild(valueEl);
+                row.appendChild(controls);
+                legacyList.appendChild(row);
             });
             legacyWrap.appendChild(legacyList);
         }
@@ -328,13 +373,15 @@ export class IntroPanel {
         confirmButton.addEventListener("click", () => {
             const name = nameField.value.trim() || "无名";
             const background = this.backgrounds.find((entry) => entry.id === this.currentBackgroundId) ?? this.backgrounds[0];
+            // 计算继承加成
+            const legacyBonus = this.legacyStats ? { ...this.legacyPoints } : undefined;
             onConfirm({
                 name,
                 backgroundId: background.id,
                 backgroundName: background.name,
                 stats: { ...this.currentStats },
                 backgroundBonus: this.getBonusStats(),
-                legacyStat: this.selectedLegacyStat ?? undefined,
+                legacyBonus,
             });
         });
         actions.appendChild(randomButton);

@@ -242,7 +242,7 @@ export class EventPopup {
             actions.style.marginTop = "20px";
             actions.style.textAlign = "center";
             const restartButton = document.createElement("button");
-            restartButton.textContent = "再次挑战（继承一项属性）";
+            restartButton.textContent = "再次挑战（获得技能点）";
             restartButton.style.padding = "10px 20px";
             restartButton.style.fontSize = "16px";
             restartButton.addEventListener("click", () => {

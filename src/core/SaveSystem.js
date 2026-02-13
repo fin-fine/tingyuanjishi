@@ -85,11 +85,14 @@ export class SaveSystem {
         };
     }
     saveLegacy(player, world) {
+        const oldLegacy = this.loadLegacy();
+        const playCount = (oldLegacy?.playCount ?? 0) + 1;
         const legacy = {
             stats: { ...player.stats },
             turn: world.turn,
             month: world.month,
             savedAt: Date.now(),
+            playCount,
         };
         localStorage.setItem(this.legacyKey, JSON.stringify(legacy));
     }

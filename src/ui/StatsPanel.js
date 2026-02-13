@@ -1,3 +1,4 @@
+import { NPCImpressionPopup } from "./NPCImpressionPopup.js";
 export class StatsPanel {
     constructor(player, world) {
         this.player = player;
@@ -7,6 +8,7 @@ export class StatsPanel {
             throw new Error("Missing stats container.");
         }
         this.container = el;
+        this.impressionPopup = new NPCImpressionPopup();
     }
     render() {
         const stats = this.player.stats;
@@ -62,11 +64,9 @@ export class StatsPanel {
         const ageYears = 15 + Math.floor(ageMonthsTotal / 12);
         const ageMonths = ageMonthsTotal % 12;
         const ageDisplay = ageMonths > 0 ? `${ageYears}岁${ageMonths}月` : `${ageYears}岁`;
-        const matronLabel = "大夫人/少夫人";
+        const matronLabel = this.world.stage <= 1 ? "赵嬷嬷" : "少夫人";
         const matronValue = this.player.npcRelations.matron ?? 0;
         const matronDisplay = `${matronValue.toFixed(1)} · ${relationRating(matronValue)}`;
-        const rivalValue = this.player.npcRelations.rival ?? 0;
-        const showRival = this.world.stage >= 2 || Math.abs(rivalValue) > 0.001;
         const servantsValue = (stats.status + stats.network) / 2;
         const npcImpressions = this.player.npcImpressions ?? {};
         const fallbackImpression = (label, value) => {
@@ -101,13 +101,43 @@ export class StatsPanel {
             }
             return `${countText}，底子偏弱，你仍需多费心照拂。`;
         };
+        // 动态构建NPC条目，包括姨娘
         const npcEntries = [
             { key: "young_master", label: "少爷", value: stats.favor, show: true },
             { key: "matron", label: matronLabel, value: matronValue, show: true },
-            { key: "rival", label: "姨娘们", value: rivalValue, show: showRival },
-            { key: "children", label: "子嗣", value: 0, show: true },
-            { key: "servants", label: "府中下人", value: servantsValue, show: true },
         ];
+        // 林姨娘
+        const hasLinConcubine = this.player.history.has("s2_lin_concubine_enter");
+        if (hasLinConcubine) {
+            npcEntries.push({
+                key: "lin_concubine",
+                label: "林姨娘",
+                value: this.player.npcRelations.lin_concubine ?? 0,
+                show: true,
+            });
+        }
+        // 王姨娘（如果没被驱逐）
+        const hasWangConcubine = this.player.history.has("s2_wang_concubine_enter");
+        const wangExpelled = this.player.history.has("s2_wang_concubine_elope_exposed");
+        if (hasWangConcubine && !wangExpelled) {
+            npcEntries.push({
+                key: "wang_concubine",
+                label: "王姨娘",
+                value: this.player.npcRelations.wang_concubine ?? 0,
+                show: true,
+            });
+        }
+        // 苏姨娘
+        const hasSuConcubine = this.player.history.has("s2_su_concubine_enter");
+        if (hasSuConcubine) {
+            npcEntries.push({
+                key: "su_concubine",
+                label: "苏姨娘",
+                value: this.player.npcRelations.su_concubine ?? 0,
+                show: true,
+            });
+        }
+        npcEntries.push({ key: "children", label: "子嗣", value: 0, show: true }, { key: "servants", label: "府中下人", value: servantsValue, show: true });
         const npcLines = npcEntries
             .filter((entry) => entry.show)
             .map((entry) => {
@@ -117,15 +147,16 @@ export class StatsPanel {
                     ? childrenImpression()
                     : fallbackImpression(entry.label, entry.value);
             }
-            return `<div class="stat-item stat-item--full stat-item--impression">${entry.label} <span>${text}</span></div>`;
+            return `<div class="stat-item stat-item--full stat-item--npc-name" data-npc-key="${entry.key}" data-npc-label="${entry.label}" data-npc-impression="${this.escapeHtml(text)}">${entry.label}</div>`;
         })
             .join("");
         const nameLabel = this.player.name ? ` · ${this.player.name}` : "";
         const businessDisplay = this.world.stage >= 3
             ? `<div class="stat-item">商业 <span>${withRating("business", stats.business)}</span></div>`
             : '';
+        const matronImpressionLabel = this.world.stage <= 1 ? "嬷嬷印象" : "少夫人印象";
         const npcSection = `
-      <div class="stat-item stat-item--full stat-item--header">NPC印象</div>
+      <div class="stat-item stat-item--full stat-item--header">NPC印象（点击查看详情）</div>
       ${npcLines}
     `;
         this.container.innerHTML = `
@@ -134,7 +165,7 @@ export class StatsPanel {
       <div class="stat-item">年纪 <span>${ageDisplay}</span></div>
       <div class="stat-item">回合 <span>${this.world.turn}/${this.world.maxTurn}</span></div>
       <div class="stat-item">行动力 <span>${this.world.ap}/${this.world.maxAp}</span></div>
-      <div class="stat-item">主母印象 <span>${matronDisplay}</span></div>
+      <div class="stat-item">${matronImpressionLabel} <span>${matronDisplay}</span></div>
       <div class="stat-item">容貌 <span>${withRating("appearance", stats.appearance)}</span></div>
       <div class="stat-item">心机 <span>${withRating("scheming", stats.scheming)}</span></div>
       <div class="stat-item">名声 <span>${withRating("status", stats.status)}</span></div>
@@ -145,5 +176,25 @@ export class StatsPanel {
       ${businessDisplay}
       ${npcSection}
     `;
+        // 添加NPC印象点击事件
+        this.container.querySelectorAll(".stat-item--npc-name").forEach((el) => {
+            el.addEventListener("click", () => {
+                const npcLabel = el.getAttribute("data-npc-label");
+                const npcImpression = el.getAttribute("data-npc-impression");
+                if (npcLabel && npcImpression) {
+                    this.impressionPopup.show(npcLabel, this.unescapeHtml(npcImpression));
+                }
+            });
+        });
+    }
+    escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    unescapeHtml(text) {
+        const div = document.createElement("div");
+        div.innerHTML = text;
+        return div.textContent || "";
     }
 }
